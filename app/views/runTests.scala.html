@@ -1,0 +1,40 @@
+<script>
+  $(function(){
+    setUpEditable($(".editable"))
+  });
+</script>
+
+<div class="levha">
+  <h2>Info</h2>
+
+  <p>There are two types of tests that should be executed on the candidate gateways. Namely <strong>ONE_WAY</strong>
+    and <strong>TWO_WAY</strong>.</p>
+
+  <p><strong>ONE_WAY&nbsp;test </strong>
+    verifies that a simple&nbsp;<strong>ONE_WAY&nbsp;push MEP</strong> &nbsp;scenario is successfully achieved from <strong>Corner 1</strong>
+    to <strong>Corner 2</strong>.</p>
+
+  <p><strong>TWO_WAY test&nbsp;</strong>verifies that a simple <strong>TWO_WAY push push MEP </strong>
+    scenario is successfully executed starting from <strong>Corner 1</strong> to <strong>Corner 4</strong> and all the way back to<strong> Corner 4</strong>
+    .&nbsp;</p>
+
+  <p>Kerkovi is responsible (only for connectivity testing) to submit messages to backends in order to achieve the mentioned tests.</p>
+
+  <h2>Run</h2>
+
+  <p>
+    <label>Select gateway:</label> <select class="gateway">
+  @for(gateway <- Databeyz.list()) {
+    <option value="@gateway.id">@gateway.name</option>
+  }
+  </select>
+      <button onclick="startOneWay()" class="fancy">One Way Test</button>
+      <button onclick="startTwoWay()" class="fancy">Two Way Test</button>
+  </p>
+
+
+  <div id="testState">
+
+  </div>
+
+</div>

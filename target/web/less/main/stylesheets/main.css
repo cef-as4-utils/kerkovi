@@ -1,0 +1,139 @@
+/* app css stylesheet */
+body {
+  background-color: #9190ec;
+  margin: 0;
+  padding: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 0px;
+  color: #333;
+  font: 15px/22.5px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+.bigcancel {
+  padding: 2px 10px 2px 10px;
+  border-radius: 0 10px 0 0;
+  font: 14px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+a {
+  color: #2321c2;
+  text-decoration: none;
+}
+.extra {
+  color: #ff9c00;
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+}
+.kerkovi {
+  color: #ff9c00;
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+}
+.title {
+  color: rgba(170, 3, 48, 0.3);
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+  font: bold normal 17px Verdana;
+}
+.title b {
+  color: rgba(255, 156, 0, 0.5);
+  text-shadow: 1px 2px 3px #feffb0, 0 0 0 #111111;
+  font: bold normal 50px 'DejaVu Serif', Georgia, Verdana, Arial;
+}
+.container {
+  width: 80%;
+  margin: 15px 10% 10px 10%;
+}
+#mainView {
+  margin: 0;
+  padding: 15px;
+  box-shadow: inset rgba(255, 255, 255, 0.3) 0px -10px 10px 1px, rgba(1, 1, 1, 0.7) 0px 0px 5px;
+  border-radius: 0 0 10px 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+  border-right: 1px solid rgba(2, 2, 2, 0.28);
+  border-left: 1px solid rgba(2, 2, 2, 0.28);
+  border-bottom: 1px solid rgba(250, 250, 250, 0.27);
+  min-height: 400px;
+}
+ul.menu {
+  height: 30px;
+  list-style: none;
+  padding-top: 5px;
+  background-color: rgba(0, 0, 0, 0.18);
+  border-radius: 10px 10px 0 0;
+  border-right: 1px solid rgba(2, 2, 2, 0.28);
+  border-left: 1px solid rgba(2, 2, 2, 0.28);
+  border-top: 1px solid rgba(250, 250, 250, 0.27);
+  box-shadow: 0 0 5px rgba(1, 1, 1, 0.7);
+  margin: 0;
+  overflow: hidden;
+}
+ul.menu li {
+  display: inline;
+  position: relative;
+  padding: 50px 10px 50px 10px;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0px;
+}
+ul.menu li:hover {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.1) 0 1px 0;
+}
+ul.menu li > a {
+  color: rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+  padding: 6px;
+  font: bold normal 16px "klavika-web", "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+ul.menu li.active {
+  border-left: 1px solid #595959;
+  border-right: 1px solid #595959;
+  background-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.4), inset 0 0 14px 7px #00ffff;
+}
+ul.menu li.active > a {
+  text-shadow: 1px 2px 4px #9190ec, 0 0 0 #000000, 1px 2px 4px #9190ec;
+}
+h1 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 6em;
+  line-height: 1em;
+}
+.gomulu {
+  box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.4);
+}
+.inset-text {
+  /* Shadows are visible under slightly transparent text color */
+  color: rgba(10, 60, 150, 0.1);
+  text-shadow: 1px 4px 6px #9190ec, 0 0 0 #000000, 1px 4px 6px #9190ec;
+}
+/* Don't show shadows when selecting text */
+::-moz-selection {
+  background: #9190ec;
+  color: #fff;
+  text-shadow: none;
+}
+::selection {
+  background: #9190ec;
+  color: #fff;
+  text-shadow: none;
+}
+.errorDialog {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background-color: #6d2426;
+  border-radius: 10px;
+  box-shadow: inset rgba(255, 255, 255, 0.3) 0px -10px 10px 1px, rgba(1, 1, 1, 0.7) 0px 0px 5px;
+}
+.errorDialogContent {
+  width: 100%;
+  height: 100%;
+  background-color: #c6d2ff;
+  overflow: scroll;
+  border-radius: 0 0 10px 10px;
+  box-shadow: inset 1px 1px 5px #111111, inset -1px -1px 5px #111111;
+}
+/*# sourceMappingURL=main.css.map */

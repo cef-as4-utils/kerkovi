@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>AS4 Conformance and Interoperability Connectivity Manager</title>
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("img/favicon.png")">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/children.css")" />
+    <script type="text/javascript" src="@routes.Assets.versioned("js/jquery-2.1.4.min.js")"></script>
+    <script type="text/javascript" src="@routes.JSRoutesController.jsRoutes()"></script>
+    <script src="@routes.Assets.versioned("js/main.js")"></script>
+
+    <script>
+    $(function(){
+      initializeMainMenu($("#mainView"), $("ul.menu li > a"))
+      triggerMainMenuItem("main")
+    });
+  </script>
+  </head>
+  <body>
+    <table class="container" align="center">
+      <tr>
+        <td>
+          <table><tr><td>
+            <img src="img/zebra-small.png"
+            height="70px"
+            about="http://www.wpclipart.com/cartoon/animals/horse/horse_cartoon_zebra_T.png" alt="Zebra"/>
+          </td> <td>
+            <div class="title"><b>Kerkovi</b> <br/>The AS4 conformance manager</div>
+          </td>
+          </tr>
+          </table>
+          <br />
+          <ul class="menu">
+            <li><a href="#" page="@routes.Application.main()" id="main">Main</a></li>
+            <li><a href="#" page="@routes.Application.run()" id="runTests">Run Tests</a></li>
+            <li><a href="#" page="@routes.Application.gateways()" id="runTests">Gateways</a></li>
+            <li><a href="#" page="@routes.Application.adapters()" id="settings">Adapters</a></li>
+            <li><a href="#" page="@routes.Application.kerkovi()" id="kerkovi" class="kerkovi">What is kerkovi?</a></li>
+          </ul>
+          <div id="mainView">
+
+          </div>
+
+        </td>
+      </tr>
+    </table>
+
+    <div id="errorDialog" class="errorDialog" title="Error">
+      <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="padding:3px;">
+        <tr><th style="height:30px;" align="left"><span style="color:#c6d2ff;">&nbsp;Error</span></th><td align="right"><button class="bigcancel" onclick='disposeError()'>\u2718</button></td></tr>
+        <tr>
+          <td colspan="2">
+          <div id="errorDialogContent" class="errorDialogContent">
+            <h2>Welcome to Kerkovi</h2>
+
+            <p>Click&nbsp;<strong><a href="#" onclick='triggerMainMenuItem("runTests")'>here</a></strong>
+                &nbsp;to run tests on your gateway.
+</p>
+
+            <p>If you want to register your gateway for testing please go
+              to <a href="#" onclick='triggerMainMenuItem("settings")'>Settings</a></strong> &nbsp;and add the&nbsp;
+              <strong><em>PARTY ID</em></strong> <em>&nbsp;</em>
+              and HTTP/S addresses of your gateway instances
+              (one for corner 2 and one for corner 3)
+</p>
+
+          </div>
+        </td>
+        </tr>
+      </table>
+    </div>
+
+  </body>
+</html>

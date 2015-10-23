@@ -1,0 +1,98 @@
+<script>
+  $(function(){
+    setUpEditable($(".editable"))
+  });
+</script>
+<div class="levha">
+  <h2>Registered Gateways</h2>
+
+  <p>The list of the AS4 compliant gateways has been given below.
+    Each gateway should be provided in&nbsp;<strong>two</strong> &nbsp;instances.
+    The first instance is&nbsp; <strong><em>Corner 2</em></strong> &nbsp;and the second instance is&nbsp;
+    <strong><em>Corner 3</em></strong>.</p>
+
+  <p>Click on the fields to start editing.&nbsp;</p>
+
+  <div>
+    <table class="zebra">
+      <tr>
+        <th class="smaller darkcolor">Name</th>
+        <th class="smaller darkcolor">C2 Party ID</th> <th class="smaller darkcolor">C2 Address</th>
+        <th class="smaller darkcolor">C3 Party ID</th> <th class="smaller darkcolor">C3 Address</th>
+        <th class="smaller darkcolor">Test State<sup>*</sup></th>
+        <th class="smaller darkcolor" title="Phase might be either connectivity or Minder">Phase<sup>**</sup></th>
+        <th align="center" style="width:50px">
+          <div title="Add New Gateway"><a class="bigger greenShiny" href="#" onclick="createNew()">+</a></div>
+        </th>
+      </tr>
+      @for(gateway <- Application.registeredGateways()) {
+        <tr>
+          <td>
+            <div class="editable" type="text"
+            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "name")"
+            >@gateway.name</div>
+          </td>
+          <td>
+            <div class="editable" type="text"
+            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "c2PartyID")"
+            >@gateway.c2PartyID</div>
+          </td>
+          <td>
+            <div class="editable" type="text"
+            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "c2Address")"
+            >@gateway.c2Address</div>
+          </td>
+          <td>
+            <div class="editable" type="text"
+            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "c3PartyID")"
+            >@gateway.c3PartyID</div>
+          </td>
+          <td>
+            <div class="editable" type="text"
+            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "c3Address")"
+            >@gateway.c3Address</div>
+          </td>
+          <td align="center">
+            <div class="@Application.decideCssForTests(gateway)">&nbsp;</div>
+          </td>
+          <td>
+            <div class="editable" type="text"
+            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "phase")"
+            >@gateway.phase</div>
+          </td>
+
+          <td align="center">
+            <div title="Delete"><a class="bigger shiny" href="#" onclick='deleteGateway(@gateway.id, "@controllers.routes.Application.deleteGateway(gateway.id)")'>-</a></div>
+          </td>
+        </tr>
+      }
+      <tr><td colspan="8">
+        <p>
+        <label>* The testing states are as follows:</label><br />
+        <span class="notest">No test finished yet</span>
+        <span class="oneway">One way test finished</span>
+        <span class="twoway">Two way test finished</span>
+        <span class="alltests">All tests finished</span>
+        </p>
+        <p>
+          <label>** Phase:</label> when a gateway passes both tests, it is ready to take the conformance test. Then its <i>phase</i> should be manually set to <i>MINDER_READY</i> by the user.
+        </p>
+      </td></tr>
+
+    </table>
+    <div id="newGatewayDiv" style="display:none;overflow:scroll;" class="newgwclass">
+      <h3>Create New Gateway</h3>
+      <form id="newGatewayForm" class="fullw"><table class="fullw">
+        <tr><td class="shrink"><label>Name</label></td> <td class="expand"><input type="text" name="name" /></td> </tr>
+        <tr><td class="shrink"><label>C2 Party ID</label></td> <td><input type="text" name="c2PartyID" class="fullw"/></td></tr>
+        <tr><td class="shrink"><label>C2 Address</label></td> <td><input type="text" name="c2Address" class="fullw"/></td></tr>
+        <tr><td class="shrink"><label>C3 Party ID</label></td> <td><input type="text" name="c3PartyID" class="fullw"/></td></tr>
+        <tr><td class="shrink"><label>C3 Address</label></td> <td><input type="text" name="c3Address" class="fullw"/></td></tr>
+      </table>
+      </form> <br />
+      <table width="100%"><tr><td align="right"><button class="cancelbutton" onclick="doCancel()">\u2718 Cancel</button></td> <td align="left">
+        <button class="savebutton" onclick='doCreateNew("@controllers.routes.Application.newGateway")'>\u2713 Save</button></td></tr>
+      </table>
+    </div>
+  </div>
+</div>

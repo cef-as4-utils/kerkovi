@@ -1,0 +1,481 @@
+/* app css stylesheet */
+body {
+  background-color: #9190ec;
+  margin: 0;
+  padding: 0;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 0px;
+  color: #333;
+  font: 15px/22.5px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+.bigcancel {
+  padding: 2px 10px 2px 10px;
+  border-radius: 0 10px 0 0;
+  font: 14px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+  margin: 0;
+}
+a {
+  color: #2321c2;
+  text-decoration: none;
+}
+.extra {
+  color: #ff9c00;
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+}
+.kerkovi {
+  color: #ff9c00;
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+}
+.title {
+  color: rgba(170, 3, 48, 0.3);
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+  font: bold normal 17px Verdana;
+}
+.title b {
+  color: rgba(255, 156, 0, 0.5);
+  text-shadow: 1px 2px 3px #feffb0, 0 0 0 #111111;
+  font: bold normal 50px 'DejaVu Serif', Georgia, Verdana, Arial;
+}
+.container {
+  width: 80%;
+  margin: 15px 10% 10px 10%;
+}
+#mainView {
+  margin: 0;
+  padding: 15px;
+  box-shadow: inset rgba(255, 255, 255, 0.3) 0px -10px 10px 1px, rgba(1, 1, 1, 0.7) 0px 0px 5px;
+  border-radius: 0 0 10px 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 1;
+  border-right: 1px solid rgba(2, 2, 2, 0.28);
+  border-left: 1px solid rgba(2, 2, 2, 0.28);
+  border-bottom: 1px solid rgba(250, 250, 250, 0.27);
+  min-height: 400px;
+}
+ul.menu {
+  height: 30px;
+  list-style: none;
+  padding-top: 5px;
+  background-color: rgba(0, 0, 0, 0.18);
+  border-radius: 10px 10px 0 0;
+  border-right: 1px solid rgba(2, 2, 2, 0.28);
+  border-left: 1px solid rgba(2, 2, 2, 0.28);
+  border-top: 1px solid rgba(250, 250, 250, 0.27);
+  box-shadow: 0 0 5px rgba(1, 1, 1, 0.7);
+  margin: 0;
+  overflow: hidden;
+}
+ul.menu li {
+  display: inline;
+  position: relative;
+  padding: 50px 10px 50px 10px;
+  vertical-align: middle;
+  text-align: center;
+  margin: 0px;
+}
+ul.menu li:hover {
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.4), rgba(255, 255, 255, 0.1) 0 1px 0;
+}
+ul.menu li > a {
+  color: rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 2px 3px #9190ec, 0 0 0 #111111, 1px 2px 3px #9190ec;
+  padding: 6px;
+  font: bold normal 16px "klavika-web", "Helvetica Neue", Helvetica, Arial, Geneva, sans-serif;
+}
+ul.menu li.active {
+  border-left: 1px solid #595959;
+  border-right: 1px solid #595959;
+  background-color: rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.4), inset 0 0 14px 7px #00ffff;
+}
+ul.menu li.active > a {
+  text-shadow: 1px 2px 4px #9190ec, 0 0 0 #000000, 1px 2px 4px #9190ec;
+}
+h1 {
+  font-family: Helvetica, Arial, sans-serif;
+  font-weight: bold;
+  font-size: 6em;
+  line-height: 1em;
+}
+.gomulu {
+  box-shadow: inset 0 0 2px 1px rgba(0, 0, 0, 0.4);
+}
+.inset-text {
+  /* Shadows are visible under slightly transparent text color */
+  color: rgba(10, 60, 150, 0.1);
+  text-shadow: 1px 4px 6px #9190ec, 0 0 0 #000000, 1px 4px 6px #9190ec;
+}
+/* Don't show shadows when selecting text */
+::-moz-selection {
+  background: #9190ec;
+  color: #fff;
+  text-shadow: none;
+}
+::selection {
+  background: #9190ec;
+  color: #fff;
+  text-shadow: none;
+}
+.errorDialog {
+  display: none;
+  position: fixed;
+  top: 10%;
+  left: 10%;
+  width: 80%;
+  height: 80%;
+  background-color: #6d2426;
+  border-radius: 10px;
+  box-shadow: inset rgba(255, 255, 255, 0.3) 0px -10px 10px 1px, rgba(1, 1, 1, 0.7) 0px 0px 5px;
+}
+.errorDialogContent {
+  width: 100%;
+  height: 100%;
+  background-color: #c6d2ff;
+  overflow: scroll;
+  border-radius: 0 0 10px 10px;
+  box-shadow: inset 1px 1px 5px #111111, inset -1px -1px 5px #111111;
+}
+.editable {
+  padding: 5px 10px 5px 10px;
+  font: 12px/22.5px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+  border: none;
+  background-color: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.4);
+}
+.newgwclass {
+  padding: 15px;
+  background-color: #9190ec;
+  position: fixed;
+  top: 30%;
+  left: 35%;
+  width: 30%;
+  height: 40%;
+  box-shadow: 0 0 3px 3px #00ffff;
+  border: 1px solid gray;
+  border-radius: 10px;
+}
+.editable:hover {
+  background-color: rgba(255, 255, 255, 0.18);
+  box-shadow: 0 0 3px 3px #00ffff;
+  outline: 1px solid gray;
+}
+.editable2 {
+  position: absolute;
+  padding: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 3px 3px #ffffff;
+  outline: 1px solid gray;
+}
+.editable2 td.tiny {
+  height: 13px;
+  line-height: 0px;
+  width: 13px;
+}
+.editable2 .transparentinput {
+  border: none;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 3px 1px gray;
+  padding-left: 5px;
+  padding-right: 5px;
+  font: 15px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+td.shrink {
+  white-space: nowrap;
+  width: 1%;
+}
+td.expand {
+  width: 99%;
+}
+table.zebra {
+  background-color: #bcbcf3;
+  border: 1px solid gray;
+  border-radius: 5px;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+}
+table.zebra > tbody > tr:nth-child(odd) > td {
+  background-color: #fbe7e7;
+}
+table.zebra > tbody > tr:nth-child(even) > td {
+  background-color: #e7fbe7;
+}
+.smaller {
+  font-size: smaller;
+}
+.bigger {
+  font-size: xx-large;
+}
+.shiny {
+  color: red;
+  text-shadow: 0 0 7px #00ffff;
+}
+.greenShiny {
+  color: limegreen;
+  text-shadow: 0 0 3px #006262;
+}
+.darkcolor {
+  color: #1b1a96;
+}
+.fullsize {
+  width: 100%;
+  height: 100%;
+}
+table.zeropad {
+  padding: 0;
+}
+table.zeropad > tbody > tr {
+  padding: 0;
+}
+table.zeropad > tbody > tr > td {
+  padding: 0;
+}
+table.zeromarg {
+  margin: 0;
+}
+table.zeromarg > tbody > tr {
+  margin: 0;
+}
+table.zeromarg > tbody > tr > td {
+  margin: 0;
+}
+.theBorder {
+  border: 1px solid black;
+}
+.fullw {
+  width: 100%;
+}
+label {
+  font-weight: bold;
+}
+.savebutton {
+  padding: 7px 30px 7px 30px;
+  background-color: #b1f2d2;
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  font: 14px/22.5px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+.cancelbutton {
+  padding: 7px 30px 7px 30px;
+  background-color: #858585;
+  box-shadow: inset 0 0 2px rgba(255, 255, 255, 0.4);
+  border-radius: 10px;
+  font: 14px/22.5px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+}
+.hoverBefore {
+  border: solid;
+  border-color: #111 transparent;
+  border-color: rgba(0, 0, 0, 0.8) transparent;
+  border-width: .4em .4em 0 .4em;
+  bottom: 1em;
+  content: "";
+  display: block;
+  left: 2em;
+  position: absolute;
+  z-index: 99;
+}
+.hoverAfter {
+  background: #111;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: .5em;
+  bottom: 1.35em;
+  color: #fff;
+  display: block;
+  left: 1em;
+  padding: .3em 1em;
+  position: absolute;
+  text-shadow: 0 1px 0 #000;
+  white-space: nowrap;
+  z-index: 98;
+}
+.tooltippable {
+  border-radius: 5px;
+  position: relative;
+  display: inline;
+  padding: 3px 10px 3px 10px;
+}
+.notest {
+  border-radius: 5px;
+  position: relative;
+  display: inline;
+  padding: 3px 10px 3px 10px;
+  background-color: red;
+}
+.oneway {
+  border-radius: 5px;
+  position: relative;
+  display: inline;
+  padding: 3px 10px 3px 10px;
+  background-color: #ffab51;
+}
+.twoway {
+  border-radius: 5px;
+  position: relative;
+  display: inline;
+  padding: 3px 10px 3px 10px;
+  background-color: #ffde71;
+}
+.alltests {
+  border-radius: 5px;
+  position: relative;
+  display: inline;
+  padding: 3px 10px 3px 10px;
+  background-color: #43ff5f;
+}
+.notest:hover:before,
+.oneway:hover:before,
+.twoway:hover:before,
+.alltests:hover:before {
+  border: solid;
+  border-color: #111 transparent;
+  border-color: rgba(0, 0, 0, 0.8) transparent;
+  border-width: .4em .4em 0 .4em;
+  bottom: 1em;
+  content: "";
+  display: block;
+  left: 2em;
+  position: absolute;
+  z-index: 99;
+}
+.notest:hover:after,
+.oneway:hover:after,
+.twoway:hover:after,
+.alltests:hover:after {
+  background: #111;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: .5em;
+  bottom: 1.35em;
+  color: #fff;
+  display: block;
+  left: 1em;
+  padding: .3em 1em;
+  position: absolute;
+  text-shadow: 0 1px 0 #000;
+  white-space: nowrap;
+  z-index: 98;
+}
+.notest:hover:after {
+  content: "No Tests Performed Yet";
+}
+.oneway:hover:after {
+  content: "Only One way test finished";
+  background: #111;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: .5em;
+  bottom: 1.35em;
+  color: #fff;
+  display: block;
+  left: 1em;
+  padding: .3em 1em;
+  position: absolute;
+  text-shadow: 0 1px 0 #000;
+  white-space: nowrap;
+  z-index: 98;
+}
+.twoway:hover:after {
+  content: "Only Two way test finished";
+  background: #111;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: .5em;
+  bottom: 1.35em;
+  color: #fff;
+  display: block;
+  left: 1em;
+  padding: .3em 1em;
+  position: absolute;
+  text-shadow: 0 1px 0 #000;
+  white-space: nowrap;
+  z-index: 98;
+}
+.alltests:hover:after {
+  content: "All tests finished";
+  background: #111;
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: .5em;
+  bottom: 1.35em;
+  color: #fff;
+  display: block;
+  left: 1em;
+  padding: .3em 1em;
+  position: absolute;
+  text-shadow: 0 1px 0 #000;
+  white-space: nowrap;
+  z-index: 98;
+}
+/* this part styles only a paragraph  */
+p {
+  margin: 1em auto;
+  width: 85%;
+}
+select.gateway {
+  /* styling */
+  background-color: white;
+  border-radius: 4px;
+  display: inline-block;
+  font: inherit;
+  line-height: 1.5em;
+  padding: 0.5em 3.5em 0.5em 1em;
+  /* reset */
+  margin: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, #9190ec 50%), linear-gradient(135deg, #9190ec 50%, transparent 50%), linear-gradient(to right, #cccccc, #cccccc);
+  background-position: calc(93%) 1em, calc(97%) 1em, calc(87%) 0.5em;
+  background-size: 7px 7px,
+  7px 7px,
+  1px 1.5em;
+  background-repeat: no-repeat;
+  outline: 0;
+}
+select.gateway:focus {
+  background-image: linear-gradient(135deg, transparent 50%, #9190ec 50%), linear-gradient(45deg, #9190ec 50%, transparent 50%), linear-gradient(to right, #cccccc, #cccccc);
+  background-position: calc(93%) 1em, calc(96%) 1em, calc(87%) 0.5em;
+  background-size: 5px 5px,
+  5px 5px,
+  1px 1.5em;
+  background-repeat: no-repeat;
+  outline: 0;
+}
+select:-moz-focusring {
+  color: transparent;
+  text-shadow: 0 0 0 #000;
+}
+.raised {
+  border-radius: 10px;
+  border: 1px solid gray;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.4);
+  padding: 10px;
+}
+button.fancy {
+  border: none;
+  background: #9190ec;
+  background-image: -webkit-linear-gradient(top, #9190ec, #57568e);
+  background-image: -moz-linear-gradient(top, #9190ec, #57568e);
+  background-image: -ms-linear-gradient(top, #9190ec, #57568e);
+  background-image: -o-linear-gradient(top, #9190ec, #57568e);
+  background-image: linear-gradient(to bottom, #9190ec, #57568e);
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 1px 3px #666666;
+  -moz-box-shadow: 0px 1px 3px #666666;
+  box-shadow: 0px 1px 3px #666666;
+  color: #ffffff;
+  font: 16px "Helvetica Neue", HelveticaNeue, Helvetica, Arial, sans-serif;
+  padding: 10px 20px 10px 20px;
+  text-decoration: none;
+}
+button.fancy:hover {
+  background: #9190ec;
+  background-image: -webkit-linear-gradient(top, #a7a6f0, #7473bd);
+  background-image: -moz-linear-gradient(top, #a7a6f0, #7473bd);
+  background-image: -ms-linear-gradient(top, #a7a6f0, #7473bd);
+  background-image: -o-linear-gradient(top, #a7a6f0, #7473bd);
+  background-image: linear-gradient(to bottom, #a7a6f0, #7473bd);
+  text-decoration: none;
+}
+/*# sourceMappingURL=children.css.map */
