@@ -20,6 +20,6 @@ GET         /deleteGateway                      controllers.Application.deleteGa
 # Map the JS resource paths
 GET         /*file                              controllers.Assets.versioned(path="/public", file: Asset)
 
-POST        /as4Endpoint                        controllers.As4Controller.as4PostEndpoint()
-GET         /as4Endpoint                        controllers.As4Controller.as4GetEndpoint()
+POST        /as4Endpoint                        controllers.AS4Controller.as4PostEndpoint()
+GET         /as4Endpoint                        controllers.AS4Controller.as4GetEndpoint()
 
