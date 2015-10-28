@@ -21,5 +21,7 @@ GET         /deleteGateway                      controllers.Application.deleteGa
 GET         /*file                              controllers.Assets.versioned(path="/public", file: Asset)
 
 POST        /as4Endpoint                        controllers.AS4Controller.as4PostEndpoint()
+POST        /c2                                 controllers.AS4Controller.c2()
+POST        /c3                                 controllers.AS4Controller.c3()
 GET         /as4Endpoint                        controllers.AS4Controller.as4GetEndpoint()
 
