@@ -15,11 +15,10 @@ scalaVersion := "2.11.7"
 libraryDependencies ++= Seq(
   "org.webjars" % "angularjs" % "1.3.0-beta.2",
   "org.yaml" % "snakeyaml" % "1.15",
-  "esens.wp6" % "esens-msh-backend" % "0.1.8-1",
-  "minder" % "as4-utils" % "1.1.3",
+  "esens.wp6" % "esens-msh-backend" % "0.1.8-2",
+  "minder" % "as4-utils" % "1.1.4-1",
   "gov.tubitak.minder" % "minder-common" % "0.3.1",
-  "gov.tubitak.minder" % "minder-client" % "0.3.3-1",
-  "esens" % "minder-backend-adapter" % "0.0.7"
+  "gov.tubitak.minder" % "minder-client" % "0.3.3-1"
 )
 
 includeFilter in (Assets, LessKeys.less) := "main.less" | "children.less"

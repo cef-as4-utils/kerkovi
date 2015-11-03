@@ -11,6 +11,7 @@ import javax.xml.transform.stream.{StreamResult, StreamSource}
 
 import controllers.Global
 import esens.wp6.esensMshBackend.{Payload, SubmissionData}
+import minder.as4Utils.AS4Utils
 import minder.as4Utils.AS4Utils._
 import org.w3c.dom.{Node, Element}
 import play.api.libs.iteratee.Enumerator
@@ -38,11 +39,10 @@ object Util extends Controller {
    */
   def sendSuccessResponse(soapMessage: SOAPMessage) = {
     val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-
     val stylesource = new StreamSource(new FileInputStream("receipt-generator.xslt"));
     val transformer = TransformerFactory.newInstance().newTransformer(stylesource);
-
-
+    transformer.setParameter("messageid", genereateEbmsMessageId("minder"));
+    transformer.setParameter("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toString);
     val baos = new ByteArrayOutputStream()
     transformer.transform(new DOMSource(soapMessage.getSOAPPart), new StreamResult(baos))
     val array: Array[Byte] = baos.toByteArray
@@ -70,7 +70,7 @@ object Util extends Controller {
 
     val fm = if (faultMessage == null) "UNKNOWN ERROR" else faultMessage
 
-    val ebmsMessageId = genereateEbmsMessageId("gAS4b") //gAS4b stands for generic as4 backend
+    val ebmsMessageId = genereateEbmsMessageId("minder")
     val category = "CONTENT"
     val errorCode = "EBMS:0004"
     val origin = "ebMS"
@@ -90,8 +90,6 @@ object Util extends Controller {
     val keyErrorDetail = "${errorDetail}"
     val keyFaultCode = "${faultCode}"
     val keyReason = "${reason}"
-
-
     xml = xml
       .replace("${timeStamp}", ZonedDateTime.now(ZoneOffset.UTC).toString)
       .replace("${refToMessageInError}", refToMessageInError)
@@ -176,6 +174,7 @@ object Util extends Controller {
    * @return
    */
   def convert2Soap(submissionData: SubmissionData): SOAPMessage = {
+    Logger.debug("Convert submission data to SOAP Message")
     var xml = scala.io.Source.fromFile("as4template.xml").mkString
 
     val keyTimeStamp = "${timeStamp}"
@@ -211,31 +210,30 @@ object Util extends Controller {
       val att = message.createAttachmentPart()
       att.setContentId(p.payloadId)
       att.setRawContentBytes(p.data, 0, p.data.length, p.mimeType)
-      println("ATTTTT ================================ " + att.getContentType)
       message.addAttachmentPart(att)
     })
 
     if (message.saveRequired())
       message.saveChanges()
 
+    Logger.debug(AS4Utils.describe(message))
     return message
   }
 
+  /**
+   * <table><tr><th>Property name	</th><th>     Required?</th></tr>
+   * <tr><td>MessageId	    </td><td>     M (should be Y)</td></tr>
+   * <tr><td>ConversationId	</td><td>   Y</td></tr>
+   * <tr><td>RefToMessageId	</td><td>   N</td></tr>
+   * <tr><td>ToPartyId	    </td><td>     Y</td></tr>
+   * <tr><td>ToPartyRole	  </td><td>     Y</td></tr>
+   * <tr><td>Service	      </td><td>     Y</td></tr>
+   * <tr><td>ServiceType	  </td><td>     N // not used</td></tr>
+   * <tr><td>Action	        </td><td>   Y</td></tr>
+   * <tr><td>originalSender	</td><td>   Y</td></tr>
+   * <tr><td>finalRecipient	</td><td>   Y</td></tr></table>
+   */
   def generateMessageProperties(submissionData: SubmissionData): String = {
-    /*
-          Property name	     Required?
-          MessageId	         N
-          ConversationId	   Y
-          RefToMessageId	   N
-          ToPartyId	         Y
-          ToPartyRole	       Y
-          Service	           Y
-          ServiceType	       N // not used
-          Action	           Y
-          originalSender	   Y
-          finalRecipient	   Y
-      */
-
     val propertiesBuilder = new StringBuilder
     if (submissionData.messageId != null) {
       propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + submissionData.messageId + "</ns2:Property>")
@@ -284,23 +282,23 @@ object Util extends Controller {
     partInfoBuilder.toString()
   }
 
-
+  /**
+   * <table><tr><th>Property name	     </th><th>Required?</th></tr>
+   * <tr><td>MessageId	         </td><td>N</td></tr>
+   * <tr><td>ConversationId	   </td><td>Y</td></tr>
+   * <tr><td>RefToMessageId	   </td><td>N</td></tr>
+   * <tr><td>ToPartyId	         </td><td>Y</td></tr>
+   * <tr><td>ToPartyRole	       </td><td>Y</td></tr>
+   * <tr><td>Service	           </td><td>Y</td></tr>
+   * <tr><td>ServiceType	       </td><td>N // not used</td></tr>
+   * <tr><td>Action	           </td><td>Y</td></tr>
+   * <tr><td>originalSender	   </td><td>Y</td></tr>
+   * <tr><td>finalRecipient	   </td><td>Y</td></tr></table>
+   */
   def convert2SubmissionData(message: SOAPMessage): SubmissionData = {
-    /*
-          Property name	     Required?
-          MessageId	         N
-          ConversationId	   Y
-          RefToMessageId	   N
-          ToPartyId	         Y
-          ToPartyRole	       Y
-          Service	           Y
-          ServiceType	       N // not used
-          Action	           Y
-          originalSender	   Y
-          finalRecipient	   Y
-      */
+    Logger.debug("Convert message to submission data")
+    Logger.debug(AS4Utils.prettyPrint(message.getSOAPPart))
     val data = new SubmissionData
-
     val properties: Element = findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
     var node: Node = findSingleNode(properties, ".//:Property[@name='ToPartyId']/text()")

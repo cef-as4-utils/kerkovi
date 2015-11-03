@@ -1,6 +1,7 @@
 package backend
 
 import java.net.{MalformedURLException, URL}
+import java.util.UUID
 import javax.xml.soap.SOAPMessage
 
 import controllers.KerkoviAS4Controller._
@@ -24,7 +25,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
   def getGatewayID: GatewayID = {
     val d: GatewayID = new GatewayID
-    d.id="Domibus3"
+    d.id = "Domibus3"
     return d;
   }
 
@@ -35,20 +36,28 @@ class GenericAS4Corner extends AbstractMSHBackend {
    * @return
    */
   def submitMessage(submissionData: SubmissionData): SubmissionResult = {
-    Logger.debug(label + " wants to submit a message to [" + submissionData.from + "]")
+    Logger.debug("[" + label + "] wants to submit a message to [" + submissionData.from + "]")
+
+    //update the message id (if its null, generate one)
+    if (submissionData.messageId == null){
+      submissionData.messageId = UUID.randomUUID().toString
+    }
 
     val message: SOAPMessage = Util.convert2Soap(submissionData)
-    val reply: SOAPMessage = AS4Utils.sendSOAPMessage(message, resolveAddressFromToPartyId(submissionData))
 
-    Logger.debug("Submit this to backend")
+    Logger.debug("[" + label + "] Submit AS4 Message to backend")
     Logger.debug(AS4Utils.describe(message))
     Logger.debug("====================")
-    //TODO: resolve the actual ebms message id
-    val id = Util.getElementText(AS4Utils.findSingleNode(reply.getSOAPHeader, "//:MessageInfo/:MessageId"))
+
+
+    val reply: SOAPMessage = AS4Utils.sendSOAPMessage(message, resolveAddressFromToPartyId(submissionData))
+    Logger.debug("[" + label + "] Receipt received from the AS4 backend")
+    Logger.debug(AS4Utils.describe(reply))
+    Logger.debug("====================")
+
     val result: SubmissionResult = new SubmissionResult
-    //TODO: this is wrong, need to correct it
-    result.ebmsMessageId = id;
-    Logger.debug("EBMS MESSAGE ID: " + result.ebmsMessageId)
+    result.ebmsMessageId = submissionData.messageId;
+    Logger.debug("MSH ebms message id: " + result.ebmsMessageId)
     return result
   }
 
@@ -71,14 +80,18 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
       action match {
         case "Deliver" => {
+          Logger.debug("Deliver message")
           processDelivery(message)
         }
         case "Notify" => {
+          Logger.debug("Process notification")
           processNotification(message)
         }
         case "Submit" => {
+          Logger.debug("Process submission")
           processDelivery(message)
-        } case _ => {
+        }
+        case _ => {
           Logger.error("Service [" + service + "] not supported")
           return BadRequest("Action [" + action + "] not supported")
         }
@@ -97,24 +110,21 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
   def processDelivery(message: SOAPMessage): Unit = {
     //create a submissiondata object from the SOAP message
-    Logger.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> >>>>>>>>>>>> MESSAGE ATTACHMENT COUNT " + message.countAttachments())
-
-    Logger.debug("PRETTY PRINTED " + AS4Utils.describe(message))
-    Logger.debug("DONE")
-
     deliver(Util.convert2SubmissionData(message))
   }
 
-  def processNotification(message: SOAPMessage): Unit = {
-    /*
-    Property name	Required?
-    MessageId	         N
-    RefToMessageId	   Y
-    SignalType	       Y
-    ErrorCode          Y if Error
-    ShortDescription   N
-    Description        N
+
+  /**
+  <table border="1" cellspacing="0"><tr><th>Property name</th><th>Required?</th></tr>
+    <tr><td>MessageId</td><td>N</td></tr>
+    <tr><td>RefToMessageId</td><td>Y</td></tr>
+    <tr><td>SignalType</td><td>Y</td></tr>
+    <tr><td>ErrorCode</td><td>Y if Error</td></tr>
+    <tr><td>ShortDescription </td><td>N</td></tr>
+    <tr><td>Description</td><td>N</td></tr>
+    </table>
     */
+  def processNotification(message: SOAPMessage): Unit = {
     val status = new MessageNotification
 
     val properties = AS4Utils.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
@@ -127,9 +137,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
     status.status = element.getNodeValue match {
       case "Receipt" => MessageNotification.MessageDeliveryStatus.Receipt
       case "Error" => {
-
         //in case of error, we also expect
-
         element = AS4Utils.findSingleNode(properties, ".//:MessageProperty[@name='ErrorCode']/@value")
         status.errorCode = element.getNodeValue
 

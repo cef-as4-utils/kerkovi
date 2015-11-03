@@ -24,7 +24,6 @@ public class Global extends GlobalSettings {
   @Override
   public void onStart(Application app) {
     Logger.debug("Starting");
-    Logger.info("iz dibug eneybld: " + Logger.isDebugEnabled());
     try {
       new Thread() {
         public void run() {
