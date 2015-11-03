@@ -1,18 +1,29 @@
 package controllers
 
-import java.io.{FileWriter, FileOutputStream, FileInputStream, File}
+import java.io.{File, FileInputStream, FileOutputStream, FileWriter}
 import java.util
 
-import model.{ConformancePhase, AS4Gateway}
+import model.AS4Gateway
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
-import play.Logger
 import play.api.Play
+
 import scala.collection.JavaConversions._
 
 /**
   */
 object Databeyz {
+  def findByPartyId(partyId: String) : AS4Gateway = {
+    var foundGw : AS4Gateway = null
+    list().foreach(gw => {
+      if (gw.partyID == partyId){
+        foundGw = gw
+      }
+    })
+
+    foundGw
+  }
+
   val yaml: Yaml = new Yaml(new CustomClassLoaderConstructor(Play.classloader(Play.current)));
   val currentDir: File = new File(".")
 

@@ -7,28 +7,24 @@ package model;
 public class AS4Gateway {
   public int id;
   public String name;
-  public String c2PartyID;
-  public String c3PartyID;
-  public String c2Address;
-  public String c3Address;
-  public ConformancePhase phase;
-  public boolean oneWayDone;
-  public boolean twoWayDone;
+  public String partyID;
+  public String address;
+  /**
+   * TRUE: just forward messages to this gateway when you receive
+   * FALSE: send messages to minder
+   */
+  public boolean proxyMode;
 
   public AS4Gateway() {
-    this.phase = ConformancePhase.CONNECTIVITY;
+    this.proxyMode = true;
   }
 
-  public AS4Gateway(int id, String name, String c2PartyID, String c3PartyID, String c2Address, String c3Address, ConformancePhase phase, boolean oneWayDone, boolean twoWayDone) {
+  public AS4Gateway(int id, String name, String partyID, String address, boolean proxyMode) {
     this.id = id;
     this.name = name;
-    this.c2PartyID = c2PartyID;
-    this.c3PartyID = c3PartyID;
-    this.c2Address = c2Address;
-    this.c3Address = c3Address;
-    this.phase = phase;
-    this.oneWayDone = oneWayDone;
-    this.twoWayDone = twoWayDone;
+    this.partyID = partyID;
+    this.address = address;
+    this.proxyMode = proxyMode;
   }
 }
 

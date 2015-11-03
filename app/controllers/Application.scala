@@ -3,14 +3,9 @@ package controllers
 import java.io.{PrintWriter, StringWriter}
 import java.lang.reflect.Field
 
-import model.{ConformancePhase, AS4Gateway}
-import play.Routes
-import play.api.libs.json.Json.JsValueWrapper
+import model.AS4Gateway
+import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
-import play.api.routing.JavaScriptReverseRouter
-import play.api.libs.json._;
-import scala.collection.JavaConversions._
-import scala.collection.mutable
 
 object Application extends Controller {
 
@@ -30,10 +25,6 @@ object Application extends Controller {
     Ok(views.html.gateways())
   }
 
-  def loremIpsum() = Action {
-    Ok(views.html.loremIpsum())
-  }
-
   def kerkovi() = Action {
     Ok(views.html.kerkovi())
   }
@@ -51,14 +42,13 @@ object Application extends Controller {
 
   def listForType(field: Field): List[JsValue] = {
     println("FIELD: " + field.getName)
-    if (field.getName.equals("phase")) {
-      ConformancePhase.values().map(theEnum => JsObject(
+    /*if (field.getName.equals("phase")) {
+     return ConformancePhase.values().map(theEnum => JsObject(
         Seq("value" -> JsString(theEnum.name()),
           "label" -> JsString(theEnum.toString))
       )).toList
-    } else {
-      List()
-    }
+    } */
+    List()
   }
 
   def gatewayMvc(id: Int, property: String, value: String = null) = Action { request =>
@@ -66,23 +56,14 @@ object Application extends Controller {
     try {
       var cls = classOf[AS4Gateway]
       var field = cls.getDeclaredField(property);
-
-      var editable = if (field.getType.getName.contains("oolean"))
-        false
-      else if (field.getType.eq(classOf[ConformancePhase])) {
-        val gateway = Databeyz.get(id)
-        if (gateway.oneWayDone && gateway.twoWayDone)
-          true
-        else
-          false
-      } else {
-        true
-      }
+      val gateway: AS4Gateway = Databeyz.get(id)
+      var editable = true
 
       if (value == null) {
         val json: JsValue = Json.obj(
           "editable" -> editable,
           "id" -> id,
+          "value" -> field.get(gateway).toString,
           "type" -> resolveType(field),
           "options" -> JsArray(listForType(field))
         )
@@ -136,8 +117,6 @@ object Application extends Controller {
       Integer.valueOf(value);
     } else if (nm == "java.lang.String") {
       value
-    } else if (nm == "model.ConformancePhase") {
-      ConformancePhase.valueOf(value)
     } else if (nm == "boolean" || nm == "java.lang.Boolean") {
       java.lang.Boolean.valueOf(value)
     } else {
@@ -152,14 +131,10 @@ object Application extends Controller {
       as4.id = Databeyz.maxId() + 1
       val frm = json.asFormUrlEncoded;
       as4.name = frm.get("name").mkString
-      as4.c2PartyID = frm.get("c2PartyID").mkString //json.getOrElse("", "UNKNOWN").toString
-      as4.c2Address = frm.get("c2Address").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
-      as4.c3PartyID = frm.get("c3PartyID").mkString //json.getOrElse("c3PartyID", "UNKNOWN").toString
-      as4.c3Address = frm.get("c3Address").mkString //json.getOrElse("c3Address", "UNKNOWN").toString*/
-      as4.phase = ConformancePhase.CONNECTIVITY
+      as4.partyID = frm.get("partyID").mkString //json.getOrElse("", "UNKNOWN").toString
+      as4.address = frm.get("address").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
+      as4.proxyMode = false
       Databeyz.add(as4)
-
-      throw new RuntimeException("Way anam way")
       Ok("ok")
     } catch {
       case th: Throwable => {
@@ -167,7 +142,7 @@ object Application extends Controller {
         val sw = new StringWriter
         val pw = new PrintWriter(sw)
         th.printStackTrace(pw)
-        BadRequest("<pre>"+sw.toString+"</pre>")
+        BadRequest("<pre>" + sw.toString + "</pre>")
       }
     }
   }
@@ -178,15 +153,6 @@ object Application extends Controller {
   }
 
   def decideCssForTests(gateway: AS4Gateway): String = {
-
-    if (!gateway.oneWayDone && !gateway.twoWayDone) {
-      "notest"
-    } else if (gateway.oneWayDone && !gateway.twoWayDone) {
-      "oneway"
-    } else if (gateway.twoWayDone && !gateway.oneWayDone) {
-      "twoway"
-    } else {
-      "alltests"
-    }
+    ""
   }
 }

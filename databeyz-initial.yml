@@ -1,0 +1,49 @@
+- !!model.AS4Gateway
+    id: 1
+    name: IBM B2B
+    partyID: IBMgw1
+    address: 'http://1.4.145.7:8080/msh'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 2
+    name: IBM B2B
+    partyID: IBMgw2
+    address: 'http://1.4.145.8:8080/msh'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 3
+    name: Domibus 3
+    partyID: domibus1
+    address: 'http://localhost:30001/msh'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 4
+    name: Domibus 3
+    partyID: domibus2
+    address: 'http://localhost:40001/msh'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 5
+    name: Flame
+    partyID: flame1
+    address: 'https://flame.com:9095/msh1'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 6
+    name: Flame
+    partyID: flame2
+    address: 'https://flame.com:9095/msh2'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 7
+    name: Holodeck
+    partyID: holodeck1
+    address: 'http://holodeck.eu:8080/as4endpoint'
+    proxyMode: true
+- !!model.AS4Gateway
+    id: 8
+    name: Holodeck
+    partyID: holodeck1
+    address: 'http://holodeck.eu:8080/as4endpoint'
+    proxyMode: true
+

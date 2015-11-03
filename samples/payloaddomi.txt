@@ -1,2 +1,0 @@
-POST /c3 HTTP/1.1; boundary="uuid:96528623-3f2b-4587-9434-1abe6b8548d3";
- 
