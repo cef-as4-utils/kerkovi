@@ -28,15 +28,25 @@
           </td> <td>
             <div class="title"><b>Kerkovi</b> <br/>The e-SENS Generic AS4 Conformance bridge</div>
           </td><td align="right" style="width:99%;">
-            <a href="http://www.esens.eu/home/" class="esenslogo"></a>
+            <img src="@routes.Assets.versioned("img/minder.png")" height="100"/>
           </td>
           </tr>
           </table>
           <br />
           <ul class="menu">
-            <li><a href="#" page="@routes.Application.main()" id="main">Main</a></li>
-            <li><a href="#" page="@routes.Application.gateways()" id="runTests">Gateways</a></li>
-            <li><a href="#" page="@routes.Application.adapters()" id="settings">Adapters</a></li>
+            <li><a href="#" page="@routes.Application.main()" id="main">
+
+              <!--<img src="@routes.Assets.versioned("img/Home-64-2.png")" height="20" alt="Home"/>  -->
+              Home
+            </a></li>
+            <li><a href="#" page="@routes.Application.gateways()" id="gateways">
+                <!--<img src="@routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
+              Gateways
+            </a></li>
+            <li><a href="#" page="@routes.Application.adapters()" id="settings">
+                <!--<img src="@routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
+              Adapters
+            </a></li>
             <li><a href="#" page="@routes.Application.kerkovi()" id="kerkovi" class="kerkovi">What is kerkovi?</a></li>
           </ul>
           <div id="mainView">

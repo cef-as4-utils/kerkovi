@@ -39,7 +39,7 @@ object Util extends Controller {
    */
   def sendSuccessResponse(soapMessage: SOAPMessage) = {
     val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-    val stylesource = new StreamSource(new FileInputStream("receipt-generator.xslt"));
+    val stylesource = new StreamSource(this.getClass.getResourceAsStream("/receipt-generator.xslt"));
     val transformer = TransformerFactory.newInstance().newTransformer(stylesource);
     transformer.setParameter("messageid", genereateEbmsMessageId("minder"));
     transformer.setParameter("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toString);
