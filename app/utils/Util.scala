@@ -1,6 +1,6 @@
 package utils
 
-import java.io.{FileInputStream, ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
 import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
 import javax.xml.parsers.DocumentBuilderFactory
@@ -9,11 +9,10 @@ import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.{StreamResult, StreamSource}
 
-import controllers.Global
-import esens.wp6.esensMshBackend.{Payload, SubmissionData}
+import esens.wp6.esensMshBackend._
 import minder.as4Utils.AS4Utils
 import minder.as4Utils.AS4Utils._
-import org.w3c.dom.{Node, Element}
+import org.w3c.dom.{Element, Node}
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc.{Controller, RawBuffer, Result}
 import play.api.{Logger, mvc}
@@ -59,8 +58,7 @@ object Util extends Controller {
    * @return
    */
   def sendFault(soapMessage: SOAPMessage, faultMessage: String): Result = {
-    //faultCode : env:Receiver
-    var xml = scala.io.Source.fromFile("fault-template.xml").mkString
+    var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/fault-template.xml")).mkString
 
     val refToMessageInError = if (soapMessage != null) {
       getElementText(findSingleNode(soapMessage.getSOAPHeader, "//:MessageInfo/:MessageId"))
@@ -73,13 +71,13 @@ object Util extends Controller {
     val ebmsMessageId = genereateEbmsMessageId("minder")
     val category = "CONTENT"
     val errorCode = "EBMS:0004"
-    val origin = "ebMS"
+    val origin = "ebms"
     val severity = "failure"
     val shortDescription = "Error"
     val description = fm
     val errorDetail = fm
     val reason = fm
-    val faultCode = "envReceiver"
+    val faultCode = "env:Receiver"
 
     val keyCategory = "${category}"
     val keyErrorCode = "${errorCode}"
@@ -125,6 +123,7 @@ object Util extends Controller {
     BadRequest.chunked(dataContent).as("application/soap+xml;charset=UTF-8")
   }
 
+
   def getHeaders(request: mvc.Request[RawBuffer]): MimeHeaders = {
     val headers: MimeHeaders = new MimeHeaders
     request.headers.headers.foreach(k => headers.addHeader(k._1, k._2))
@@ -155,6 +154,9 @@ object Util extends Controller {
       headers.addHeader("content-type", request.headers.get("content-type").get)
 
       val soapMessage = createMessage(headers, new ByteArrayInputStream(bytes))
+
+      Logger.debug("Received SOAP Message")
+      Logger.debug(prettyPrint(soapMessage.getSOAPHeader()));
       soapMessage;
     } catch {
       case th: RuntimeException => {
@@ -173,27 +175,31 @@ object Util extends Controller {
    * @param submissionData
    * @return
    */
-  def convert2Soap(submissionData: SubmissionData): SOAPMessage = {
+  def convert2Soap(submissionData: SubmissionData, from: String, to: String, action: String,
+                   targetService: String, targetAction: String): SOAPMessage = {
     Logger.debug("Convert submission data to SOAP Message")
-    var xml = scala.io.Source.fromFile("as4template.xml").mkString
+    var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
 
     val keyTimeStamp = "${timeStamp}"
     val keyMessageId = "${ebmsMessageID}"
-    val keyFrom = "${fromPartyID}"
-    val keyTo = "${toPartyID}"
+    val keyFrom = "${from}"
+    val keyTo = "${to}"
+    val keyAction = "${action}"
     val keyMessageProps = "${messageProperties}"
     val keyPartInfo = "${partInfo}"
 
-    val ebmsMessageId = genereateEbmsMessageId("minder")
+    val ebmsMessageId = genereateEbmsMessageId("backend")
 
     xml = xml
       .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
       .replace(keyMessageId, ebmsMessageId)
+      .replace(keyFrom, from)
       //why from instead of to?
       // because, we are submitting the message to the guy who has the equal to FROM.
       // He then, will send it to the TO
-      .replace(keyTo, submissionData.from)
-      .replace(keyMessageProps, generateMessageProperties(submissionData))
+      .replace(keyTo, to)
+      .replace(keyAction, action)
+      .replace(keyMessageProps, generateMessageProperties(submissionData, targetService, targetAction))
       .replace(keyPartInfo, generatePartInfo(submissionData))
 
     val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
@@ -220,6 +226,19 @@ object Util extends Controller {
     return message
   }
 
+  def generateMessageProperties(result: SubmissionResult) = {
+    val propertiesBuilder = new StringBuilder
+
+    if (result.error != null) {
+      propertiesBuilder.append("<ns2:Property name=\"Error\">" + result.error.errorCode + "</ns2:Property>")
+      propertiesBuilder.append("<ns2:Property name=\"ErrorDescription\">" + result.error.description + "</ns2:Property>")
+    } else {
+      propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + result.ebmsMessageId + "</ns2:Property>")
+    }
+
+    propertiesBuilder.toString
+  }
+
   /**
    * <table><tr><th>Property name	</th><th>     Required?</th></tr>
    * <tr><td>MessageId	    </td><td>     M (should be Y)</td></tr>
@@ -233,7 +252,7 @@ object Util extends Controller {
    * <tr><td>originalSender	</td><td>   Y</td></tr>
    * <tr><td>finalRecipient	</td><td>   Y</td></tr></table>
    */
-  def generateMessageProperties(submissionData: SubmissionData): String = {
+  def generateMessageProperties(submissionData: SubmissionData, targetService: String, targetAction: String): String = {
     val propertiesBuilder = new StringBuilder
     if (submissionData.messageId != null) {
       propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + submissionData.messageId + "</ns2:Property>")
@@ -251,8 +270,8 @@ object Util extends Controller {
 
     propertiesBuilder.append("<ns2:Property name=\"ToPartyId\">" + submissionData.to + "</ns2:Property>")
     propertiesBuilder.append("<ns2:Property name=\"ToPartyRole\">" + submissionData.partyRole + "</ns2:Property>")
-    propertiesBuilder.append("<ns2:Property name=\"Service\">" + Global.serviceProperties.getProperty(submissionData.pModeId) + "</ns2:Property>")
-    propertiesBuilder.append("<ns2:Property name=\"Action\">" + Global.actionProperties.getProperty(submissionData.pModeId) + "</ns2:Property>")
+    propertiesBuilder.append("<ns2:Property name=\"Service\">" + targetService + " </ns2:Property>")
+    propertiesBuilder.append("<ns2:Property name=\"Action\">" + targetAction + " </ns2:Property>")
     propertiesBuilder.append("<ns2:Property name=\"originalSender\">" + submissionData.originalSender + "</ns2:Property>")
     propertiesBuilder.append("<ns2:Property name=\"finalRecipient\">" + submissionData.finalRecipient + "</ns2:Property>")
 
@@ -267,7 +286,7 @@ object Util extends Controller {
       partInfoBuilder
         .append("<ns2:PartInfo href=\"")
         .append(payload.payloadId)
-        .append("\"><ns2:PartProperties>\n<ns2:Property name=\"MimeType\">")
+        .append("\">\n<ns2:PartProperties><ns2:Property name=\"MimeType\">")
         .append(payload.mimeType)
         .append("</ns2:Property>\n");
 
@@ -276,7 +295,7 @@ object Util extends Controller {
           .append(payload.characterSet)
           .append("</ns2:Property>\n");
       }
-      partInfoBuilder.append("</ns2:PartProperties></ns2:PartInfo>\n")
+      partInfoBuilder.append("</ns2:PartProperties>\n</ns2:PartInfo>\n")
     })
 
     partInfoBuilder.toString()
@@ -295,39 +314,57 @@ object Util extends Controller {
    * <tr><td>originalSender	   </td><td>Y</td></tr>
    * <tr><td>finalRecipient	   </td><td>Y</td></tr></table>
    */
-  def convert2SubmissionData(message: SOAPMessage): SubmissionData = {
+  def convert2SubmissionData(message: SOAPMessage): ExtendedSubmissionData = {
     Logger.debug("Convert message to submission data")
     Logger.debug(AS4Utils.prettyPrint(message.getSOAPPart))
-    val data = new SubmissionData
+    val data = new ExtendedSubmissionData
     val properties: Element = findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
     var node: Node = findSingleNode(properties, ".//:Property[@name='ToPartyId']/text()")
     data.to = node.getNodeValue
+    Logger.debug("Data.to " + data.to)
     Try {
       node = findSingleNode(properties, ".//:Property[@name='MessageId']/text()")
       data.messageId = node.getNodeValue
+      Logger.debug("Data.messageId " + data.messageId)
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='ConversationId']/text()")
       data.conversationId = node.getNodeValue
+      Logger.debug("data.conversationId: " + data.conversationId)
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
       data.refToMessageId = node.getNodeValue
+      Logger.debug("data.conversationId: " + data.conversationId)
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='ToPartyRole']/text()")
       data.partyRole = node.getNodeValue
+      Logger.debug("data.partyRole: " + data.partyRole)
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='originalSender']/text()")
       data.originalSender = node.getNodeValue
+      Logger.debug("data.originalSender: " + data.originalSender)
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='finalRecipient']/text()")
       data.finalRecipient = node.getNodeValue
+      Logger.debug("data.finalRecipient: " + data.finalRecipient)
     }
 
+    Try {
+      node = findSingleNode(properties, ".//:Property[@name='Service']/text()")
+      data.service = node.getNodeValue
+      Logger.debug("data.service: " + data.service)
+    }
+
+    Try {
+      node = findSingleNode(properties, ".//:Property[@name='Action']/text()")
+      data.action = node.getNodeValue
+      Logger.debug("data.action: " + data.action)
+    }
     //parse part properties and validate consistency with Attachments
 
     message.getAttachments.toSeq.foreach(attObj => {
@@ -357,8 +394,132 @@ object Util extends Controller {
         payload.characterSet = charSet.getNodeValue
         Logger.debug("\tpayload.characterSet: " + payload.characterSet)
       }
+
       data.add(payload)
     })
     data
+  }
+
+
+  def generateMessageProperties(messageNotification: MessageNotification) = {
+    /**
+     * Property name	Required?
+       RefToMessageId	  Y
+       SignalType	      Y
+       ErrorCode	      N
+       ShortDescription	N
+       Description	    N
+     */
+    val propertiesBuilder = new StringBuilder
+    propertiesBuilder.append("<ns2:Property name=\"RefToMessageId\">" + messageNotification.messageId + "</ns2:Property>")
+    propertiesBuilder.append("<ns2:Property name=\"SignalType\">" + messageNotification.status.name() + "</ns2:Property>")
+
+    if (messageNotification.errorCode != null) {
+      propertiesBuilder.append("<ns2:Property name=\"ErrorCode\">" + messageNotification.errorCode + "</ns2:Property>")
+    }
+    if (messageNotification.shortDescription != null) {
+      propertiesBuilder.append("<ns2:Property name=\"ShortDescription\">" + messageNotification.shortDescription + "</ns2:Property>")
+    }
+
+    if (messageNotification.description != null) {
+      propertiesBuilder.append("<ns2:Property name=\"Description\">" + messageNotification.description + "</ns2:Property>")
+    }
+
+    propertiesBuilder.toString
+  }
+
+  def convert2Soap(result: SubmissionResult, from: String, to: String, action: String): SOAPMessage = {
+    /**
+     * Property name	Required?
+       RefToMessageId	  Y
+       SignalType	      Y
+       Error Code	      N
+       ShortDescription	N
+       Description	    N
+     */
+    var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
+
+    val keyTimeStamp = "${timeStamp}"
+    val keyMessageId = "${ebmsMessageID}"
+    val keyFrom = "${from}"
+    val keyTo = "${to}"
+    val keyAction = "${action}"
+    val keyMessageProps = "${messageProperties}"
+    val keyPartInfo = "${partInfo}"
+
+    val ebmsMessageId = genereateEbmsMessageId("backend")
+
+    xml = xml
+      .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
+      .replace(keyMessageId, ebmsMessageId)
+      .replace(keyFrom, from)
+      //why from instead of to?
+      // because, we are submitting the message to the guy who has the equal to FROM.
+      // He then, will send it to the TO
+      .replace(keyTo, to)
+      .replace(keyAction, action)
+      .replace(keyMessageProps, generateMessageProperties(result))
+      .replace(keyPartInfo, "")
+
+    val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
+    instance.setNamespaceAware(true);
+    val document = instance.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("utf-8")))
+
+    //create a soap message based on this XML
+    val message = createMessage();
+    val element: Element = document.getDocumentElement
+    val importNode = message.getSOAPHeader.getOwnerDocument.importNode(element, true)
+    message.getSOAPHeader.appendChild(importNode)
+
+    if (message.saveRequired())
+      message.saveChanges()
+
+    return message
+  }
+
+  def convert2Soap(messageNotification: MessageNotification, from: String, to: String, action: String): SOAPMessage = {
+    /**
+     * Property name	Required?
+       RefToMessageId	  Y
+       SignalType	      Y
+       Error Code	      N
+       ShortDescription	N
+       Description	    N
+     */
+    var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
+
+    val keyTimeStamp = "${timeStamp}"
+    val keyMessageId = "${ebmsMessageID}"
+    val keyFrom = "${from}"
+    val keyTo = "${to}"
+    val keyAction = "${action}"
+    val keyMessageProps = "${messageProperties}"
+    val keyPartInfo = "${partInfo}"
+
+    val ebmsMessageId = genereateEbmsMessageId("backend")
+
+    xml = xml
+      .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
+      .replace(keyMessageId, ebmsMessageId)
+      .replace(keyFrom, from)
+      .replace(keyAction, action)
+      .replace(keyTo, to)
+      .replace(keyMessageProps, generateMessageProperties(messageNotification))
+      .replace(keyPartInfo, "")
+
+    val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
+    instance.setNamespaceAware(true);
+    val document = instance.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("utf-8")))
+
+    //create a soap message based on this XML
+    val message = createMessage();
+    val element: Element = document.getDocumentElement
+    val importNode = message.getSOAPHeader.getOwnerDocument.importNode(element, true)
+    message.getSOAPHeader.appendChild(importNode)
+
+    if (message.saveRequired())
+      message.saveChanges()
+
+    return message
   }
 }

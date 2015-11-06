@@ -20,6 +20,7 @@ public class Global extends GlobalSettings {
   public static GenericAS4Corner4 genericCorner4;
   public static Properties serviceProperties;
   public static Properties actionProperties;
+  public static String myPartyID;
 
   @Override
   public void onStart(Application app) {
@@ -56,6 +57,8 @@ public class Global extends GlobalSettings {
 
             serviceProperties = filterConfiguration("SERVICES.");
             actionProperties = filterConfiguration("ACTIONS.");
+
+            myPartyID = Play.application().configuration().getString("MYPARTYID", "minder");
 
           } catch (Exception ex) {
             Logger.error("Fatal error occurred during initialization. " + ex.getMessage(), ex);

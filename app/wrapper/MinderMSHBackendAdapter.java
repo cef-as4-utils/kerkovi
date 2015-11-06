@@ -3,6 +3,7 @@ package wrapper;
 import esens.wp6.esensMshBackend.AbstractMSHBackendAdapter;
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
+import esens.wp6.esensMshBackend.SubmissionResult;
 import gov.tubitak.minder.client.MinderClient;
 import play.api.Play;
 
@@ -36,6 +37,12 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
   public void processNotification(MessageNotification messageNotification) {
     if (started)
       minderBackendAdapter.processNotification(messageNotification);
+  }
+
+  @Override
+  public void processSubmissionResult(SubmissionResult submissionResult) {
+    if (started)
+      minderBackendAdapter.processSubmissionResult(submissionResult);
   }
 
   @Override

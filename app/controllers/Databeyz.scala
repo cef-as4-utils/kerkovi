@@ -28,22 +28,22 @@ object Databeyz {
   val currentDir: File = new File(".")
 
   val db: File = new File(currentDir.getAbsoluteFile + "/databeyz.yml")
-  val backup: File = new File(currentDir.getAbsoluteFile + "/databeyz-initial.yml")
 
   if (!db.exists()) {
-    val fis = new FileInputStream(backup);
+
+    val backup = getClass.getResourceAsStream("/databeyz-initial.yml")
     val fos = new FileOutputStream(db);
 
     val buf = new Array[Byte](1024);
     var read = -1
 
-    read = fis.read(buf, 0, 1024)
+    read = backup.read(buf, 0, 1024)
     while (read != -1) {
       fos.write(buf, 0, read)
-      read = fis.read(buf, 0, 1024)
+      read = backup.read(buf, 0, 1024)
     }
 
-    fis.close();
+    backup.close();
     fos.close();
   }
 

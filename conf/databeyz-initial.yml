@@ -13,15 +13,15 @@
 - !!model.AS4Gateway
     id: 3
     name: Domibus 3
-    partyID: domibus1
-    address: 'http://localhost:30001/msh'
-    proxyMode: true
+    partyID: domibusDe
+    address: 'http://localhost:30001/domibus/services/msh'
+    proxyMode: false
 - !!model.AS4Gateway
     id: 4
     name: Domibus 3
-    partyID: domibus2
-    address: 'http://localhost:40001/msh'
-    proxyMode: true
+    partyID: domibusDe2
+    address: 'http://localhost:40001/domibus/services/msh'
+    proxyMode: false
 - !!model.AS4Gateway
     id: 5
     name: Flame

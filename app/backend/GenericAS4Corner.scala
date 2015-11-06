@@ -5,9 +5,10 @@ import java.util.UUID
 import javax.xml.soap.SOAPMessage
 
 import controllers.KerkoviAS4Controller._
-import controllers.Databeyz
+import controllers.{Global, Databeyz}
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.AS4Utils
+import model.AS4Gateway
 import org.w3c.dom.{Node, Element}
 import play.api.Logger
 import play.api.mvc.{RawBuffer, Request, Result}
@@ -35,15 +36,17 @@ class GenericAS4Corner extends AbstractMSHBackend {
    * @param submissionData
    * @return
    */
-  def submitMessage(submissionData: SubmissionData): SubmissionResult = {
+  def submitMessage(submissionData: SubmissionData): Unit = {
     Logger.debug("[" + label + "] wants to submit a message to [" + submissionData.from + "]")
 
     //update the message id (if its null, generate one)
-    if (submissionData.messageId == null){
+    if (submissionData.messageId == null) {
       submissionData.messageId = UUID.randomUUID().toString
     }
 
-    val message: SOAPMessage = Util.convert2Soap(submissionData)
+    val message: SOAPMessage = Util.convert2Soap(submissionData, Global.myPartyID,
+      submissionData.from, "Submit", Global.serviceProperties.getProperty(submissionData.pModeId),
+      Global.actionProperties.getProperty(submissionData.pModeId))
 
     Logger.debug("[" + label + "] Submit AS4 Message to backend")
     Logger.debug(AS4Utils.describe(message))
@@ -54,15 +57,14 @@ class GenericAS4Corner extends AbstractMSHBackend {
     Logger.debug("[" + label + "] Receipt received from the AS4 backend")
     Logger.debug(AS4Utils.describe(reply))
     Logger.debug("====================")
-
-    val result: SubmissionResult = new SubmissionResult
-    result.ebmsMessageId = submissionData.messageId;
-    Logger.debug("MSH ebms message id: " + result.ebmsMessageId)
-    return result
   }
 
   def resolveAddressFromToPartyId(submissionData: SubmissionData): URL = {
-    new URL(Databeyz.findByPartyId(submissionData.from).address)
+    val gateway: AS4Gateway = Databeyz.findByPartyId(submissionData.from)
+    if (gateway == null) {
+      throw new IllegalArgumentException("A party with id [" + submissionData.from + "] was not found")
+    }
+    new URL(gateway.address)
   }
 
   def process(request: Request[RawBuffer]): Result = {
@@ -87,9 +89,9 @@ class GenericAS4Corner extends AbstractMSHBackend {
           Logger.debug("Process notification")
           processNotification(message)
         }
-        case "Submit" => {
-          Logger.debug("Process submission")
-          processDelivery(message)
+        case "SubmitResponse" => {
+          Logger.debug("Process submission response")
+          processSubmissionResponse(message)
         }
         case _ => {
           Logger.error("Service [" + service + "] not supported")
@@ -124,38 +126,47 @@ class GenericAS4Corner extends AbstractMSHBackend {
     <tr><td>Description</td><td>N</td></tr>
     </table>
     */
-  def processNotification(message: SOAPMessage): Unit = {
-    val status = new MessageNotification
+  def processSubmissionResponse(message: SOAPMessage): Unit = {
+    val submissionResult = new SubmissionResult
 
-    val properties = AS4Utils.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
+    val properties: Element = AS4Utils.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
-    var element: Node = AS4Utils.findSingleNode(properties, ".//:MessageProperty[@name='RefToMessageId']/@value")
-    status.messageId = element.getNodeValue
-
-    element = AS4Utils.findSingleNode(properties, ".//:MessageProperty[@name='SignalType']/@value")
-
-    status.status = element.getNodeValue match {
-      case "Receipt" => MessageNotification.MessageDeliveryStatus.Receipt
-      case "Error" => {
-        //in case of error, we also expect
-        element = AS4Utils.findSingleNode(properties, ".//:MessageProperty[@name='ErrorCode']/@value")
-        status.errorCode = element.getNodeValue
-
-        //take description if any
-        Try {
-          element = AS4Utils.findSingleNode(properties, ".//:MessageProperty[@name='Description']/@value")
-          status.description = element.getNodeValue
-        }
-        Try {
-          element = AS4Utils.findSingleNode(properties, ".//:MessageProperty[@name='ShortDescription']/@value")
-          status.shortDescription = element.getNodeValue
-        }
-
-        MessageNotification.MessageDeliveryStatus.Error
+    try {
+      val element: Node = AS4Utils.findSingleNode(properties, ".//:Property[@name='MessageId']/text()")
+      submissionResult.ebmsMessageId = element.getNodeValue
+    } catch {
+      case th: Throwable => {
+        val element: Node = AS4Utils.findSingleNode(properties, ".//:Property[@name='Error']/text()")
+        submissionResult.error = new SubmissionError;
+        submissionResult.error.errorCode = element.getNodeValue
+        submissionResult.error.description = ""
       }
     }
 
-    processNotification(status)
+    processSubmissionResult(submissionResult)
 
+  }
+
+
+  def processNotification(message: SOAPMessage): Unit = {
+    val status = new MessageNotification
+
+    val properties: Element = AS4Utils.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
+
+    var element: Node = AS4Utils.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
+    status.messageId = element.getNodeValue
+    element = AS4Utils.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
+    status.status = MessageDeliveryStatus.valueOf(element.getNodeValue)
+
+    Try {
+      element = AS4Utils.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
+      status.errorCode = element.getNodeValue
+      element = AS4Utils.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
+      status.shortDescription = element.getNodeValue
+      element = AS4Utils.findSingleNode(properties, ".//:Property[@name='Description']/text()")
+      status.description = element.getNodeValue
+    }
+
+    processNotification(status);
   }
 }

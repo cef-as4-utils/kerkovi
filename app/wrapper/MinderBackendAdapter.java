@@ -54,18 +54,17 @@ public abstract class MinderBackendAdapter extends Wrapper {
    * @param submissionData The arbitrary message that will be a payload in the AS4 structure
    */
   @Slot
-  public SubmissionResult submitMessage(SubmissionData submissionData) {
+  public void submitMessage(SubmissionData submissionData) {
     if (!isRunning)
       throw new MinderException(MinderException.E_SUT_NOT_RUNNING);
 
     SubmissionResult result = null;
     try {
-      result = backendClient.submitMessage(submissionData);
+      backendClient.submitMessage(submissionData);
     } catch (Throwable throwable) {
       LOGGER.debug(throwable.getMessage(), throwable);
       throw throwable;
     }
-    return result;
   }
 
   /**
@@ -84,6 +83,10 @@ public abstract class MinderBackendAdapter extends Wrapper {
   @Signal
   public abstract void processNotification(MessageNotification status);
 
+  @Signal
+  public abstract void processSubmissionResult(SubmissionResult submissionResult);
+
+
   public void setBackendClient(MinderMSHBackendAdapter backendClient) {
     this.backendClient = backendClient;
   }
@@ -93,5 +96,6 @@ public abstract class MinderBackendAdapter extends Wrapper {
   public String getSUTName() {
     return backendClient.getGatewayID().id;
   }
+
 }
 

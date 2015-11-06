@@ -10,17 +10,17 @@
         </ns2:MessageInfo>
         <ns2:PartyInfo>
             <ns2:From>
-                <ns2:PartyId>Minder</ns2:PartyId>
+                <ns2:PartyId>${from}</ns2:PartyId>
                 <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
             </ns2:From>
             <ns2:To>
-                <ns2:PartyId>${toPartyID}</ns2:PartyId>
+                <ns2:PartyId>${to}</ns2:PartyId>
                 <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
             </ns2:To>
         </ns2:PartyInfo>
         <ns2:CollaborationInfo>
             <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
-            <ns2:Action>Submit</ns2:Action>
+            <ns2:Action>${action}</ns2:Action>
             <ns2:ConversationId>1</ns2:ConversationId>
         </ns2:CollaborationInfo>
         <ns2:MessageProperties>
