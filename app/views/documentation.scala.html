@@ -1,0 +1,94 @@
+<div class="levha">
+  <h2>Overview</h2>
+
+  <p>
+  Kerkovi is the e-SENS generic AS4 Conformance & Interoperability bridge that achieves connectivity between the testing system (<b>Minder Testbed</b>
+    ) and the AS4 compliant gateways.
+</p>
+  <p>
+  Kerkovi consists of three adapters (two national backend simulators and an AS4 interceptor).
+    The backend adapters are capable of sending AS4 messages as backend submission messages to the AS4 gateways. They can also receive <i>delivery</i>
+    , <i>submission result</i> and <i>notification</i> messages.
+</p>
+  <p>For the PMODES of the backends, please click <strong><a href="#" onclick='triggerMainMenuItem("pmodes")'>here</a> </strong></p>
+
+  <p>
+  Kerkovi is responsible of tracking the addresses of the gateways with respect to the party ID's
+    and perform forwarding of messages with respect to the addresses it resolves from the party ID's.
+  </p>
+  <h2>Adapters</h2>
+  <p>
+    Kerkovi provides three adapters (i.e. actors in GITB terms) to create a bridge between <i>Minder</i> and the conformance testing environment.
+  </p>
+
+  <div align="center">
+  @theSVG()
+  </div>
+
+  <h3>Backend Adapters</h3>
+
+  <p>
+    We have two backend adapters (i.e. corner1 and corner4). They send messages to and receive messages from the AS4 gateways as described in the PMODE documentation.
+    A generic AS4 backend sends a <i>Submit</i>
+  </p>
+  <h4>Corner 1 (generic AS4 backend) </h4>
+
+  <p>Plays to role of <strong><em>Corner 1</em></strong> &nbsp;(e.g. the sending national backend) and&nbsp;submits messages to the&nbsp; <strong><em>backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 2 (from Corner 3).</p>
+  <p><b>Endpoint address: </b><br />
+    https://193.140.74.199:15000/corner1 <br />
+    http://193.140.74.199:15001/corner1 <br />
+  </p>
+
+  <h4>Corner 4 (generic AS4 backend) </h4>
+
+  <p>Plays to role of&nbsp;<strong><em>Corner 4</em></strong> &nbsp;(e.g. the receiving national backend) and&nbsp;submits messages to the&nbsp; <strong><em>backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 3.</p>
+
+  <p><b>Endpoint address: </b><br />
+    https://193.140.74.199:15000/corner4 <br />
+    http://193.140.74.199:15001/corner4 <br />
+  </p>
+
+  <h3>Man in the middle (AS4-interceptor)</h3>
+
+  <p>Intercepts the message flow between&nbsp;<em><strong>Corner2</strong></em> &nbsp;and <em><b>Corner3&nbsp;</b></em>
+    and depending on the <em><strong>Proxy</strong></em>
+    setting, forwards the message either to <em><strong>Minder</strong></em> or its <em>target</em> (resolved from the TO_PARTY_ID)</p>
+
+  <p><b>Endpoint address: </b> <br />
+    https://193.140.74.199:15000/as4Interceptor <br />
+    http://193.140.74.199:15001/as4Interceptor <br />
+  </p>
+
+  <h2>Sample Messages</h2>
+
+  <p>In this section we provide sample AS4 messages that may take place in a sample conformance or interoperability scenario.
+    Please note that we have also depicted the multipart mime message format for the AS4 messages that carry attachments. <br />
+    These samples may be used as a starting point for a test attempts.</p>
+  <p>We did not provide any information about the receipts as they are optional. If you want to respond with receipts,
+    please refer to the <a target="_blank"
+  href="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html">AS4 specification</a></p>
+  <h3>Sample Submission (from the minder to the sender backend)</h3>
+  @sampleCode("samplesubmission.xml", 1000, 600)
+
+  <br />
+  <br />
+  <br />
+
+  <h3>Sample Submission Result (from the backend to Minder)</h3>
+  @sampleCode("samplesubmissionresult.xml", 1000, 450)
+
+  <br />
+  <br />
+  <br />
+
+  <h3>Sample Notification Message (from the backend to Minder)</h3>
+  @sampleCode("samplenotification.xml", 1000, 450)
+
+  <br />
+  <br />
+  <br />
+
+  <h3>Sample AS4 Message (between corner 2 and corner 3)</h3>
+  @sampleCode("sampleas4message.xml", 1000, 600)
+
+</div>

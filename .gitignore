@@ -21,3 +21,6 @@ databeyz.yml
 *.log
 logs
 release
+sampleas4message.xml
+samplesubmission.xml
+*.7z

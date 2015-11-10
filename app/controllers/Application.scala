@@ -17,8 +17,12 @@ object Application extends Controller {
     Ok(views.html.main())
   }
 
-  def adapters() = Action {
-    Ok(views.html.adapters())
+  def documentation() = Action {
+    Ok(views.html.documentation())
+  }
+
+  def logs() = Action {
+    Ok(views.html.logs())
   }
 
   def gateways() = Action {

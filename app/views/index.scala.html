@@ -4,11 +4,17 @@
     <meta charset="utf-8">
     <title>AS4 Conformance and Interoperability Connectivity Manager</title>
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.versioned("img/favicon.png")">
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
-    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/children.css")" />
     <script type="text/javascript" src="@routes.Assets.versioned("js/jquery-2.1.4.min.js")"></script>
     <script type="text/javascript" src="@routes.JSRoutesController.jsRoutes()"></script>
+    <script type="text/javascript" src="@routes.Assets.versioned("js/codemirror.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.versioned("js/active-line.js")"></script>
+    <script type="text/javascript" src="@routes.Assets.versioned("js/xml.js")"></script>
     <script src="@routes.Assets.versioned("js/main.js")"></script>
+
+    <link rel="stylesheet" href="@routes.Assets.versioned("css/codemirror.css")" rel="stylesheet">
+    <link rel="stylesheet" href="@routes.Assets.versioned("css/theme/mdn-like.css")" rel="stylesheet">
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
+    <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/children.css")" />
 
     <script>
     $(function(){
@@ -43,9 +49,17 @@
                 <!--<img src="@routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
               Gateways
             </a></li>
-            <li><a href="#" page="@routes.Application.adapters()" id="settings">
+            <li><a href="#" page="@routes.Application.logs()" id="logs">
+                <!--<img src="@routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
+              Logs
+            </a></li>
+            <li><a href="#" page="@routes.Application.documentation()" id="documentation">
                 <!--<img src="@routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
-              Adapters
+              Documentation
+            </a></li>
+            <li><a href="#" page="@routes.Assets.versioned("pmodes.htm")" id="pmodes">
+                <!--<img src="@routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
+              Backend PModes
             </a></li>
             <li><a href="#" page="@routes.Application.kerkovi()" id="kerkovi" class="kerkovi">What is kerkovi?</a></li>
           </ul>
@@ -58,28 +72,7 @@
     </table>
 
     <div id="errorDialog" class="errorDialog" title="Error">
-      <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="padding:3px;">
-        <tr><th style="height:30px;" align="left"><span style="color:#c6d2ff;">&nbsp;Error</span></th><td align="right"><button class="bigcancel" onclick='disposeError()'>\u2718</button></td></tr>
-        <tr>
-          <td colspan="2">
-          <div id="errorDialogContent" class="errorDialogContent">
-            <h2>Welcome to Kerkovi</h2>
 
-            <p>Click&nbsp;<strong><a href="#" onclick='triggerMainMenuItem("runTests")'>here</a></strong>
-                &nbsp;to run tests on your gateway.
-</p>
-
-            <p>If you want to register your gateway for testing please go
-              to <a href="#" onclick='triggerMainMenuItem("settings")'>Settings</a></strong> &nbsp;and add the&nbsp;
-              <strong><em>PARTY ID</em></strong> <em>&nbsp;</em>
-              and HTTP/S addresses of your gateway instances
-              (one for corner 2 and one for corner 3)
-</p>
-
-          </div>
-        </td>
-        </tr>
-      </table>
     </div>
 
   </body>

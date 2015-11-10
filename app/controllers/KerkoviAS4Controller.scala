@@ -1,6 +1,6 @@
 package controllers
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{FileOutputStream, ByteArrayInputStream, ByteArrayOutputStream}
 import java.net.URL
 
 import minder.as4Utils.AS4Utils
@@ -14,17 +14,35 @@ import scala.collection.JavaConversions._
 
 import utils.Util
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.util.Try
 
 object KerkoviAS4Controller extends Controller {
 
-  def c1() = Action(parse.raw) { request =>
+  def postCorner1() = Action(parse.raw) { request =>
     Logger.debug("Corner 1 received a message")
     Global.genericCorner1.process(request)
   }
+  def postCorner4() = Action(parse.raw) { request =>
+    Logger.debug("Corner 1 received a message")
+    Global.genericCorner4.process(request)
+  }
+
+  def getCorner1() = Action { request =>
+    BadRequest("Please use POST")
+  }
+  def getCorner4() = Action{ request =>
+    BadRequest("Please use POST")
+  }
 
   def process(request: Request[RawBuffer]): Result = {
+    Logger.info("AS4 Interceptor received a message")
     try {
       val sOAPMessage = Util.extractSOAPMessageFromRequest(request)
+     // Try {
+     //   val fos = new FileOutputStream("sampleas4message.txt")
+     //   sOAPMessage.writeTo(fos);
+     //   fos.close();
+     // }
       val toPartyId: Element = AS4Utils.findSingleNode(sOAPMessage.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
 
       val content: String = toPartyId.getTextContent
@@ -36,9 +54,14 @@ object KerkoviAS4Controller extends Controller {
         return Util.sendFault(null, "A gateway with party id [" + content + "] not found")
       }
 
+      Logger.info("Target gateway " + gateway.partyID + " ==> " + gateway.address)
+
       if (gateway.proxyMode) {
+        Logger.debug("Send message to " + gateway.address)
         val reply = AS4Utils.sendSOAPMessage(sOAPMessage, new URL(gateway.address))
 
+        Logger.debug("Reply received")
+        Logger.debug(AS4Utils.prettyPrint(reply.getSOAPPart));
         //TODO: wrong code
         val k = reply.getMimeHeaders.getAllHeaders.toSeq.map(elm => (elm.toString -> reply.getMimeHeaders.getHeader(elm.toString).toString))
 
@@ -83,14 +106,5 @@ object KerkoviAS4Controller extends Controller {
 
   def as4Interceptor() = Action(parse.raw) {
     request => process(request)
-  }
-
-  def c4() = Action(parse.raw) { request =>
-    Logger.debug("Corner 4 received a message")
-    Global.genericCorner4.process(request)
-  }
-
-  def reject() = Action {
-    BadRequest("Please use POST")
   }
 }

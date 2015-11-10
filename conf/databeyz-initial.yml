@@ -2,13 +2,13 @@
     id: 1
     name: IBM B2B
     partyID: IBMgw1
-    address: 'http://1.4.145.7:8080/msh'
+    address: 'https://5.153.46.53:29002/AS4'
     proxyMode: true
 - !!model.AS4Gateway
     id: 2
     name: IBM B2B
     partyID: IBMgw2
-    address: 'http://1.4.145.8:8080/msh'
+    address: 'https://5.153.46.51:29002/AS4'
     proxyMode: true
 - !!model.AS4Gateway
     id: 3

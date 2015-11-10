@@ -1,0 +1,31 @@
+@(source:String, width: Int=900, height: Int = 600)
+<div style="width:@{width}px;height:@{height}px;">
+
+<textarea id="@{source}">
+@{
+  import play.api.Play
+  import scala.io.Source
+  import play.api.Play.current
+  val fis = Play.application.classloader.getResourceAsStream("samples/" + source);
+  val xml = Source.fromInputStream(fis, "utf-8").mkString
+
+  xml
+}
+</textarea>
+<script>
+$(function(){
+  var editor = CodeMirror.fromTextArea(document.getElementById("@{source}"), {
+      lineWrapping: true,
+      lineNumbers: true,
+      styleActiveLine: true,
+      readOnly: true,
+      //viewportMargin: Infinity,
+      mode: {name: "application/xml", globalVars: true},
+      theme: "mdn-like"
+  });
+
+   editor.setSize(@{width}, @{height});
+  });
+</script>
+
+  </div>

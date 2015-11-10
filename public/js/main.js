@@ -78,7 +78,7 @@ var htmlTemplate = '<div class="editable2" style="padding:4px">'
   + '</div>'
 
 function setUpEditable(target, rendererMap) {
-  target.click(function () {
+  target.click(function (event) {
     eventSource = $(event.target)
     var binding = eventSource.attr("binding")
     if (binding === undefined) {

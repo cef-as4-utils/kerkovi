@@ -1,19 +1,19 @@
 package backend
 
-import java.net.{MalformedURLException, URL}
+import java.io.FileOutputStream
+import java.net.URL
 import java.util.UUID
 import javax.xml.soap.SOAPMessage
 
 import controllers.KerkoviAS4Controller._
-import controllers.{Global, Databeyz}
+import controllers.{Databeyz, Global}
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.AS4Utils
 import model.AS4Gateway
-import org.w3c.dom.{Node, Element}
+import org.w3c.dom.{Element, Node}
 import play.api.Logger
 import play.api.mvc.{RawBuffer, Request, Result}
 import utils.Util
-import scala.collection.JavaConversions._
 
 import scala.util.Try
 
@@ -52,8 +52,20 @@ class GenericAS4Corner extends AbstractMSHBackend {
     Logger.debug(AS4Utils.describe(message))
     Logger.debug("====================")
 
+    Try {
+      val fos = new FileOutputStream("samplesubmission.txt")
+      message.writeTo(fos);
+      fos.close();
+    }
 
     val reply: SOAPMessage = AS4Utils.sendSOAPMessage(message, resolveAddressFromToPartyId(submissionData))
+
+    Try {
+      val fos = new FileOutputStream("samplesubmissionreceipt.txt")
+      reply.writeTo(fos);
+      fos.close();
+    }
+
     Logger.debug("[" + label + "] Receipt received from the AS4 backend")
     Logger.debug(AS4Utils.describe(reply))
     Logger.debug("====================")

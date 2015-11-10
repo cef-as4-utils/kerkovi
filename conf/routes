@@ -9,7 +9,8 @@ GET         /assets/javascript/routes.js        controllers.JSRoutesController.j
 GET         /                                   controllers.Application.index()
 GET         /main                               controllers.Application.main()
 GET         /gateways                           controllers.Application.gateways()
-GET         /adapters                           controllers.Application.adapters()
+GET         /adapters                           controllers.Application.documentation()
+GET         /logs                               controllers.Application.logs()
 GET         /kerkovi                            controllers.Application.kerkovi()
 GET         /run                                controllers.Application.run()
 GET         /gatewayMvc                         controllers.Application.gatewayMvc(id: Int, property: String, value: String ?= null)
@@ -19,14 +20,13 @@ GET         /deleteGateway                      controllers.Application.deleteGa
 # Map the JS resource paths
 GET         /*file                              controllers.Assets.versioned(path="/public", file: Asset)
 
-POST        /corner1                            controllers.KerkoviAS4Controller.c1()
-POST        /as4Interceptor                     controllers.KerkoviAS4Controller.as4Interceptor()
-POST        /corner4                            controllers.KerkoviAS4Controller.c4()
+POST        /corner1                            controllers.KerkoviAS4Controller.postCorner1()
+GET         /corner1                            controllers.KerkoviAS4Controller.getCorner1()
 
-GET         /c1                                 controllers.KerkoviAS4Controller.reject()
-GET         /c2                                 controllers.KerkoviAS4Controller.reject()
-GET         /c3                                 controllers.KerkoviAS4Controller.reject()
-GET         /c4                                 controllers.KerkoviAS4Controller.reject()
+POST        /corner4                            controllers.KerkoviAS4Controller.postCorner4()
+GET         /corner4                            controllers.KerkoviAS4Controller.getCorner4()
+
+POST        /as4Interceptor                     controllers.KerkoviAS4Controller.as4Interceptor()
 
 GET         /lastHttpError                      as4Interceptor.LastHttpError.lastHttpError()
 GET         /lastError                          as4Interceptor.LastHttpError.lastError()
