@@ -3,8 +3,8 @@
   var rendererMap = new Object()
 
   rendererMap["booleanRenderer"] = function(bool){
-  if (bool === "true" || bool === true || bool === "True")
-    return '<span style="color:green;font-size: x-large">\u2713</span>'
+    if (bool === "true" || bool === true || bool === "True")
+      return '<span style="color:green;font-size: x-large">\u2713</span>'
     return '<span style="color:red;font-size: x-large">\u2718</span>'
   }
 
@@ -30,7 +30,7 @@
           <div title="Add New Gateway"><a class="bigger greenShiny" href="#" onclick="createNew()">+</a></div>
         </th>
       </tr>
-      @for(gateway <- Application.registeredGateways()) {
+      @for( gateway <- Application.registeredGateways()) {
         <tr>
           <td>
             <div class="editable" type="text"
@@ -53,9 +53,9 @@
             renderer="booleanRenderer"
             >
             @if(gateway.proxyMode) {
-              <span style="color:green;font-size: x-large"> \u2713</span>
+              <span style="color:green ; font-size: x-large"> \u2713</span>
             } else {
-              <span style="color:red;font-size: x-large"> \u2718</span>
+              <span style="color:red ; font-size: x-large"> \u2718</span>
             }
             </div>
           </td>
@@ -66,17 +66,21 @@
           </td>
         </tr>
       }
-      <tr><td colspan="8">
+
+      <tr><td colspan="4">&nbsp;</td> <td align="center"><a class="bigger greenShiny" style="color:blue ;" onclick='undoDelete("@controllers.routes.Application.undoDelete()")' href="#" alt="Undo Delete" title="Undo delete">&#9100;</a></td></tr>
+      <tr><td colspan="5">
         <p>
-          <label>* Proxy Mode:</label><br />
-          <b>if (<span style="color:green;font-size: x-large">\u2713</span>)</b>{<br />
-          &nbsp;&nbsp;the intercepted message is directly passed to its receiver (i.e <i>TO PARTY</i>);
-         <br /> }<b>else if(<span style="color:red;font-size: x-large">\u2718</span>)</b>{<br/> &nbsp;&nbsp;the intercepted message is forwarded to Minder. <br />}<br/>
+          <label>* Proxy Mode:</label> <br />
+          <b>if (<span style="color:green ; font-size: x-large">\u2713</span>)</b>{<br />
+            &nbsp;&nbsp;the intercepted message is directly passed to its receiver (i.e <i>TO PARTY</i>);
+          <br /> }<b>else if(<span style="color:red ; font-size: x-large">\u2718</span>)</b>
+          {<br/> &nbsp;&nbsp;the intercepted message is forwarded to Minder.<br />}<br/>
           This setting is useful for connectivity tests.
         </p>
-      </td></tr>
+      </td>
+      </tr>
     </table>
-    <div id="newGatewayDiv" style="display:none;overflow:scroll;" class="newgwclass">
+    <div id="newGatewayDiv" style="display:none ; overflow:scroll ;" class="newgwclass">
       <h3>Create New Gateway</h3>
       <form id="newGatewayForm" class="fullw"><table class="fullw">
         <tr><td class="shrink"><label>Name</label></td> <td class="expand"><input type="text" name="name" class="fancy fullw"/></td> </tr>
@@ -86,10 +90,9 @@
       </form> <br />
       <table width="100%"><tr><td align="right">
 
-
-
-        <button class="fancyOpposite" onclick="doCancel()">\u2718 Cancel</button></td> <td align="left">
-        <button class="fancy" onclick='doCreateNew("@controllers.routes.Application.newGateway")'>\u2713 Save</button></td></tr>
+        <button class="fancyOpposite" onclick="doCancel(event)">\u2718 Cancel</button></td> <td align="left">
+        <button class="fancy" onclick='doCreateNew("@controllers.routes.Application.newGateway")'>\u2713 Save</button></td>
+      </tr>
       </table>
     </div>
   </div>

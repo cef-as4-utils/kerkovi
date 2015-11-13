@@ -1,4 +1,21 @@
 <div class="levha">
+
+  <script>
+    $ ( function ( ) {
+      var logfeed = $( "#logfeed" )[0];
+      var logpre = $("#logpre")
+      //new EventSource ( '/logFeed' ).onmessage = function ( event ) {
+     //   var newd  = event.data
+     //   logpre[0].textContent += "\n" + newd;
+     //   logdiv.scrollTop(logdiv.prop("scrollHeight"));
+      //}
+    });
+</script>
+
   <h3>Logs</h3>
 
+  <div style="overflow: scroll ; max-height:800px ;" id="logfeed">
+    <pre id="logpre">
+    </pre>
+  </div>
 </div>

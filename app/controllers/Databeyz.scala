@@ -9,20 +9,11 @@ import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor
 import play.api.Play
 
 import scala.collection.JavaConversions._
+import scala.collection.mutable.Stack
 
 /**
   */
 object Databeyz {
-  def findByPartyId(partyId: String) : AS4Gateway = {
-    var foundGw : AS4Gateway = null
-    list().foreach(gw => {
-      if (gw.partyID == partyId){
-        foundGw = gw
-      }
-    })
-
-    foundGw
-  }
 
   val yaml: Yaml = new Yaml(new CustomClassLoaderConstructor(Play.classloader(Play.current)));
   val currentDir: File = new File(".")
@@ -49,42 +40,84 @@ object Databeyz {
 
 
   val all: util.ArrayList[AS4Gateway] = yaml.load(new FileInputStream(db)).asInstanceOf[util.ArrayList[AS4Gateway]]
-  val linkedHashMap = new util.LinkedHashMap[Int, AS4Gateway]()
-  for (gateway <- all) {
-    linkedHashMap.put(gateway.id, gateway)
-  }
+
+  val deleteStack = Stack[(Int, AS4Gateway)]();
 
   def list(): List[AS4Gateway] = {
-    linkedHashMap.values().toList
+    all.toList
   }
 
 
-  def remove(id: Int) = {
-    linkedHashMap.remove(id)
+  def remove(id: Int): Unit = {
+    val index = findIndexById(id);
+    if (index == -1)
+      return;
+
+    val gw = all.remove(index);
+    deleteStack.push((index, gw));
     persist
   }
 
+  def findByPartyId(partyId: String): AS4Gateway = {
+    var foundGw: AS4Gateway = null
+    list().foreach(gw => {
+      if (gw.partyID == partyId) {
+        return gw;
+      }
+    })
+    null
+  }
+
+  def findById(id: Int): AS4Gateway = {
+    var foundGw: AS4Gateway = null
+    list().foreach(gw => {
+      if (gw.id == id) {
+        return gw
+      }
+    })
+    null
+  }
+
+  def findIndexById(id: Int): Int = {
+    for (i <- 0 to all.length) {
+      if (all(i).id == id) {
+        return i;
+      }
+    }
+    -1;
+  }
+
+  def undoDelete(): Unit = {
+    if (deleteStack isEmpty) {
+      return
+    }
+
+    val (index, gw) = deleteStack.pop()
+    all.add(index, gw)
+  }
+
   def add(as4: AS4Gateway) = {
-    linkedHashMap.put(as4.id, as4)
+    all.add(as4)
     persist
   }
 
   def persist: Unit = {
     val fw = new FileWriter(db);
-    yaml.dump(linkedHashMap.values().toArray(), fw);
+    yaml.dump(all.toArray(), fw);
     fw.close();
   }
 
   def maxId(): Int = {
-    if (linkedHashMap.isEmpty)
-      0
-    else {
-      val values: Array[AnyRef] = linkedHashMap.values().toArray
-      values(values.length - 1).asInstanceOf[AS4Gateway].id
+    var max = 0
+    for (gw <- all) {
+      if (max < gw.id)
+        max = gw.id;
     }
+
+    return max;
   }
 
   def get(id: Int) = {
-    linkedHashMap(id)
+    findById(id)
   }
 }

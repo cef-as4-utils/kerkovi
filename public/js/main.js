@@ -13,6 +13,10 @@ function initializeMainMenu(target, items) {
     var vnt = $(event);
     vnt.stop();
 
+    if (editorBusy)
+      return;
+
+
     var trg = null
     if (window.event) {
       trg = window.event.srcElement
@@ -39,6 +43,10 @@ function initializeMainMenu(target, items) {
 function triggerMainMenuItem(id) {
   var vnt = $(window.event);
   vnt.stop();
+
+  if (editorBusy)
+    return;
+
   lnk = $('#' + id)
   lnk.parent().parent().children(".active").removeClass("active")
   lnk.parent().addClass('active')
@@ -77,8 +85,16 @@ var htmlTemplate = '<div class="editable2" style="padding:4px">'
   + '</table>'
   + '</div>'
 
+var editorBusy = false
+
 function setUpEditable(target, rendererMap) {
   target.click(function (event) {
+
+    if (editorBusy) {
+      return;
+    }
+
+    editorBusy = true;
     eventSource = $(event.target)
     var binding = eventSource.attr("binding")
     if (binding === undefined) {
@@ -107,17 +123,19 @@ function setUpEditable(target, rendererMap) {
         url: binding,
         async: false
       }).done(function (data) {
-        json = data
-      }).fail(function (data) {
-        alert("Fail\n" + data.responseText)
-        json = null
-      })
+      json = data
+    }).fail(function (data) {
+      alert("Fail\n" + data.responseText)
+      json = null
+    })
 
     if (!json) {
+      editorBusy = false;
       return;
     }
 
     if (!json.editable) {
+      editorBusy = false;
       return;
     }
 
@@ -141,11 +159,13 @@ function setUpEditable(target, rendererMap) {
 
     var wnd = $(window)
     wnd.resize(function () {
+      editorBusy = false;
       dv.remove();
       eventSource.show()
       wnd.unbind('resize', this)
     })
     crossButton.click(function () {
+      editorBusy = false;
       dv.remove();
       eventSource.show()
     })
@@ -157,17 +177,18 @@ function setUpEditable(target, rendererMap) {
           url: newUrl,
           async: false
         }).done(function (data) {
-          json = data
-        }).fail(function (data) {
-          alert("Fail\n" + data.responseText)
-          json = null
-        })
+        json = data
+      }).fail(function (data) {
+        alert("Fail\n" + data.responseText)
+        json = null
+      })
 
       dv.remove();
 
       var data = theInput.getData()
       eventSource.html(renderer(data))
       eventSource.show()
+      editorBusy = false;
     })
 
     eventSource.hide()
@@ -247,8 +268,12 @@ function createInput(json) {
 }
 
 function createNew() {
-  event.stopPropagation()
-  event.preventDefault()
+  if (editorBusy)
+    return;
+
+  var vnt = $(window.event);
+  vnt.stop();
+
   var dv = $("#newGatewayDiv")
   var frm = $("#newGatewayForm")
   frm[0].reset()
@@ -256,6 +281,8 @@ function createNew() {
 }
 
 function doCreateNew(theUrl) {
+  if (editorBusy)
+    return;
   event.stopPropagation()
   event.preventDefault()
   var dv = $("#newGatewayDiv")
@@ -267,35 +294,60 @@ function doCreateNew(theUrl) {
     url: theUrl,
     data: frm.serialize()
   }).
-    done(function (data) {
-      triggerMainMenuItem("settings")
-    }).
-    fail(function (data) {
-      showError(data.responseText)
-      triggerMainMenuItem("settings")
-    })
+  done(function (data) {
+    triggerMainMenuItem("settings")
+  }).
+  fail(function (data) {
+    showError(data.responseText)
+    triggerMainMenuItem("settings")
+  })
   dv.hide()
 }
 
-function doCancel() {
+function doCancel(event) {
   event.stopPropagation()
   event.preventDefault()
   var dv = $("#newGatewayDiv")
   dv.hide()
 }
 
-function deleteGateway(id, theUrl) {
-  event.stopPropagation()
-  event.preventDefault()
+function undoDelete(theUrl){
+  var vnt = $(window.event);
+  vnt.stop();
+
+  if (editorBusy)
+    return;
+
 
   $.ajax({
     async: false,
     url: theUrl,
     success: function (data) {
-      triggerMainMenuItem("settings")
+      triggerMainMenuItem("gateways")
     },
     fail: function (data) {
-      triggerMainMenuItem("settings")
+      triggerMainMenuItem("gateways")
+    }
+  });
+}
+
+function deleteGateway(id, theUrl) {
+
+  var vnt = $(window.event);
+  vnt.stop();
+
+  if (editorBusy)
+    return;
+
+
+  $.ajax({
+    async: false,
+    url: theUrl,
+    success: function (data) {
+      triggerMainMenuItem("gateways")
+    },
+    fail: function (data) {
+      triggerMainMenuItem("gateways")
     }
   });
 }

@@ -8,7 +8,7 @@ import javax.xml.soap.SOAPMessage
 import controllers.KerkoviAS4Controller._
 import controllers.{Databeyz, Global}
 import esens.wp6.esensMshBackend._
-import minder.as4Utils.AS4Utils
+import minder.as4Utils.SWA12Util
 import model.AS4Gateway
 import org.w3c.dom.{Element, Node}
 import play.api.Logger
@@ -18,9 +18,9 @@ import utils.Util
 import scala.util.Try
 
 /**
- * Author: yerlibilgin
- * Date: 04/08/15.
- */
+  * Author: yerlibilgin
+  * Date: 04/08/15.
+  */
 class GenericAS4Corner extends AbstractMSHBackend {
   var label: String = "Corner"
 
@@ -31,11 +31,11 @@ class GenericAS4Corner extends AbstractMSHBackend {
   }
 
   /**
-   * Convert the submissiondata object into an AS4 object and send it to the MSH
-   *
-   * @param submissionData
-   * @return
-   */
+    * Convert the submissiondata object into an AS4 object and send it to the MSH
+    *
+    * @param submissionData
+    * @return
+    */
   def submitMessage(submissionData: SubmissionData): Unit = {
     Logger.debug("[" + label + "] wants to submit a message to [" + submissionData.from + "]")
 
@@ -49,7 +49,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       Global.actionProperties.getProperty(submissionData.pModeId))
 
     Logger.debug("[" + label + "] Submit AS4 Message to backend")
-    Logger.debug(AS4Utils.describe(message))
+    Logger.debug(SWA12Util.describe(message))
     Logger.debug("====================")
 
     Try {
@@ -58,7 +58,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       fos.close();
     }
 
-    val reply: SOAPMessage = AS4Utils.sendSOAPMessage(message, resolveAddressFromToPartyId(submissionData))
+    val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, resolveAddressFromToPartyId(submissionData))
 
     Try {
       val fos = new FileOutputStream("samplesubmissionreceipt.txt")
@@ -67,7 +67,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
     }
 
     Logger.debug("[" + label + "] Receipt received from the AS4 backend")
-    Logger.debug(AS4Utils.describe(reply))
+    Logger.debug(SWA12Util.describe(reply))
     Logger.debug("====================")
   }
 
@@ -83,14 +83,14 @@ class GenericAS4Corner extends AbstractMSHBackend {
     try {
       val message = Util.extractSOAPMessageFromRequest(request)
       //validate the service
-      val service = Util.getElementText(AS4Utils.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Service"))
+      val service = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Service"))
       if ("http://www.esens.eu/as4/conformancetest" != service) {
         Logger.error("Service [" + service + "] not supported")
         return BadRequest("Service [" + service + "] not supported")
       }
 
       //TODO : process wrt sanders PMODE
-      val action = Util.getElementText(AS4Utils.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Action"))
+      val action = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Action"))
 
       action match {
         case "Deliver" => {
@@ -141,14 +141,14 @@ class GenericAS4Corner extends AbstractMSHBackend {
   def processSubmissionResponse(message: SOAPMessage): Unit = {
     val submissionResult = new SubmissionResult
 
-    val properties: Element = AS4Utils.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
+    val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
     try {
-      val element: Node = AS4Utils.findSingleNode(properties, ".//:Property[@name='MessageId']/text()")
+      val element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='MessageId']/text()")
       submissionResult.ebmsMessageId = element.getNodeValue
     } catch {
       case th: Throwable => {
-        val element: Node = AS4Utils.findSingleNode(properties, ".//:Property[@name='Error']/text()")
+        val element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='Error']/text()")
         submissionResult.error = new SubmissionError;
         submissionResult.error.errorCode = element.getNodeValue
         submissionResult.error.description = ""
@@ -163,19 +163,19 @@ class GenericAS4Corner extends AbstractMSHBackend {
   def processNotification(message: SOAPMessage): Unit = {
     val status = new MessageNotification
 
-    val properties: Element = AS4Utils.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
+    val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
-    var element: Node = AS4Utils.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
+    var element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
     status.messageId = element.getNodeValue
-    element = AS4Utils.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
+    element = SWA12Util.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
     status.status = MessageDeliveryStatus.valueOf(element.getNodeValue)
 
     Try {
-      element = AS4Utils.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
       status.errorCode = element.getNodeValue
-      element = AS4Utils.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
       status.shortDescription = element.getNodeValue
-      element = AS4Utils.findSingleNode(properties, ".//:Property[@name='Description']/text()")
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='Description']/text()")
       status.description = element.getNodeValue
     }
 

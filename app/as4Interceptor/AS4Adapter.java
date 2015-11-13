@@ -2,7 +2,7 @@ package as4Interceptor;
 
 import controllers.Databeyz;
 import gov.tubitak.minder.client.MinderClient;
-import minder.as4Utils.AS4Utils;
+import minder.as4Utils.SWA12Util;
 import minderengine.Signal;
 import minderengine.SignalFailedException;
 import minderengine.Slot;
@@ -93,13 +93,17 @@ public abstract class AS4Adapter extends Wrapper {
 
   @Slot
   public void sendResponse(byte[] receipt) {
+    Logger.info("Send Response Slot Called");
+
     //put the message into the queue.
-    if (receipt == null)
+    if (receipt == null) {
       reply = null;
-    else {
+      Logger.debug("Receipt is null");
+    } else {
       try {
-        reply = AS4Utils.deserializeSOAPMessage(receipt);
+        reply = SWA12Util.deserializeSOAPMessage(receipt);
       } catch (Exception ex) {
+        Logger.error(ex.getMessage(), ex);
       }
     }
 
@@ -112,12 +116,12 @@ public abstract class AS4Adapter extends Wrapper {
   public void sendMessage(byte[] message) {
     Logger.info("Send message slot called");
     //send message to c2 and signal the receipt.
-    SOAPMessage soapMessage = AS4Utils.deserializeSOAPMessage(message);
+    SOAPMessage soapMessage = SWA12Util.deserializeSOAPMessage(message);
     SOAPMessage receipt = null;
 
     //get the address from party id.
     try {
-      Element tmp = AS4Utils.findSingleNode(soapMessage.getSOAPHeader(), "//:PartyInfo/:To/:PartyId");
+      Element tmp = SWA12Util.findSingleNode(soapMessage.getSOAPHeader(), "//:PartyInfo/:To/:PartyId");
       final String toPartyId = tmp.getTextContent();
       String targetUrlString = Databeyz.findByPartyId(toPartyId).address;
       Logger.debug("Send message to [" + toPartyId + "] with address " + targetUrlString);
@@ -128,13 +132,13 @@ public abstract class AS4Adapter extends Wrapper {
         replyReceived(null);
       } else {
         Logger.info(toPartyId + " sent back Receipt, Call Signal");
-        Logger.debug(AS4Utils.describe(receipt));
-        final String[] contentTypeHeader = receipt.getMimeHeaders().getHeader("content-type");
-        receipt.getMimeHeaders().removeAllHeaders();
-        if (contentTypeHeader != null) {
-          receipt.getMimeHeaders().addHeader("content-type", contentTypeHeader[0]);
-        }
-        replyReceived(AS4Utils.serializeSOAPMessage(receipt.getMimeHeaders(), receipt));
+        Logger.debug(SWA12Util.describe(receipt));
+        //final String[] contentTypeHeader = receipt.getMimeHeaders().getHeader("content-type");
+        //receipt.getMimeHeaders().removeAllHeaders();
+        //if (contentTypeHeader != null) {
+          //receipt.getMimeHeaders().addHeader("content-type", contentTypeHeader[0]);
+        //}
+        replyReceived(SWA12Util.serializeSOAPMessage(receipt.getMimeHeaders(), receipt));
       }
     } catch (Exception e) {
       Logger.error(e.getMessage(), e);
@@ -179,13 +183,8 @@ public abstract class AS4Adapter extends Wrapper {
 
   private SOAPMessage sendMessage(SOAPMessage soapMessage, String targetUrlString) {
     SOAPMessage receipt;
-    Logger.info("Send Message to  [" + targetUrlString + "]");
     try {
-      receipt = AS4Utils.sendSOAPMessage(soapMessage, new URL(targetUrlString));
-
-      if (Logger.isDebugEnabled()) {
-        Logger.debug(AS4Utils.prettyPrint(receipt.getSOAPPart()));
-      }
+      receipt = SWA12Util.sendSOAPMessage(soapMessage, new URL(targetUrlString));
     } catch (Exception e) {
       Logger.error(e.getMessage(), e);
       throw new RuntimeException(e);

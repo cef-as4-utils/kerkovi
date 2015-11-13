@@ -9,6 +9,7 @@ import play.*;
 import play.Application;
 
 import javax.net.ssl.*;
+import java.io.RandomAccessFile;
 import java.security.cert.X509Certificate;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -28,6 +29,8 @@ public class Global extends GlobalSettings {
 
   @Override
   public void onStart(Application app) {
+
+    //initiateLogWatcher();
     Logger.debug("Starting");
 
     disableSslVerification();
@@ -78,6 +81,46 @@ public class Global extends GlobalSettings {
     }
   }
 
+  Thread logThread;
+
+  private void initiateLogWatcher() {
+    logThread = new Thread() {
+      @Override
+      public void run() {
+        try {
+          RandomAccessFile raf = new RandomAccessFile("logs/application.log", "r");
+
+          System.out.println("Opened log file");
+          byte[] fully = new byte[2048];
+          while (true) {
+            int read = raf.read(fully);
+
+            System.out.println("Read something");
+
+            controllers.Application.logFeedUpdate(new String(fully, 0, read));
+            if (Thread.interrupted()) {
+              Logger.warn("Watcher thread interrupted");
+              return;
+            }
+          }
+        } catch (Exception ex) {
+          Logger.error("Coudnt create log file watcher", ex);
+        }
+      }
+    };
+    logThread.start();
+  }
+
+  @Override
+  public void onStop(Application app) {
+    if (logThread != null) {
+      try {
+        logThread.interrupt();
+      } catch (Exception ex) {
+      }
+    }
+  }
+
   /**
    * Filters the configuration parameters
    * existing in the play configuration file
@@ -107,15 +150,16 @@ public class Global extends GlobalSettings {
   }
 
   private static void disableSslVerification() {
-    try
-    {
+    try {
       // Create a trust manager that does not validate certificate chains
-      TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
+      TrustManager[] trustAllCerts = new TrustManager[]{new X509TrustManager() {
         public java.security.cert.X509Certificate[] getAcceptedIssuers() {
           return null;
         }
+
         public void checkClientTrusted(X509Certificate[] certs, String authType) {
         }
+
         public void checkServerTrusted(X509Certificate[] certs, String authType) {
         }
       }

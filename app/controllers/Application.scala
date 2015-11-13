@@ -4,10 +4,14 @@ import java.io.{PrintWriter, StringWriter}
 import java.lang.reflect.Field
 
 import model.AS4Gateway
+import play.api.libs.EventSource
+import play.api.libs.iteratee.Concurrent
 import play.api.libs.json._
 import play.api.mvc.{Action, Controller}
 
 object Application extends Controller {
+
+  val (logOut, logChannel) = Concurrent.broadcast[String];
 
   def index = Action {
     Ok(views.html.index())
@@ -156,7 +160,26 @@ object Application extends Controller {
     Ok("")
   }
 
+  def undoDelete() = Action { request =>
+    Databeyz.undoDelete();
+    Ok("")
+  }
+
   def decideCssForTests(gateway: AS4Gateway): String = {
     ""
+  }
+
+  /**
+    * An action that provides information about the current
+    * running job.
+    * @return
+    */
+  def logFeed() = Action {
+    println("Log feed")
+    Ok.chunked(logOut &> EventSource()).as("text/event-stream")
+  }
+
+  def logFeedUpdate(log: String): Unit = {
+    logChannel.push(log)
   }
 }

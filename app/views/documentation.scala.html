@@ -16,6 +16,51 @@
   Kerkovi is responsible of tracking the addresses of the gateways with respect to the party ID's
     and perform forwarding of messages with respect to the addresses it resolves from the party ID's.
   </p>
+
+  <h2>Sample Workflow</h2>
+  <p >A sample message flow that includes the
+    journey of a message from Corner1 to Corner 4 has been given below.</p>
+
+  <h3>Assumptions</h3>
+
+  <ol>
+    <li >Producer = Minder.</li>
+
+    <li >C2: Sending MSH, which sends messages to Corner 3 (C3).</li>
+
+    <li>C3: Receiving MSH, which receives messages and sends back
+      receipts (i.e. in a ONE_WAY mep scenario).</li>
+  </ol>
+
+  <h2>Sequence</h2>
+
+  <ol>
+    <li ><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to SMSH</li>
+
+    <li ><b>Step 2 -</b> Producer receives a callback receipt from C2
+      containing details of the producer message - the receipt back to Producer is
+      optional and may just be an HTTP Response 20x</li>
+
+    <li ><b>Step 3 -</b> Send: C2 constructs a message based on
+      message received from Producer and sends this to C3</li>
+
+    <li ><b>Step 4 -</b> <i>SubmitResponse</i>: C2 constructs a
+      message containing the refToMessageId of the step 1 messageId, as well as the
+      messageId used in the message from C2 to C3</li>
+
+    <li ><b>Step 5 -</b> C2 receives a receipt (or error) signal from
+      C3 containing details of the C2 message</li>
+
+    <li ><b>Step 6 -</b> <i>Notify</i>: C2 constructs message
+      detailing the result of the message from C2 to C3 and sends this to the
+      producer</li>
+
+    <li ><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based
+      on the message it received, and delivers it to C4.</li>
+  </ol>
+  <p >The <i>SubmitResponse</i> message from C2 to C3 should then
+    include the Step 3 C2 to C3 messageId as a message property.</p>
+
   <h2>Adapters</h2>
   <p>
     Kerkovi provides three adapters (i.e. actors in GITB terms) to create a bridge between <i>Minder</i> and the conformance testing environment.
@@ -34,7 +79,7 @@
   <h4>Corner 1 (generic AS4 backend) </h4>
 
   <p>Plays to role of <strong><em>Corner 1</em></strong> &nbsp;(e.g. the sending national backend) and&nbsp;submits messages to the&nbsp; <strong><em>backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 2 (from Corner 3).</p>
-  <p><b>Endpoint address: </b><br />
+  <p><b>Endpoint address: </b> <br />
     https://193.140.74.199:15000/corner1 <br />
     http://193.140.74.199:15001/corner1 <br />
   </p>
@@ -43,7 +88,7 @@
 
   <p>Plays to role of&nbsp;<strong><em>Corner 4</em></strong> &nbsp;(e.g. the receiving national backend) and&nbsp;submits messages to the&nbsp; <strong><em>backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 3.</p>
 
-  <p><b>Endpoint address: </b><br />
+  <p><b>Endpoint address: </b> <br />
     https://193.140.74.199:15000/corner4 <br />
     http://193.140.74.199:15001/corner4 <br />
   </p>

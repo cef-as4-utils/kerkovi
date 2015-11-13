@@ -1,724 +1,849 @@
 <style>
-<!--
- /* Font Definitions */
-@font-face
-	{font-family:"Courier New";
-	panose-1:2 7 3 9 2 2 5 2 4 4;}
-@font-face
-	{font-family:"\FF2D\FF33 \30B4\30B7\30C3\30AF";
-	panose-1:0 0 0 0 0 0 0 0 0 0;}
-@font-face
-	{font-family:"\FF2D\FF33 \30B4\30B7\30C3\30AF";
-	panose-1:0 0 0 0 0 0 0 0 0 0;}
-@font-face
-	{font-family:Calibri;
-	panose-1:2 15 5 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:"Calibri Light";
-	panose-1:2 15 3 2 2 2 4 3 2 4;}
-@font-face
-	{font-family:"Lucida Grande";
-	panose-1:2 11 6 0 4 5 2 2 2 4;}
- /* Style Definitions */
-p.MsoNormal, li.MsoNormal, div.MsoNormal
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:12.0pt;
-	font-family:Calibri;}
-h1
-	{margin-top:24.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	font-size:16.0pt;
-	font-family:"Calibri Light";
-	color:#2C6EAB;}
-h2
-	{margin-top:10.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	font-size:13.0pt;
-	font-family:"Calibri Light";
-	color:#5B9BD5;}
-h3
-	{margin-top:10.0pt;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:0cm;
-	margin-bottom:.0001pt;
-	font-size:12.0pt;
-	font-family:"Calibri Light";
-	color:#5B9BD5;}
-p.MsoTitle, li.MsoTitle, div.MsoTitle
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:15.0pt;
-	margin-left:0cm;
-	border:none;
-	padding:0cm;
-	font-size:26.0pt;
-	font-family:"Calibri Light";
-	color:#323E4F;
-	letter-spacing:.25pt;}
-a:link, span.MsoHyperlink
-	{color:#0563C1;}
-a:visited, span.MsoHyperlinkFollowed
-	{color:#954F72;}
-p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:9.0pt;
-	font-family:"Lucida Grande";}
-p.MsoRMPane, li.MsoRMPane, div.MsoRMPane
-	{margin:0cm;
-	margin-bottom:.0001pt;
-	font-size:12.0pt;
-	font-family:Calibri;}
-p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph
-	{margin-top:0cm;
-	margin-right:0cm;
-	margin-bottom:0cm;
-	margin-left:36.0pt;
-	margin-bottom:.0001pt;
-	font-size:12.0pt;
-	font-family:Calibri;}
-span.TitleChar
-	{font-family:"Calibri Light";
-	color:#323E4F;
-	letter-spacing:.25pt;}
-span.BalloonTextChar
-	{font-family:"Lucida Grande";}
-span.Heading1Char
-	{font-family:"Calibri Light";
-	color:#2C6EAB;
-	font-weight:bold;}
-span.Heading2Char
-	{font-family:"Calibri Light";
-	color:#5B9BD5;
-	font-weight:bold;}
-span.Heading3Char
-	{font-family:"Calibri Light";
-	color:#5B9BD5;
-	font-weight:bold;}
-.MsoChpDefault
-	{font-family:Calibri;}
-@page WordSection1
-	{size:595.0pt 842.0pt;
-	margin:72.0pt 72.0pt 72.0pt 72.0pt;}
-div.WordSection1
-	{page:WordSection1;}
- /* List Definitions */
-ol
-	{margin-bottom:0cm;}
-ul
-	{margin-bottom:0cm;}
--->
+    <!--
+    /* Font Definitions */
+    @font-face {
+        font-family: "Courier New";
+        panose-1: 2 7 3 9 2 2 5 2 4 4;
+    }
+
+    @font-face {
+        font-family: "\FF2D\FF33 \30B4\30B7\30C3\30AF";
+    }
+
+    @font-face {
+        font-family: "\FF2D\FF33 \30B4\30B7\30C3\30AF";
+    }
+
+    @font-face {
+        font-family: Calibri;
+        panose-1: 2 15 5 2 2 2 4 3 2 4;
+    }
+
+    @font-face {
+        font-family: "Calibri Light";
+        panose-1: 2 15 3 2 2 2 4 3 2 4;
+    }
+
+    @font-face {
+        font-family: "Lucida Grande";
+        panose-1: 2 11 6 0 4 5 2 2 2 4;
+    }
+
+    /* Style Definitions */
+    p.MsoNormal, li.MsoNormal, div.MsoNormal {
+        margin: 0cm;
+        margin-bottom: .0001pt;
+        font-size: 12.0pt;
+        font-family: Calibri;
+    }
+
+    h1 {
+        margin-top: 24.0pt;
+        margin-right: 0cm;
+        margin-bottom: 0cm;
+        margin-left: 0cm;
+        margin-bottom: .0001pt;
+        font-size: 16.0pt;
+        font-family: "Calibri Light";
+        color: #2C6EAB;
+    }
+
+    h2 {
+        margin-top: 10.0pt;
+        margin-right: 0cm;
+        margin-bottom: 0cm;
+        margin-left: 0cm;
+        margin-bottom: .0001pt;
+        font-size: 13.0pt;
+        font-family: "Calibri Light";
+        color: #5B9BD5;
+    }
+
+    h3 {
+        margin-top: 10.0pt;
+        margin-right: 0cm;
+        margin-bottom: 0cm;
+        margin-left: 0cm;
+        margin-bottom: .0001pt;
+        font-size: 12.0pt;
+        font-family: "Calibri Light";
+        color: #5B9BD5;
+    }
+
+    p.MsoTitle, li.MsoTitle, div.MsoTitle {
+        margin-top: 0cm;
+        margin-right: 0cm;
+        margin-bottom: 15.0pt;
+        margin-left: 0cm;
+        border: none;
+        padding: 0cm;
+        font-size: 26.0pt;
+        font-family: "Calibri Light";
+        color: #323E4F;
+        letter-spacing: .25pt;
+    }
+
+    a:link, span.MsoHyperlink {
+        color: #0563C1;
+    }
+
+    a:visited, span.MsoHyperlinkFollowed {
+        color: #954F72;
+    }
+
+    p.MsoAcetate, li.MsoAcetate, div.MsoAcetate {
+        margin: 0cm;
+        margin-bottom: .0001pt;
+        font-size: 9.0pt;
+        font-family: "Lucida Grande";
+    }
+
+    p.MsoRMPane, li.MsoRMPane, div.MsoRMPane {
+        margin: 0cm;
+        margin-bottom: .0001pt;
+        font-size: 12.0pt;
+        font-family: Calibri;
+    }
+
+    p.MsoListParagraph, li.MsoListParagraph, div.MsoListParagraph {
+        margin-top: 0cm;
+        margin-right: 0cm;
+        margin-bottom: 0cm;
+        margin-left: 36.0pt;
+        margin-bottom: .0001pt;
+        font-size: 12.0pt;
+        font-family: Calibri;
+    }
+
+    span.TitleChar {
+        font-family: "Calibri Light";
+        color: #323E4F;
+        letter-spacing: .25pt;
+    }
+
+    span.BalloonTextChar {
+        font-family: "Lucida Grande";
+    }
+
+    span.Heading1Char {
+        font-family: "Calibri Light";
+        color: #2C6EAB;
+        font-weight: bold;
+    }
+
+    span.Heading2Char {
+        font-family: "Calibri Light";
+        color: #5B9BD5;
+        font-weight: bold;
+    }
+
+    span.Heading3Char {
+        font-family: "Calibri Light";
+        color: #5B9BD5;
+        font-weight: bold;
+    }
+
+    .MsoChpDefault {
+        font-family: Calibri;
+    }
+
+    @page WordSection1 {
+        size: 595.0pt 842.0pt;
+        margin: 72.0pt 72.0pt 72.0pt 72.0pt;
+    }
+
+    div.WordSection1 {
+        page: WordSection1;
+    }
+
+    /* List Definitions */
+    ol {
+        margin-bottom: 0cm;
+    }
+
+    ul {
+        margin-bottom: 0cm;
+    }
+
+    -->
 </style>
+
+</head>
+
+<body lang=EN-US link="#0563C1" vlink="#954F72">
 
 <div class=WordSection1>
 
-<div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+    <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
 
-<p class=MsoTitle>Recommended Message Structure and P-Modes for Minder
-conformance testing</p>
+        <p class=MsoTitle>Recommended Message Structure and P-Modes for Minder
+            conformance testing</p>
 
-</div>
+    </div>
 
-<h1>Introduction</h1>
+    <h1>Introduction</h1>
 
-<p class=MsoNormal>This document provides a recommendation for P-Mode
-definitions as used in operations between Minder and the system under test
-(SUT) where Minder acts as Corner 1 (C1) or Corner (4) and the SUT acts as
-Corner 2 (C2) or Corner 3 (C3) in the four corner model.</p>
+    <p class=MsoNormal>This document provides a recommendation for P-Mode
+        definitions as used in operations between Minder and the system under test
+        (SUT) where Minder acts as Corner 1 (C1) or Corner (4) and the SUT acts as
+        Corner 2 (C2) or Corner 3 (C3) in the four corner model.</p>
 
-<p class=MsoNormal>This is based on the 'Messaging Model' diagram from the
-document named '<i>TestAssertians_eSENS_AS4_Draft6.docx</i>' as shown below:</p>
+    <p class=MsoNormal>This is based on the 'Messaging Model' diagram from the
+        document named '<i>TestAssertians_eSENS_AS4_Draft6.docx</i>' as shown below:</p>
 
-<p class=MsoNormal><span><img width=303 height=177 id="Picture 1"
-src="pmode/image001.png"
-alt="Description: worddav248b2390374ee32f0fb3dfecafa22a0b.png"></span></p>
+    <p class=MsoNormal><span><img width=303 height=177 id="Picture 1"
+                                  src="pmodes_files/image001.png"
+                                  alt="Description: worddav248b2390374ee32f0fb3dfecafa22a0b.png"></span></p>
 
-<p class=MsoNormal>For the P-Mode definition considered here Minder will act as
-the <i>Message Producer</i> <i>/ Consumer</i> and the SUT is either the <i>Sending
-</i>or <i>Receiving MSH</i>. Therefor P-Modes need to be defined for the <b>Submit,
-Deliver</b> and <b>Notify</b> operations. The P-Modes that define the message
-exchanges between the MSHs is out of scope of this document.</p>
+    <p class=MsoNormal>For the P-Mode definition considered here Minder will act as
+        the <i>Message Producer</i> <i>/ Consumer</i> and the SUT is either the <i>Sending
+        </i>or <i>Receiving MSH</i>. Therefor P-Modes need to be defined for the <b>Submit,
+            Deliver</b> and <b>Notify</b> operations. The P-Modes that define the message
+        exchanges between the MSHs is out of scope of this document.</p>
 
-<h1>General</h1>
+    <h1>General</h1>
 
-<p class=MsoNormal>All P-Modes use the Push MEP binding. Because the <b>submit</b>
-operation may require a response to inform the Message Producer (Minder) on the
-<span style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageId</span>
-used in the exchange between the MSHs it uses a Two-Way MEP. Both the <b>deliver</b>
-and <b>notify</b> operation use a One-Way MEP.</p>
+    <p class=MsoNormal>All P-Modes use the Push MEP binding. Because the <b>submit</b>
+        operation may require a response to inform the Message Producer (Minder) on the
+        <span style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageId</span>
+        used in the exchange between the MSHs it uses a Two-Way MEP. Both the <b>deliver</b>
+        and <b>notify</b> operation use a One-Way MEP.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The <b>PartyId</b>s to use for Minder and the SUT have to be
-agreed upon between the Minder team and the vendor of the SUT.</p>
+    <p class=MsoNormal>The <b>PartyId</b>s to use for Minder and the SUT have to be
+        agreed upon between the Minder team and the vendor of the SUT.</p>
 
-<p class=MsoNormal>The proposed values for <b>Role</b> are as follows</p>
+    <p class=MsoNormal>The proposed values for <b>Role</b> are as follows</p>
 
-<p class=MsoListParagraph style='text-indent:-36.0pt'><span><span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>I.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <p class=MsoListParagraph style='text-indent:-36.0pt'><span><span
+            style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span>I.<span
+            style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><i>&quot;http://www.esens.eu/as4/conformancetest/testdriver&quot;</i>
-for Minder</p>
+        for Minder</p>
 
-<p class=MsoListParagraph style='text-indent:-36.0pt'><span><span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp; </span>II.<span
-style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <p class=MsoListParagraph style='text-indent:-36.0pt'><span><span
+            style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp; </span>II.<span
+            style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 </span></span><i>&quot;http://www.esens.eu/as4/conformancetest/sut&quot; </i>for
-the system under test.</p>
+        the system under test.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal><b>AgreementRef</b> is not used and must not be included in
-the messages.</p>
+    <p class=MsoNormal><b>AgreementRef</b> is not used and must not be included in
+        the messages.</p>
 
-<p class=MsoNormal>The <b>Service</b> value to use in all P-Modes is <i>&quot;http://www.esens.eu/as4/conformancetest&quot;</i>
-with no type attribute.</p>
+    <p class=MsoNormal>The <b>Service</b> value to use in all P-Modes is <i>&quot;http://www.esens.eu/as4/conformancetest&quot;</i>
+        with no type attribute.</p>
 
-<p class=MsoNormal>No security and reliability is used between the SUT and
-Minder.</p>
+    <p class=MsoNormal>No security and reliability is used between the SUT and
+        Minder.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <h1>Sample Workflow</h1>
 
-<h1>Test Operations</h1>
+    <p class=MsoNormal>A sample message flow that includes the
+        journey of a message from Corner1 to Corner 4 has been given below.</p>
 
-<p class=MsoNormal>The operations associated with the three P-Modes include
-'submit', 'deliver' and 'notify'. Each operation message between Minder and the
-SUT includes a set of <i>Message Properties</i> defining the necessary
-instructions and properties for the test operation. These being as follows.</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<h2>Submit</h2>
+    <h2>Assumptions</h2>
 
-<p class=MsoNormal>Instruction from Minder to C2 or C3 to submit a message to
-the opposite corner (C3 or C2 respectively). Because Minder needs to know the
-ebMS MessageId that the SUT uses for the exchange with the other corner the
-submit operation consists of two legs with Minder always being the Initiator: &nbsp;<b>Initiator</b>
-= <i>Minder</i></p>
+    <p class=MsoNormal>Producer = Minder.</p>
 
-<h3>Request leg</h3>
+    <p class=MsoNormal>C2: Sending MSH, which sends messages to Corner 3 (C3).</p>
 
-<p class=MsoNormal>The request leg of the submit is the actual submission from Minder
-to the SUT. The value to use for <b>Action</b> is <i>Submit.</i></p>
+    <p class=MsoNormal>C3: Receiving MSH, which receives messages and sends back
+        receipts (i.e. in a ONE_WAY mep scenario).</p>
 
-<p class=MsoNormal>In the <span style='font-size:11.0pt;font-family:"Courier New"'>eb:</span><span
-style='font-size:11.0pt;font-family:"Courier New"'>MessageProperties</span><span
-style='font-size:11.0pt'> </span>element the meta-data required for submitting the
-message from Minder to the SUT must be supplied.</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>It is assumed that the From PartyId to use in the message to
-be sent by the MSH is fixed and does not need to be provided by Minder. The <i>originalSender</i>
-and <i>finalRecipient</i> properties must also be included in the <span
-style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageProperties</span> &nbsp;of
-the actual message sent by the MSH to the other MSH. </p>
+    <h2>Sequence</h2>
 
-<p class=MsoNormal>Based on these message properties the SUT must be able to
-find the P-Mode to use for the message exchange with the other MSH. The P-Modes
-that define the message exchanges between the MSHs should therefore be
-sufficiently different to allow unambiguous selection of the P-Mode.</p>
+    <p class=MsoNormal><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to SMSH</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal><b>Step 2 -</b> Producer receives a callback receipt from C2
+        containing details of the producer message - the receipt back to Producer is
+        optional and may just be an HTTP Response 20x</p>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
- style='border-collapse:collapse;border:none'>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+    <p class=MsoNormal><b>Step 3 -</b> Send: C2 constructs a message based on
+        message received from Producer and sends this to C3</p>
+
+    <p class=MsoNormal><b>Step 4 -</b> <i>SubmitResponse</i>: C2 constructs a
+        message containing the refToMessageId of the step 1 messageId, as well as the
+        messageId used in the message from C2 to C3</p>
+
+    <p class=MsoNormal><b>Step 5 -</b> C2 receives a receipt (or error) signal from
+        C3 containing details of the C2 message</p>
+
+    <p class=MsoNormal><b>Step 6 -</b> <i>Notify</i>: C2 constructs message
+        detailing the result of the message from C2 to C3 and sends this to the
+        producer</p>
+
+    <p class=MsoNormal><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based
+        on the message it received, and delivers it to C4.</p>
+
+    <p class=MsoNormal>&nbsp;</p>
+
+    <p class=MsoNormal>The <i>SubmitResponse</i> message from C2 to C3 should then
+        include the Step 3 C2 to C3 messageId as a message property.</p>
+
+    <h1>Test Operations</h1>
+
+    <p class=MsoNormal>The operations associated with the three P-Modes include
+        'submit', 'deliver' and 'notify'. Each operation message between Minder and the
+        SUT includes a set of <i>Message Properties</i> defining the necessary
+        instructions and properties for the test operation. These being as follows.</p>
+
+    <h2>Submit</h2>
+
+    <p class=MsoNormal>Instruction from Minder to C2 or C3 to submit a message to
+        the opposite corner (C3 or C2 respectively). Because Minder needs to know the
+        ebMS MessageId that the SUT uses for the exchange with the other corner the
+        submit operation consists of two legs with Minder always being the Initiator: &nbsp;<b>Initiator</b>
+        = <i>Minder</i></p>
+
+    <h3>Request leg</h3>
+
+    <p class=MsoNormal>The request leg of the submit is the actual submission from Minder
+        to the SUT. The value to use for <b>Action</b> is <i>Submit.</i></p>
+
+    <p class=MsoNormal>In the <span style='font-size:11.0pt;font-family:"Courier New"'>eb:</span><span
+            style='font-size:11.0pt;font-family:"Courier New"'>MessageProperties</span><span
+            style='font-size:11.0pt'> </span>element the meta-data required for submitting the
+        message from Minder to the SUT must be supplied.</p>
+
+    <p class=MsoNormal>It is assumed that the From PartyId to use in the message to
+        be sent by the MSH is fixed and does not need to be provided by Minder. The <i>originalSender</i>
+        and <i>finalRecipient</i> properties must also be included in the <span
+                style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageProperties</span> &nbsp;of
+        the actual message sent by the MSH to the other MSH. </p>
+
+    <p class=MsoNormal>Based on these message properties the SUT must be able to
+        find the P-Mode to use for the message exchange with the other MSH. The P-Modes
+        that define the message exchanges between the MSHs should therefore be
+        sufficiently different to allow unambiguous selection of the P-Mode.</p>
+
+    <p class=MsoNormal>&nbsp;</p>
+
+    <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+           style='border-collapse:collapse;border:none'>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
-  <p class=MsoNormal style='margin-bottom:15.0pt;border:none;padding:0cm'><b>Property
-  name</b></p>
-  </div>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border:solid windowtext 1.0pt;
+                <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+                    <p class=MsoNormal style='margin-bottom:15.0pt;border:none;padding:0cm'><b>Property
+                        name</b></p>
+                </div>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border:solid windowtext 1.0pt;
   border-left:none;background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
-  <p class=MsoNormal align=center style='margin-bottom:15.0pt;text-align:center;
+                <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+                    <p class=MsoNormal align=center style='margin-bottom:15.0pt;text-align:center;
   border:none;padding:0cm'><b>Required?</b></p>
-  </div>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>MessageId</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>MessageId</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>N</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>N</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>ConversationId</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>ConversationId</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>RefToMessageId</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>RefToMessageId</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>N</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>N</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>ToPartyId</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>ToPartyId</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>ToPartyRole</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>ToPartyRole</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Service</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>Service</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>ServiceType</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>ServiceType</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>N</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>N</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Action</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>Action</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>originalSender</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>originalSender</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>finalRecipient</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>finalRecipient</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
- </tr>
-</table>
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+        </tr>
+    </table>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The payloads included in the submit message (from Minder to
-SUT) and associated meta-data provided in <span style='font-size:11.0pt;
+    <p class=MsoNormal>The payloads included in the submit message (from Minder to
+        SUT) and associated meta-data provided in <span style='font-size:11.0pt;
 font-family:"Courier New"'>eb:PayloadInfo</span> must also be included with the
-message sent by the SUT.</p>
+        message sent by the SUT.</p>
 
-<h3>Reply leg</h3>
+    <h3>Reply leg</h3>
 
-<p class=MsoNormal>The reply leg of the submit is from SUT to Minder and used
-to report success or failure and, the ebMS MessageId in the case of a message exchange
-between the MSHs. The value to use for <b>Action</b> is <i>SubmitResponse.</i></p>
+    <p class=MsoNormal>The reply leg of the submit is from SUT to Minder and used
+        to report success or failure and, the ebMS MessageId in the case of a message exchange
+        between the MSHs. The value to use for <b>Action</b> is <i>SubmitResponse.</i></p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>When the submission was successful the reply is used to
-report the <span style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageId</span>
-used by the SUT for sending the message to the opposite MSH. The SUT must
-include a message property <i>RefToMessageId</i> in the submit reply with the value
-set to the actual <span style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageId</span>.
-</p>
+    <p class=MsoNormal>When the submission was successful the reply is used to
+        report the <span style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageId</span>
+        used by the SUT for sending the message to the opposite MSH. The SUT must
+        include a message property <i>MessageId</i> in the submit reply with the value
+        set to the actual <span style='font-size:11.0pt;font-family:"Courier New"'>eb:MessageId</span>.
+    </p>
 
-<p class=MsoNormal>When the submission fails the SUT must report this by
-including a message property <i>Error</i> with the value including the reason
-of the failed submission.</p>
+    <p class=MsoNormal>When the submission fails the SUT must report this by
+        including a message property <i>Error</i> with the value including the reason
+        of the failed submission.</p>
 
-<p class=MsoNormal>No other information is needed.</p>
+    <p class=MsoNormal>No other information is needed.</p>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
- style='border-collapse:collapse;border:none'>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+    <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+           style='border-collapse:collapse;border:none'>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal><b>Property name</b></p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal><b>Property name</b></p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border:solid windowtext 1.0pt;
   border-left:none;background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'><b>Required?</b></p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal align=center style='text-align:center'><b>Required?</b></p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>RefToMessageId</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>MessageId</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>N</p>
-  </td>
- </tr>
-</table>
+                <p class=MsoNormal align=center style='text-align:center'>N</p>
+            </td>
+        </tr>
+    </table>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<h2>Deliver</h2>
+    <h2>Deliver</h2>
 
-<p class=MsoNormal>The deliver operation is between the opposite inner corner
-SUT and Minder. I.e. C3 or C2 where C2 or C3 received the corresponding Minder
-submit operation. Initiator and action are set as follows</p>
+    <p class=MsoNormal>The deliver operation is between the opposite inner corner
+        SUT and Minder. I.e. C3 or C2 where C2 or C3 received the corresponding Minder
+        submit operation. Initiator and action are set as follows</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal><b>Initiator </b>= SUT</p>
+    <p class=MsoNormal><b>Initiator </b>= SUT</p>
 
-<p class=MsoNormal><b>Action</b> = <i>Deliver</i></p>
+    <p class=MsoNormal><b>Action</b> = <i>Deliver</i></p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The deliver operation is the reverse of submit, so the
-meta-data can be transferred from the SUT to Minder in the same way as in the
-submit operation.</p>
+    <p class=MsoNormal>The deliver operation is the reverse of submit, so the
+        meta-data can be transferred from the SUT to Minder in the same way as in the
+        submit operation.</p>
 
-<p class=MsoNormal>Although the deliver operation is abstract, i.e. has no
-formal specification, it is assumed that implementations are able to supply the
-specified meta-data on delivery.</p>
+    <p class=MsoNormal>Although the deliver operation is abstract, i.e. has no
+        formal specification, it is assumed that implementations are able to supply the
+        specified meta-data on delivery.</p>
 
-<h2>Notify</h2>
+    <h2>Notify</h2>
 
-<p class=MsoNormal>The notify operation is from the corner receiving the Minder
-submit operation in case of receipt/error signal.</p>
+    <p class=MsoNormal>The notify operation is from the corner receiving the Minder
+        submit operation in case of receipt/error signal.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal><b>Initiator</b> = SUT</p>
+    <p class=MsoNormal><b>Initiator</b> = SUT</p>
 
-<p class=MsoNormal><b>Action</b> = <i>Notify</i></p>
+    <p class=MsoNormal><b>Action</b> = <i>Notify</i></p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The following message properties are defined to indicate the
-corresponding message for which the Signal was received and the Signal type
-(Receipt or Error). </p>
+    <p class=MsoNormal>The following message properties are defined to indicate the
+        corresponding message for which the Signal was received and the Signal type
+        (Receipt or Error). </p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
- style='border-collapse:collapse;border:none'>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+    <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+           style='border-collapse:collapse;border:none'>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
-  <p class=MsoNormal style='margin-bottom:15.0pt;border:none;padding:0cm'><b>Property
-  name</b></p>
-  </div>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border:solid windowtext 1.0pt;
+                <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+                    <p class=MsoNormal style='margin-bottom:15.0pt;border:none;padding:0cm'><b>Property
+                        name</b></p>
+                </div>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border:solid windowtext 1.0pt;
   border-left:none;background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
-  <p class=MsoNormal align=center style='margin-bottom:15.0pt;text-align:center;
+                <div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+                    <p class=MsoNormal align=center style='margin-bottom:15.0pt;text-align:center;
   border:none;padding:0cm'><b>Required?</b></p>
-  </div>
-  </td>
-  <td width=224 valign=top style='width:223.65pt;border:solid windowtext 1.0pt;
+                </div>
+            </td>
+            <td width=224 valign=top style='width:223.65pt;border:solid windowtext 1.0pt;
   border-left:none;background:#BFBFBF;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal><b>Notes</b></p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal><b>Notes</b></p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>RefToMessageId</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>RefToMessageId</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y/O</p>
-  </td>
-  <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
+                <p class=MsoNormal align=center style='text-align:center'>Y/O</p>
+            </td>
+            <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Required for Receipts, Optional for Errors</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Required for Receipts, Optional for Errors</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>SignalType</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>SignalType</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>Y</p>
-  </td>
-  <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
+                <p class=MsoNormal align=center style='text-align:center'>Y</p>
+            </td>
+            <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Receipt or Error</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Receipt or Error</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>ErrorCode</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>ErrorCode</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>N/Y</p>
-  </td>
-  <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
+                <p class=MsoNormal align=center style='text-align:center'>N/Y</p>
+            </td>
+            <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>EBMS:xxxx for Errors only</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>EBMS:xxxx for Errors only</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>ShortDescription</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>ShortDescription</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>O</p>
-  </td>
-  <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
+                <p class=MsoNormal align=center style='text-align:center'>O</p>
+            </td>
+            <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>&nbsp;</p>
-  </td>
- </tr>
- <tr>
-  <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>&nbsp;</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=131 valign=top style='width:130.7pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Description</p>
-  </td>
-  <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
+                <p class=MsoNormal>Description</p>
+            </td>
+            <td width=83 valign=top style='width:83.4pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal align=center style='text-align:center'>O</p>
-  </td>
-  <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
+                <p class=MsoNormal align=center style='text-align:center'>O</p>
+            </td>
+            <td width=224 valign=top style='width:223.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>&nbsp;</p>
-  </td>
- </tr>
-</table>
+                <p class=MsoNormal>&nbsp;</p>
+            </td>
+        </tr>
+    </table>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The <i>RefTomessageId</i> property is optional in the case
-of an ebMS Error Signal and</p>
+    <p class=MsoNormal>The <i>RefTomessageId</i> property is optional in the case
+        of an ebMS Error Signal and</p>
 
-<p class=MsoNormal>must contain the <span style='font-size:11.0pt;font-family:
+    <p class=MsoNormal>must contain the <span style='font-size:11.0pt;font-family:
 "Courier New"'>eb:MessageId</span> from the message that was received by the
-SUT if included. </p>
+        SUT if included. </p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The <i>SignalType</i> property must contain either <i>Receipt</i>
-or <i>Error</i>. In addition to the message properties the message may include
-information on the received signal as a payload.</p>
+    <p class=MsoNormal>The <i>SignalType</i> property must contain either <i>Receipt</i>
+        or <i>Error</i>. In addition to the message properties the message may include
+        information on the received signal as a payload.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The <i>ErrorCode</i> property should reflect the value of
-ebms error code in case of a fault message. For a <i>Receipt</i> notification
-type, this value may be empty.</p>
+    <p class=MsoNormal>The <i>ErrorCode</i> property should reflect the value of
+        ebms error code in case of a fault message. For a <i>Receipt</i> notification
+        type, this value may be empty.</p>
 
-<p class=MsoNormal>&nbsp;</p>
+    <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The <i>ShortDescription</i> and <i>Description</i>
-properties should reflect the values of the same name (i.e. <span
-style='font-size:11.0pt;font-family:"Courier New"'>eb:Error@shortDescription</span><i><span
-style='font-size:11.0pt'> </span></i>and<i> </i><span style='font-size:11.0pt;
-font-family:"Courier New"'>eb:Error/eb:Description</span>) in case of a fault
-message.</p>
+    <p class=MsoNormal>The <i>ShortDescription</i> and <i>Description</i>
+        properties should reflect the values of the same name (i.e. <span
+                style='font-size:11.0pt;font-family:"Courier New"'>eb:Error@shortDescription</span><i><span
+                style='font-size:11.0pt'> </span></i>and<i> </i><span style='font-size:11.0pt;
+font-family:"Courier New"'>eb:Error/eb:Description</span>) in case of a fault message.</p>
 
-<h1>Revisions</h1>
+    <h1>Revisions</h1>
 
-<table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
- style='border-collapse:collapse;border:none'>
- <tr>
-  <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+    <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+           style='border-collapse:collapse;border:none'>
+        <tr>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Version</p>
-  </td>
-  <td width=68 valign=top style='width:68.0pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Version</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border:solid windowtext 1.0pt;
   border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Date</p>
-  </td>
-  <td width=104 valign=top style='width:103.65pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Date</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border:solid windowtext 1.0pt;
   border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Author(s)</p>
-  </td>
-  <td width=231 valign=top style='width:231.0pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Author(s)</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border:solid windowtext 1.0pt;
   border-left:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Remarks</p>
-  </td>
- </tr>
- <tr>
-  <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Remarks</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>0.1</p>
-  </td>
-  <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
+                <p class=MsoNormal>0.1</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>23-10-2015</p>
-  </td>
-  <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
+                <p class=MsoNormal>23-10-2015</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>S. Fieten</p>
-  </td>
-  <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
+                <p class=MsoNormal>S. Fieten</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Initial draft</p>
-  </td>
- </tr>
- <tr>
-  <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Initial draft</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>0.2</p>
-  </td>
-  <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
+                <p class=MsoNormal>0.2</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>28-10-2015</p>
-  </td>
-  <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
+                <p class=MsoNormal>28-10-2015</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>S. Fieten, </p>
-  <p class=MsoNormal>T. Kramer</p>
-  </td>
-  <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
+                <p class=MsoNormal>S. Fieten, </p>
+
+                <p class=MsoNormal>T. Kramer</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Update after review by Theo and formatting</p>
-  </td>
- </tr>
- <tr style='height:16.25pt'>
-  <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Update after review by Theo and formatting</p>
+            </td>
+        </tr>
+        <tr style='height:16.25pt'>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt;height:16.25pt'>
-  <p class=MsoNormal>0.3</p>
-  </td>
-  <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
+                <p class=MsoNormal>0.3</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt;height:16.25pt'>
-  <p class=MsoNormal>31-10-2015</p>
-  </td>
-  <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
+                <p class=MsoNormal>31-10-2015</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt;height:16.25pt'>
-  <p class=MsoNormal>M. Y<span lang=TR>ldz</span></p>
-  </td>
-  <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
+                <p class=MsoNormal>M. Yildiz</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt;height:16.25pt'>
-  <p class=MsoNormal>Review and Formatting </p>
-  </td>
- </tr>
- <tr>
-  <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+                <p class=MsoNormal>Review and Formatting </p>
+            </td>
+        </tr>
+        <tr>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
   border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>0.4</p>
-  </td>
-  <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
+                <p class=MsoNormal>0.4</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
   border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>03-11-2015</p>
-  </td>
-  <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
+                <p class=MsoNormal>03-11-2015</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
   none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
   padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>S. Fieten,</p>
-  <p class=MsoNormal>T. Kramer</p>
-  </td>
-  <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Changed submit operation into twoWay async MEP to allow
-  MSH to report result of submission.</p>
-  <p class=MsoNormal>Removed use of Receipts.</p>
-  </td>
- </tr>
- <tr>
-  <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
-  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>0.5</p>
-  </td>
-  <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
-  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>07-11-2015</p>
-  </td>
-  <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>M. YILDIZ</p>
-  </td>
-  <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
-  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
-  padding:0cm 5.4pt 0cm 5.4pt'>
-  <p class=MsoNormal>Changed <i>MessageId </i>to <i>RefToMessageId </i>in SubmissionResult.</p>
-  <p class=MsoNormal>Declared the usage of ebms:receipts as optional.</p>
-  </td>
- </tr>
-</table>
+                <p class=MsoNormal>S. Fieten,</p>
 
-<p class=MsoNormal>&nbsp;</p>
+                <p class=MsoNormal>T. Kramer</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>Changed submit operation into twoWay async MEP to allow
+                    MSH to report result of submission.</p>
+
+                <p class=MsoNormal>Removed use of Receipts.</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>0.5</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>07-11-2015</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>M. Yildiz</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>Changed <i>MessageId </i>to <i>RefToMessageId </i>in
+                    SubmissionResult.</p>
+
+                <p class=MsoNormal>Declared the usage of ebms:receipts as optional.</p>
+            </td>
+        </tr>
+        <tr>
+            <td width=48 valign=top style='width:47.85pt;border:solid windowtext 1.0pt;
+  border-top:none;padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>0.6</p>
+            </td>
+            <td width=68 valign=top style='width:68.0pt;border-top:none;border-left:none;
+  border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>11-11-2015</p>
+            </td>
+            <td width=104 valign=top style='width:103.65pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>M. Yildiz</p>
+            </td>
+            <td width=231 valign=top style='width:231.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  padding:0cm 5.4pt 0cm 5.4pt'>
+                <p class=MsoNormal>Added the test steps as described by Theo</p>
+            </td>
+        </tr>
+    </table>
+
+    <p class=MsoNormal>&nbsp;</p>
 
 </div>

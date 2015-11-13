@@ -10,8 +10,8 @@ import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.{StreamResult, StreamSource}
 
 import esens.wp6.esensMshBackend._
-import minder.as4Utils.AS4Utils
-import minder.as4Utils.AS4Utils._
+import minder.as4Utils.SAAJUtil
+import minder.as4Utils.SWA12Util._
 import org.w3c.dom.{Element, Node}
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc.{Controller, RawBuffer, Result}
@@ -155,8 +155,8 @@ object Util extends Controller {
 
       val soapMessage = createMessage(headers, new ByteArrayInputStream(bytes))
 
-      Logger.debug("Received SOAP Message")
-      Logger.debug(prettyPrint(soapMessage.getSOAPHeader()));
+     // Logger.debug("SOAP Message")
+     Logger.debug(prettyPrint(soapMessage.getSOAPHeader()));
       soapMessage;
     } catch {
       case th: RuntimeException => {
@@ -222,7 +222,7 @@ object Util extends Controller {
     if (message.saveRequired())
       message.saveChanges()
 
-    Logger.debug(AS4Utils.describe(message))
+    Logger.debug(describe(message))
     return message
   }
 
@@ -316,7 +316,7 @@ object Util extends Controller {
    */
   def convert2SubmissionData(message: SOAPMessage): ExtendedSubmissionData = {
     Logger.debug("Convert message to submission data")
-    Logger.debug(AS4Utils.prettyPrint(message.getSOAPPart))
+    Logger.debug(prettyPrint(message.getSOAPPart))
     val data = new ExtendedSubmissionData
     val properties: Element = findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
