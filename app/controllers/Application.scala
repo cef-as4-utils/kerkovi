@@ -140,7 +140,8 @@ object Application extends Controller {
       val frm = json.asFormUrlEncoded;
       as4.name = frm.get("name").mkString
       as4.partyID = frm.get("partyID").mkString //json.getOrElse("", "UNKNOWN").toString
-      as4.address = frm.get("address").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
+      as4.backendAddress = frm.get("backendAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
+      as4.mshAddress = frm.get("mshAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.proxyMode = false
       Databeyz.add(as4)
       Ok("ok")

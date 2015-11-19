@@ -58,7 +58,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       fos.close();
     }
 
-    val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, resolveAddressFromToPartyId(submissionData))
+    val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, resolveBackendAddress(submissionData))
 
     Try {
       val fos = new FileOutputStream("samplesubmissionreceipt.txt")
@@ -71,12 +71,12 @@ class GenericAS4Corner extends AbstractMSHBackend {
     Logger.debug("====================")
   }
 
-  def resolveAddressFromToPartyId(submissionData: SubmissionData): URL = {
+  def resolveBackendAddress(submissionData: SubmissionData): URL = {
     val gateway: AS4Gateway = Databeyz.findByPartyId(submissionData.from)
     if (gateway == null) {
       throw new IllegalArgumentException("A party with id [" + submissionData.from + "] was not found")
     }
-    new URL(gateway.address)
+    new URL(gateway.getBackendAddress)
   }
 
   def process(request: Request[RawBuffer]): Result = {

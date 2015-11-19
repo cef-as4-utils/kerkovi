@@ -54,11 +54,11 @@ object KerkoviAS4Controller extends Controller {
         return Util.sendFault(null, "A gateway with party id [" + content + "] not found")
       }
 
-      Logger.info("Target gateway " + gateway.partyID + " ==> " + gateway.address)
+      Logger.info("Target gateway " + gateway.partyID + " ==> " + gateway.mshAddress)
 
       if (gateway.proxyMode) {
-        Logger.info("Send message to " + gateway.address)
-        val reply = SWA12Util.sendSOAPMessage(sOAPMessage, new URL(gateway.address))
+        Logger.info("Send message to " + gateway.mshAddress)
+        val reply = SWA12Util.sendSOAPMessage(sOAPMessage, new URL(gateway.mshAddress))
 
         //var bytes = SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage);
         //var fileOutputStream = new FileOutputStream("david.txt");

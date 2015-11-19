@@ -10,15 +10,8 @@ import minderengine.Wrapper;
 import org.w3c.dom.Element;
 import play.Logger;
 
-import javax.xml.soap.MimeHeader;
-import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
-import java.io.InputStream;
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Properties;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.PriorityBlockingQueue;
 
 /**
  * This class is the bridge between "Minder test engine" and the system under
@@ -119,11 +112,11 @@ public abstract class AS4Adapter extends Wrapper {
     SOAPMessage soapMessage = SWA12Util.deserializeSOAPMessage(message);
     SOAPMessage receipt = null;
 
-    //get the address from party id.
+    //get the backendAddress from party id.
     try {
       Element tmp = SWA12Util.findSingleNode(soapMessage.getSOAPHeader(), "//:PartyInfo/:To/:PartyId");
       final String toPartyId = tmp.getTextContent();
-      String targetUrlString = Databeyz.findByPartyId(toPartyId).address;
+      String targetUrlString = Databeyz.findByPartyId(toPartyId).mshAddress;
       Logger.debug("Send message to [" + toPartyId + "] with address " + targetUrlString);
       receipt = sendMessage(soapMessage, targetUrlString);
       if (receipt == null) {
