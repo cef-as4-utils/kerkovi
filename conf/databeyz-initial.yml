@@ -30,28 +30,28 @@
     id: 5
     name: Flame
     partyID: flame1
-    backendAddress: 'https://flame.com:9095/msh1'
-    mshAddress: 'https://flame.com:9095/msh1'
+    backendAddress: ''
+    mshAddress: 'http://fmstest.flame.co.za:8080/AS4-C2'
     proxyMode: true
 - !!model.AS4Gateway
     id: 6
     name: Flame
     partyID: flame2
-    backendAddress: 'https://flame.com:9095/msh2'
-    mshAddress: 'https://flame.com:9095/msh2'
+    backendAddress: ''
+    mshAddress: 'http://fmstest.flame.co.za:8080/AS4-C3'
     proxyMode: true
 - !!model.AS4Gateway
     id: 7
     name: Holodeck
     partyID: holodeck1
-    backendAddress: 'http://holodeck.eu:8080/as4endpoint'
+    backendAddress: ''
     mshAddress: 'http://holodeck.eu:8080/as4endpoint'
     proxyMode: true
 - !!model.AS4Gateway
     id: 8
     name: Holodeck
     partyID: holodeck1
-    backendAddress: 'http://holodeck.eu:8080/as4endpoint'
+    backendAddress: ''
     mshAddress: 'http://holodeck.eu:8080/as4endpoint'
     proxyMode: true
 
