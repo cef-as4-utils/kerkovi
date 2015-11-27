@@ -2,12 +2,14 @@ package controllers
 
 import java.io.{PrintWriter, StringWriter}
 import java.lang.reflect.Field
+import java.net.URL
 
 import model.AS4Gateway
 import play.api.libs.EventSource
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.json._
-import play.api.mvc.{Action, Controller}
+import play.api.mvc.{Result, Action, Controller}
+import play.mvc.Security
 
 object Application extends Controller {
 
@@ -132,6 +134,7 @@ object Application extends Controller {
     }
   }
 
+  @Security.Authenticated(classOf[Secured])
   def newGateway() = Action { implicit request =>
     try {
       val json = request.body;
@@ -143,8 +146,8 @@ object Application extends Controller {
       as4.backendAddress = frm.get("backendAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.mshAddress = frm.get("mshAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.proxyMode = false
-      Databeyz.add(as4)
-      Ok("ok")
+
+      checkFields(as4)
     } catch {
       case th: Throwable => {
         th.printStackTrace()
@@ -153,6 +156,36 @@ object Application extends Controller {
         th.printStackTrace(pw)
         BadRequest("<pre>" + sw.toString + "</pre>")
       }
+    }
+  }
+
+  def checkFields(as4: AS4Gateway): Result = {
+    if (as4.name == null || "" == as4.name) {
+      return BadRequest("Please provide a real name")
+    } else if (as4.partyID == null || "" == as4.partyID) {
+      return BadRequest("Please provide a real partyid")
+    } else if (as4.mshAddress == null || "" == as4.mshAddress) {
+      return BadRequest("Please provide a real msh address")
+    } else {
+      try {
+        new URL(as4.mshAddress)
+      } catch {
+        case _ => {
+          return BadRequest("Please provide valid URL for the msh backend")
+        }
+      }
+
+      if (as4.backendAddress != null && "" != as4.backendAddress)
+        try {
+          new URL(as4.backendAddress)
+        } catch {
+          case _ => {
+            return BadRequest("Please provide valid backend address or leave it blank")
+          }
+        }
+
+      Databeyz.add(as4)
+      Ok("Your gateway has been added. It will be visible after approval.")
     }
   }
 
@@ -182,5 +215,53 @@ object Application extends Controller {
 
   def logFeedUpdate(log: String): Unit = {
     logChannel.push(log)
+  }
+
+  @Security.Authenticated(classOf[Secured])
+  def approve(id: Int) = Action { implicit request =>
+    try {
+      Databeyz.approve(id);
+      Ok("OK");
+    } catch {
+      case th: Throwable => {
+        th.printStackTrace();
+        BadRequest(th.getMessage)
+      }
+    }
+  }
+
+  @Security.Authenticated(classOf[Secured])
+  def approvePage() = Action { implicit request =>
+    Ok(views.html.approve())
+  }
+
+  def showAS4Message(time: Long) = Action { implicit request =>
+    Ok(LogDB.readAs4Message(time))
+  }
+
+  def showReply(time: Long) = Action { implicit request =>
+    Ok(LogDB.readReply(time))
+  }
+
+  def showException(time: Long) = Action { implicit request =>
+    Ok(LogDB.readException(time))
+  }
+
+  def prevLogPage(currentPage: Int) = Action { implicit request =>
+    var page = currentPage
+
+    if (page > 0)
+      page = page - 1
+
+    Ok(views.html.logTableView.render(page));
+  }
+
+  def nextLogPage(currentPage: Int) = Action { implicit request =>
+    var page = currentPage
+
+    if (page < LogDB.list.size() / LogDB.PAGE_SIZE)
+      page = page + 1
+
+    Ok(views.html.logTableView.render(page));
   }
 }

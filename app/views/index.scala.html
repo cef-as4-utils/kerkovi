@@ -15,6 +15,9 @@
     <link rel="stylesheet" href="@routes.Assets.versioned("css/theme/mdn-like.css")" rel="stylesheet">
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/main.css")" />
     <link rel="stylesheet" href="@routes.Assets.versioned("stylesheets/children.css")" />
+    <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,200,200italic,300,300italic,400italic,900,700italic,600italic,600,700&subset=latin,latin-ext' rel='stylesheet' type='text/css' />
+    <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,600' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,400italic,600,700' rel='stylesheet' type='text/css'>
 
     <script>
     $(function(){
@@ -27,40 +30,64 @@
     <table class="container" align="center">
       <tr>
         <td>
-          <table><tr><td>
-            <img src="img/zebra-small.png"
-            height="70px"
-            about="http://www.wpclipart.com/cartoon/animals/horse/horse_cartoon_zebra_T.png" alt="Zebra"/>
-          </td> <td>
-            <div class="title"><b>Kerkovi</b><span style="font-size:small;color:#2A00FF">V0.6</span> <br/>The e-SENS Generic AS4 Conformance bridge</div>
-          </td><td align="right" style="width:99%;">
-            <img src="@routes.Assets.versioned("img/minder.png")" height="100"/>
+          <table><tr class="titleFirstRow">
+            <td style="width:1% ;">
+              <img src="img/zebra-small.png"
+              height="70px"
+              about="http://www.wpclipart.com" alt="Zebra"/>
+              <div class="kerkovi" style="display: inline ;"><b>Kerkovi</b> <sup style="font-size:small ; color:#2A00FF">v1.0</sup> <br/></div>
+            </td> <td align="right" style="width:99% ; vertical-align: bottom">&nbsp;
+            <div style="font-size: small ;">
+            @{
+              /*
+                                <label>Username:</label> <input type="text" name="username" style="width:80px;"/>
+                                  <input type="password" name="password" style="width:80px;"/>
+                                <button onclick="login()">Login</button>
+                            */
+            }
+            </div>
           </td>
           </tr>
+            <tr class="titleSecondRow">
+              <td class="subtitle">
+                <div class="lessop">
+                The <img class="minderlogo" src="@routes.Assets.versioned("img/minder.png")" height="29px;"/>
+                  Generic AS4 Conformance Bridge</div></td>
+              <td align="right"><span class="theEsens">&nbsp;</span></td>
+            </tr>
           </table>
-          <br />
           <ul class="menu">
             <li><a href="#" page="@routes.Application.main()" id="main">
 
-              <!--<img src="@routes.Assets.versioned("img/Home-64-2.png")" height="20" alt="Home"/>  -->
-              Home
-            </a></li>
+                <!--<img src="      @routes.Assets.versioned("img/Home-64-2.png")" height="20" alt="Home"/>  -->
+                Home
+            </a>
+            </li>
             <li><a href="#" page="@routes.Application.gateways()" id="gateways">
-                <!--<img src="@routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
-              Gateways
-            </a></li>
+                <!--<img src="      @routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
+                Gateways
+            </a>
+            </li>
             <li><a href="#" page="@routes.Application.logs()" id="logs">
-                <!--<img src="@routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
-              Logs
-            </a></li>
+                <!--<img src="      @routes.Assets.versioned("img/Server-64-2.png")" height="20" alt="Gateways"/> -->
+                Logs
+            </a>
+            </li>
             <li><a href="#" page="@routes.Application.documentation()" id="documentation">
-                <!--<img src="@routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
-              Documentation
-            </a></li>
+                <!--<img src="      @routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
+                Docs
+            </a>
+            </li>
             <li><a href="#" page="@routes.Assets.versioned("pmodes.htm")" id="pmodes">
-                <!--<img src="@routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
-              Backend PModes
-            </a></li>
+                <!--<img src="      @routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
+                Backend PModes
+            </a>
+            </li>
+            <li><a href="#" page="@routes.Assets.versioned("pmodes2.htm")" id="pmodes2">
+                <!--<img src="      @routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
+                C2-C3 PModes
+            </a>
+            </li>
             <li><a href="#" page="@routes.Application.kerkovi()" id="kerkovi" class="kerkovi">What is kerkovi?</a></li>
           </ul>
           <div id="mainView">
@@ -72,8 +99,16 @@
     </table>
 
     <div id="errorDialog" class="errorDialog" title="Error">
+      <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="padding:3px ;">
+        <tr><th style="height:30px ;" align="left"><span>&nbsp;Error</span></th> <td align="right"><button class="bigcancel" onclick='disposeError()'>\u2718</button></td></tr>
+        <tr>
+          <td colspan="2">
+            <div id="errorDialogContent" class="errorDialogContent">
 
+            </div>
+          </td>
+        </tr>
+      </table>
     </div>
-
   </body>
 </html>

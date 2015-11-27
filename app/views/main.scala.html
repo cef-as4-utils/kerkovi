@@ -1,4 +1,4 @@
-<h2>Overwiew</h2>
+<h2>Overview</h2>
 
 <p>
   Kerkovi is the e-SENS generic AS4 Conformance & Interoperability bridge that achieves connectivity between the testing system (<b>Minder Testbed</b>
@@ -16,29 +16,33 @@
 </p>
 
 <table>
-  <tr><td style="border:1px solid gray ; padding:5px ;">
-  @theSVG()
+  <tr><td style="padding:20px;vertical-align: top;">
+    <table><tr><td style="vertical-align: top;"> @theSVG()</td></tr><tr><th> <label>The proposed AS4 conformance architecture</label></th></tr></table>
   </td> <td style="vertical-align:text-top ;">
     <h2>How to join</h2>
-    <p>If you want to register your gateway for testing please go
-      to <strong><a href="#" onclick='triggerMainMenuItem("gateways")'>Gateways</a> </strong> &nbsp;and add the&nbsp;
+    <p><label>Step 1: </label> Register your gateway for testing at <strong><a href="#" onclick='triggerMainMenuItem("gateways")'>this</a> </strong> page &nbsp;and add the&nbsp;
       <strong><em>PARTY ID</em></strong> <em>&nbsp;</em>
-      and HTTP/S addresses of your gateway instances
+      and <b>HTTP/S</b> addresses of your gateway instances
       (one for corner 2 and one for corner 3)
-</p>
-
-    <h2>More Info...</h2>
-
-
+    </p>
+    <p>
+      <label>Step 2: </label> Read the <a href="#" onclick='triggerMainMenuItem("documentation")'>documentation</a> to learn more about the architecture and also to examine sample messages.
+    </p>
+    <p>
+      <label>Step 3: </label> Read the <a href="#" onclick='triggerMainMenuItem("pmodes")'>backend PModes</a> for the details of the communication between C1-C2 and C3-C4.
+    </p>
+    <p>
+      <label>Step 4: </label> Read the <a href="#" onclick='triggerMainMenuItem("pmodes2")'>C2-C3 PModes</a> for the details of the communication between C2 and C3 that is customized with respect to the e-SENS AS4 Conformance Test Assertions.
+    </p>
 
     <p>
-  Click <a href="#" onclick='triggerMainMenuItem("documentation")'>here</a> for the detailed information.
-</p>
-
+      <br />
+      <table>
+    <tr><td><h3>Feel confused?</h3></td><td>&nbsp;</td><td rowspan="4"><img src="  @routes.Assets.versioned("img/confused_panda.png")" height="150" alt="http://www.esocsci.org.nz/wp-content/uploads/2015/05/confused-minions.jpg"/></td></tr>
+    <tr><th>Contact us:</th><td>&nbsp;muhammet.yildiz [at]<b></b><i></i> tubitak.gov.tr</td><td></td></tr>
+    <tr><td></td><td>
+        &nbsp;melis.cetinkaya [at]<b></b><i></i> tubitak.gov.tr</td><td></td></tr><tr><td></td></tr></table>
+    </p>
   </td>
-
-  </tr> <tr>
-  <th>
-    <label>The proposed AS4 conformance architecture</label>
-  </th></tr>
+  </tr>
 </table>

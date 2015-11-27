@@ -1,0 +1,109 @@
+<h2>PModes between C2 and C3</h2>
+
+<p>
+    The e-SENS Conformance and Interoperability Testing environment requires, a PMode setting for conformance tests.
+    This PMode setting is based on the e-SENS AS4 profile.
+</p>
+<p>Click <a href="/PMode_Parameters_e-SENS_profile.pdf" target="_blank"><span
+        style="font-size: large; font-weight: bold;"> HERE </span></a> to download the PMode parameters for e-SENS AS4
+    profile.</p>
+
+<p>The <a href="/TestAssertions_eSENS_AS4_Draft6.pdf" target="_blank">e-SENS test assertions</a> require four different
+    profiles based on the e-SENS AS4 profile PModes. They are provided
+    below.</p>
+
+<ol class="myinlineol">
+    <li><label>SIMPLE_ONEWAY</label>
+        <ol>
+            <li><b>MEP</b>: One way - push</li>
+            <li><b>Compress</b>: Yes</li>
+            <li><b>Retry</b>: None</li>
+            <li><b>Sign</b>: Yes</li>
+            <li><b>Encrypt</b>: Yes</li>
+            <li><b>Service</b>: SRV_SIMPLE_ONEWAY</li>
+            <li><b>Action</b>: ACT_SIMPLE_ONEWAY</li>
+        </ol>
+    </li>
+    <li>
+        <label>SIMPLE_TWOWAY</label>
+        <ol>
+            <li><b>MEP</b>: Two way push-and-push</li>
+            <li><b>Compress</b>: Yes</li>
+            <li><b>Retry</b>: None</li>
+            <li><b>Sign</b>: Yes</li>
+            <li><b>Encrypt</b>: Yes</li>
+            <li><b>Service</b>: SRV_SIMPLE_TWOWAY</li>
+            <li><b>Action</b>: ACT_SIMPLE_TWOWAY</li>
+        </ol>
+    </li>
+    <li><label>ONEWAY_RETRY</label>
+        <ol>
+            <li><b>MEP</b>: One way - push</li>
+            <li><b>Compress</b>: Yes</li>
+            <li><b>Retry</b>: 5</li>
+            <li><b>Sign</b>: Yes</li>
+            <li><b>Encrypt</b>: Yes</li>
+            <li><b>Service</b>: SRV_ONEWAY_RETRY</li>
+            <li><b>Action</b>: ACT_ONEWAY_RETRY</li>
+        </ol>
+    </li>
+    <li><label>ONEWAY_ONLY_SIGN</label>
+        <ol>
+            <li><b>MEP</b>: One way - push</li>
+            <li><b>Compress</b>: Yes</li>
+            <li><b>Retry</b>: None</li>
+            <li><b>Sign</b>: Yes</li>
+            <li><b>Encrypt</b>: No</li>
+            <li><b>Service</b>: SRV_ONEWAY_SIGNONLY</li>
+            <li><b>Action</b>: ACT_ONEWAY_SIGNONLY</li>
+        </ol>
+    </li>
+</ol>
+
+
+<p>
+    <b style="color:red">IMPORTANT NOTE:</b> The gateways should be able to identify (i.e. configure their PModes) to
+    select the correct PMode profile above with respect to the <b>Service</b> and <b>Action</b>
+    parameters that they receive from the backend.
+    <b/>
+    It is up to the gateway to map its pmode by the Service or the Action.
+</p>
+<p>All the other PMode parameters are the same for as the e-SENS AS4 profile PModes</p>
+
+<h3>Payload Profiles</h3>
+
+<p>The test cases that are created for the test assertions submit a combination of types of payloads with the following
+    information: </p>
+
+<ol class="myinlineol">
+    <li>
+        <label>xmlpayload@minder</label>
+        <ol>
+            <li><b>ContentId</b>=xmlpayload@minder</li>
+            <li><b>MimeType</b>=application/xml</li>
+            <li><b>Required</b>=yes</li>
+            <li><b>Character Set</b>=utf-8 (optional)</li>
+        </ol>
+    </li>
+    <li>
+        <label>xmlpayload2@minder</label>
+        <ol>
+            <li><b>ContentId</b>=xmlpayload2@minder</li>
+            <li><b>MimeType</b>=application/xml</li>
+            <li><b>Required</b>=No</li>
+            <li><b>Character Set</b>=utf-8 (optional)</li>
+        </ol>
+    </li>
+    <li>
+        <label>custompayload@minder</label>
+        <ol>
+            <li><b>ContentId</b>=custompayload@minder</li>
+            <li><b>MimeType</b>=application/octet-stream</li>
+            <li><b>Required</b>=No</li>
+            <li>&nbsp;</li>
+        </ol>
+    </li>
+</ol>
+
+
+

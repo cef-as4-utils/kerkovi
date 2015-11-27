@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><S12:Envelope xmlns:S12="http://www.w3.org/2003/05/soap-envelope" xmlns:ebbp="http://docs.oasis-open.org/ebxml-bp/ebbp-signals-2.0" xmlns:eb3="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:wsse="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd" xmlns:ebint="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/multihop/200902/" xmlns:ds="http://www.w3.org/2000/09/xmldsig#" xmlns:wsa="http://www.w3.org/2005/08/addressing" xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd">
+<S12:Header>
+<eb3:Messaging S12:mustUnderstand="true" id="_ebmessaging_N65541">
+<eb3:SignalMessage>
+<eb3:MessageInfo>
+<eb3:Timestamp>2015-11-24T09:49:46.463Z</eb3:Timestamp>
+<eb3:MessageId>ec66ce1d-a1e7-4cca-a267-e9b99c1c3c7e@minder</eb3:MessageId>
+<eb3:RefToMessageId>184d9a5c-f0f1-4d4e-b475-2743a1fc248c@backend</eb3:RefToMessageId>
+</eb3:MessageInfo>
+<eb3:Receipt>
+<ns2:UserMessage xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:env="http://www.w3.org/2003/05/soap-envelope" xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+        <ns2:MessageInfo>
+            <ns2:Timestamp>2015-11-24T09:49:46.339Z</ns2:Timestamp>
+            <ns2:MessageId>184d9a5c-f0f1-4d4e-b475-2743a1fc248c@backend</ns2:MessageId>
+        </ns2:MessageInfo>
+        <ns2:PartyInfo>
+            <ns2:From>
+                <ns2:PartyId>minder</ns2:PartyId>
+                <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
+            </ns2:From>
+            <ns2:To>
+                <ns2:PartyId>domibusDe</ns2:PartyId>
+                <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
+            </ns2:To>
+        </ns2:PartyInfo>
+        <ns2:CollaborationInfo>
+            <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
+            <ns2:Action>Submit</ns2:Action>
+            <ns2:ConversationId>1</ns2:ConversationId>
+        </ns2:CollaborationInfo>
+        <ns2:MessageProperties>
+            <ns2:Property name="MessageId">56cb0fde-711a-42a5-ba22-09faa2f1a423</ns2:Property>
+<ns2:Property name="ConversationId">1</ns2:Property>
+<ns2:Property name="ToPartyId">domibusDe2</ns2:Property>
+<ns2:Property name="ToPartyRole">null</ns2:Property>
+<ns2:Property name="Service">SRV_SIMPLE_TWOWAY </ns2:Property>
+<ns2:Property name="Action">ACT_SIMPLE_TWOWAY </ns2:Property>
+<ns2:Property name="originalSender">C1</ns2:Property>
+<ns2:Property name="finalRecipient">C4</ns2:Property>
+        </ns2:MessageProperties>
+        <ns2:PayloadInfo>
+            <ns2:PartInfo href="xmlpayload@minder">
+<ns2:PartProperties>
+<ns2:Property name="MimeType">application/xml</ns2:Property>
+</ns2:PartProperties>
+</ns2:PartInfo>
+<ns2:PartInfo href="custompayload@minder">
+<ns2:PartProperties>
+<ns2:Property name="MimeType">application/octet-stream</ns2:Property>
+</ns2:PartProperties>
+</ns2:PartInfo>
+
+        </ns2:PayloadInfo>
+    </ns2:UserMessage>
+</eb3:Receipt>
+</eb3:SignalMessage>
+</eb3:Messaging>
+</S12:Header>
+<S12:Body/>
+</S12:Envelope>

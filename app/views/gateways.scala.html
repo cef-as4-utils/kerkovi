@@ -9,7 +9,7 @@
   }
 
   $(function(){
-    setUpEditable($(".editable"), rendererMap)
+    @{/*setUpEditable($(".editable"), rendererMap)*/}
   });
 </script>
 <div class="levha">
@@ -18,86 +18,70 @@
     The first instance is&nbsp; <strong><em>Corner 2</em></strong> &nbsp;and the second instance is&nbsp;
     <strong><em>Corner 3</em></strong>.</p>
 
-  <p>Click on the fields to start editing.&nbsp;</p>
-
+  <button class="fancyBlue" onclick='createNew()'>Register Your Gateway</button>
+  <br /> <br />
+  <p>To modify an existing gateway please contact <b>muhammet.yildiz [at]<b></b><i></i> tubitak.gov.tr</b> or  <b>melis.cetinkaya [at]<b></b><i></i> tubitak.gov.tr</b>. </p>
   <div align="center">
     <table class="zebra">
       <tr>
-        <th class="smaller darkcolor">Name<sup>*</sup></th>
-        <th class="smaller darkcolor">Party ID<sup>*</sup></th> <th class="smaller darkcolor">Address<sup>1</sup></th>
-        <th class="smaller darkcolor">Proxy Mode<sup>2</sup></th>
-        <th align="center" style="width:50px">
-          <div title="Add New Gateway"><a class="bigger greenShiny" href="#" onclick="createNew()">+</a></div>
-        </th>
+        <th class="darkcolor">Name</th>
+        <th class="darkcolor">Party ID</th> <th>MSH Address<sup>1</sup></th> <th>Backend Address<sup>2</sup></th>
+        <th class=" darkcolor">Direct Mode<sup>3</sup></th>
       </tr>
       @for( gateway <- Application.registeredGateways()) {
-        <tr>
-          <td>
-            <div class="editable" type="text"
-            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "name")"
-            >@gateway.name</div>
-          </td>
-          <td>
-            <div class="editable" type="text"
-            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "partyID")"
-            >@gateway.partyID</div>
-          </td>
-          <td>
-            <table style="width:100% ;">
-              <tr>
-                <td class="shrink">
-                  MSH Address<sup>*</sup>:
-                </td>
-                <td class="expand">
-                  <div class="editable" type="text" binding="@controllers.routes.Application.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  Backend:
-                </td>
-                <td>
-                  <div class="editable" type="text"
-                  binding="@controllers.routes.Application.gatewayMvc(gateway.id, "backendAddress")"
-                  >@gateway.backendAddress</div>
-                </td>
-              </tr>
-            </table>
-          </td>
-          <td align="center">
-            <div class="editable" type="text"
-            binding="@controllers.routes.Application.gatewayMvc(gateway.id, "proxyMode")"
-            renderer="booleanRenderer"
-            >
-            @if(gateway.proxyMode) {
-              <span style="color:green ; font-size: x-large"> \u2713</span>
-            } else {
-              <span style="color:red ; font-size: x-large"> \u2718</span>
+        @if(gateway.approved) {
+          <tr>
+            <td>
+              <div class="editable" type="text"
+              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "name")"
+              >@gateway.name</div>
+            </td>
+            <td>
+              <div class="editable" type="text"
+              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "partyID")"
+              >@gateway.partyID</div>
+            </td>
+            <td>
+
+              <div class="editable" type="text" binding="@controllers.routes.Application.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
+            </td>
+
+            <td>
+              <div class="editable" type="text"
+              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "backendAddress")"
+              >@gateway.backendAddress</div>
+            </td>
+            <td align="center">
+              <div class="editable" type="text"
+              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "proxyMode")"
+              renderer="booleanRenderer"
+              >
+              @if(gateway.proxyMode) {
+                <span style="color:green ; font-size: x-large"> \u2713</span>
+              } else {
+                <span style="color:red ; font-size: x-large"> \u2718</span>
+              }
+              </div>
+            </td>
+
+
+            @{
+              /*<td align="center">
+                <div title="Delete"><a class="bigger shiny" href="#" onclick='deleteGateway(@gateway.id, "@controllers.routes.Application.deleteGateway(gateway.id)")'>-</a></div>
+              </td>*/
             }
-            </div>
-          </td>
-
-
-          <td align="center">
-            <div title="Delete"><a class="bigger shiny" href="#" onclick='deleteGateway(@gateway.id, "@controllers.routes.Application.deleteGateway(gateway.id)")'>-</a></div>
-          </td>
-        </tr>
+          </tr>
+        }
       }
-
-      <tr><td colspan="4">&nbsp;</td> <td align="center"><a class="bigger greenShiny" style="color:blue ;" onclick='undoDelete("@controllers.routes.Application.undoDelete()")' href="#" alt="Undo Delete" title="Undo delete">&#9100;</a></td></tr>
+      @{
+        //<tr><td colspan="4">&nbsp;</td>
+        // <td align="center"><a class="bigger greenShiny" style="color:blue ;" onclick='undoDelete("@controllers.routes.Application.undoDelete()")' href="#" alt="Undo Delete" title="Undo delete">&#9100;</a></td>
+        //      </tr>
+      }
       <tr><td colspan="5">
         <p>
-          <label>1: Proxy Mode:</label> <br />
-          <b>if (<span style="color:green ; font-size: x-large">\u2713</span>)</b>{<br />
-            &nbsp;&nbsp;the intercepted message is directly passed to its receiver (i.e <i>TO PARTY</i>);
-          <br /> }<b>else if(<span style="color:red ; font-size: x-large">\u2718</span>)</b>
-          {<br/> &nbsp;&nbsp;the intercepted message is forwarded to Minder.<br />}<br/>
-          This setting is useful for connectivity tests.
 
-          <br />
-          <br />
-
-          <label>2: Adress</label> <br />
+          <label>1-2: Adress</label> <br />
           A gateway might be providing different HTTP/S endpoints for their Backend and MSH AS4 receiver. In this case please provide the backend address and MSH address separately.
           <br />
           If the backend address is provided, all the backend submission messages will be forwarded to the <b><i>Backend Address</i></b>
@@ -107,24 +91,29 @@
           Therefore, the <b><i>MSH Address</i></b> is obligatory, while the <b><i>Backend Address</i></b> is optional.
           <br />
           <br />
+          <label>3: Direct Mode:</label> <br />
+          <b>if (<span style="color:green ; font-size: x-large">\u2713</span>)</b>{<br />
+            &nbsp;&nbsp;the intercepted message is directly passed to its receiver (i.e <i>TO PARTY</i>);
+          <br /> }<b>else if(<span style="color:red ; font-size: x-large">\u2718</span>)</b>
+          {<br/> &nbsp;&nbsp;the intercepted message is forwarded to Minder.<br />}<br/>
+          This setting is useful for connectivity tests.
 
-          <label>*:</label> <br />
-          Mandatory field
+          <br />
+          <br />
         </p>
       </td>
       </tr>
     </table>
-    <div id="newGatewayDiv" style="display:none ; overflow:scroll ;" class="newgwclass">
-      <h3>Create New Gateway</h3>
+    <div id="newGatewayDiv" style="display:none ; overflow:scroll ; padding:30px ;" class="newgwclass">
+      <h3>Register Your Gateway</h3>
       <form id="newGatewayForm" class="fullw"><table class="fullw">
-        <tr><td class="shrink"><label>Name</label></td> <td class="expand"><input type="text" name="name" class="fancy fullw"/></td> </tr>
-        <tr><td class="shrink"><label>Party ID</label></td> <td><input type="text" name="partyID" class="fancy fullw"/></td></tr>
+        <tr><td class="shrink"><label>Name<sup>*</sup></label></td> <td class="expand"><input type="text" name="name" class="fancy fullw"/></td> </tr>
+        <tr><td class="shrink"><label>Party ID<sup>*</sup></label></td> <td><input type="text" name="partyID" class="fancy fullw"/></td></tr>
         <tr><td class="shrink"><label>MSH Address<sup>*</sup></label></td> <td><input type="text" name="mshAddress" class="fancy fullw"/></td></tr>
         <tr><td class="shrink"><label>Backend Address</label></td> <td><input type="text" name="backendAddress" class="fancy fullw"/></td></tr>
       </table>
       </form> <br />
       <table width="100%"><tr><td align="right">
-
         <button class="fancyOpposite" onclick="doCancel(event)">\u2718 Cancel</button></td> <td align="left">
         <button class="fancy" onclick='doCreateNew("@controllers.routes.Application.newGateway")'>\u2713 Save</button></td>
       </tr>

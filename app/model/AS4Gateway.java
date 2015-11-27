@@ -10,6 +10,7 @@ public class AS4Gateway {
   public String partyID;
   public String backendAddress;
   public String mshAddress;
+  public boolean approved = false;
   /**
    * TRUE: just forward messages to this gateway when you receive
    * FALSE: send messages to minder
@@ -31,6 +32,7 @@ public class AS4Gateway {
 
   /**
    * Return backend address if it is valid, otherwise, return the address (default)
+   *
    * @return
    */
   public String getBackendAddress() {

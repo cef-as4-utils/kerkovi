@@ -1,0 +1,7 @@
+------=_Part_10_633019922.1448357462574
+Content-Transfer-Encoding: 8bit
+Content-ID: bb32004c-c697-4309-89c5-c0ac54ccf006
+Content-Type: application/soap+xml; charset=UTF-8
+
+<?xml version="1.0" encoding="utf-8"?><soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope"><soapenv:Header><ns2:Messaging xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" soapenv:mustUnderstand="true"><ns2:SignalMessage><ns2:MessageInfo><ns2:Timestamp>2015-11-24T09:32:17.510Z</ns2:Timestamp><ns2:MessageId>e44584d2-1bc6-469d-aa34-0c047fddc25c@1448357537509</ns2:MessageId><ns2:RefToMessageId>14d65e91-8702-4144-9e71-25fff0835bcb@1447276264883</ns2:RefToMessageId></ns2:MessageInfo><ns2:Error category="Processing" errorCode="EBMS:0102" origin="security" severity="failure" shortDescription="DecryptionFailed"><ns2:Description xml:lang="en">Error while decrypting message.</ns2:Description><ns2:ErrorDetail>Error while decrypting message.</ns2:ErrorDetail></ns2:Error></ns2:SignalMessage></ns2:Messaging></soapenv:Header><soapenv:Body><soapenv:Fault xmlns:axis2ns48="http://www.w3.org/2003/05/soap-envelope"><soapenv:Code><soapenv:Value>axis2ns48:EBMSInternalError</soapenv:Value></soapenv:Code><soapenv:Reason><soapenv:Text xml:lang="en">Error while decrypting message.</soapenv:Text></soapenv:Reason><soapenv:Detail><DetailError>InvalidAlgorithmParameterException: Wrong parameter type: GCM expected</DetailError></soapenv:Detail></soapenv:Fault></soapenv:Body></soapenv:Envelope>
+------=_Part_10_633019922.1448357462574--

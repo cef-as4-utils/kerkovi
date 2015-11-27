@@ -5,6 +5,7 @@
     backendAddress: 'https://5.153.46.53:29002/AS4'
     mshAddress: 'https://5.153.46.53:29002/AS4'
     proxyMode: true
+    approved: true
 - !!model.AS4Gateway
     id: 2
     name: IBM B2B
@@ -12,6 +13,7 @@
     backendAddress: 'https://5.153.46.51:29002/AS4'
     mshAddress: 'https://5.153.46.51:29002/AS4'
     proxyMode: true
+    approved: true
 - !!model.AS4Gateway
     id: 3
     name: Domibus 3
@@ -19,6 +21,7 @@
     backendAddress: 'http://localhost:30001/domibus/services/msh'
     mshAddress: 'http://localhost:30001/domibus/services/msh'
     proxyMode: false
+    approved: true
 - !!model.AS4Gateway
     id: 4
     name: Domibus 3
@@ -26,6 +29,7 @@
     backendAddress: 'http://localhost:40001/domibus/services/msh'
     mshAddress: 'http://localhost:40001/domibus/services/msh'
     proxyMode: false
+    approved: true
 - !!model.AS4Gateway
     id: 5
     name: Flame
@@ -33,6 +37,7 @@
     backendAddress: ''
     mshAddress: 'http://fmstest.flame.co.za:8080/AS4-C2'
     proxyMode: true
+    approved: true
 - !!model.AS4Gateway
     id: 6
     name: Flame
@@ -40,6 +45,7 @@
     backendAddress: ''
     mshAddress: 'http://fmstest.flame.co.za:8080/AS4-C3'
     proxyMode: true
+    approved: true
 - !!model.AS4Gateway
     id: 7
     name: Holodeck
@@ -47,6 +53,7 @@
     backendAddress: ''
     mshAddress: 'http://holodeck.eu:8080/as4endpoint'
     proxyMode: true
+    approved: true
 - !!model.AS4Gateway
     id: 8
     name: Holodeck
@@ -54,4 +61,5 @@
     backendAddress: ''
     mshAddress: 'http://holodeck.eu:8080/as4endpoint'
     proxyMode: true
+    approved: true
 

@@ -34,6 +34,7 @@ public class Global extends GlobalSettings {
     Logger.debug("Starting");
 
     disableSslVerification();
+    LogDB.readDb();
 
     try {
       new Thread() {

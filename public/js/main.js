@@ -268,6 +268,10 @@ function createInput(json) {
 }
 
 function createNew() {
+
+  var vnt = $(window.event);
+  vnt.stop();
+
   if (editorBusy)
     return;
 
@@ -281,6 +285,10 @@ function createNew() {
 }
 
 function doCreateNew(theUrl) {
+
+  var vnt = $(window.event);
+  vnt.stop();
+
   if (editorBusy)
     return;
   event.stopPropagation()
@@ -295,13 +303,12 @@ function doCreateNew(theUrl) {
     data: frm.serialize()
   }).
   done(function (data) {
-    triggerMainMenuItem("settings")
+    alert(data)
+    dv.hide()
   }).
   fail(function (data) {
     showError(data.responseText)
-    triggerMainMenuItem("settings")
   })
-  dv.hide()
 }
 
 function doCancel(event) {

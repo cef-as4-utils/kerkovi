@@ -15,6 +15,7 @@ import scala.collection.mutable.Stack
   */
 object Databeyz {
 
+
   val yaml: Yaml = new Yaml(new CustomClassLoaderConstructor(Play.classloader(Play.current)));
   val currentDir: File = new File(".")
 
@@ -115,6 +116,17 @@ object Databeyz {
     }
 
     return max;
+  }
+
+
+
+  def approve(id: Int) = {
+    for (gw <- all) {
+      if (id == gw.id) {
+        gw.approved=true;
+        persist
+      }
+    }
   }
 
   def get(id: Int) = {

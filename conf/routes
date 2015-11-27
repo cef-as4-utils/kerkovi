@@ -18,6 +18,15 @@ POST        /newGateway                         controllers.Application.newGatew
 GET         /deleteGateway                      controllers.Application.deleteGateway(id: Int)
 GET         /undoDelete                         controllers.Application.undoDelete()
 GET         /logFeed                            controllers.Application.logFeed()
+GET         /approve                            controllers.Application.approve(id: Int)
+GET         /approvePage                        controllers.Application.approvePage()
+GET         /prevLogPage                        controllers.Application.prevLogPage(currentPage: Int)
+GET         /nextLogPage                        controllers.Application.nextLogPage(currentPage: Int)
+
+GET         /showAS4Message                     controllers.Application.showAS4Message(time: Long)
+GET         /showReply                          controllers.Application.showReply(time: Long)
+GET         /showException                      controllers.Application.showException(time: Long)
+
 
 # Map the JS resource paths
 GET         /*file                              controllers.Assets.versioned(path="/public", file: Asset)

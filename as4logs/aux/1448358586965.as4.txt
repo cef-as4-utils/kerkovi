@@ -1,0 +1,29 @@
+<env:Envelope xmlns:env="http://www.w3.org/2003/05/soap-envelope"><env:Header><ns2:Messaging xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/" xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope" soapenv:mustUnderstand="true">
+    <ns2:UserMessage>
+        <ns2:MessageInfo>
+            <ns2:Timestamp>2015-11-24T09:49:46.948Z</ns2:Timestamp>
+            <ns2:MessageId>1b27d44f-cbc4-4281-b315-bc5b46078c56@backend</ns2:MessageId>
+        </ns2:MessageInfo>
+        <ns2:PartyInfo>
+            <ns2:From>
+                <ns2:PartyId>backend</ns2:PartyId>
+                <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
+            </ns2:From>
+            <ns2:To>
+                <ns2:PartyId>minder</ns2:PartyId>
+                <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
+            </ns2:To>
+        </ns2:PartyInfo>
+        <ns2:CollaborationInfo>
+            <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
+            <ns2:Action>SubmitResponse</ns2:Action>
+            <ns2:ConversationId>1</ns2:ConversationId>
+        </ns2:CollaborationInfo>
+        <ns2:MessageProperties>
+            <ns2:Property name="MessageId">56cb0fde-711a-42a5-ba22-09faa2f1a423</ns2:Property>
+        </ns2:MessageProperties>
+        <ns2:PayloadInfo>
+            
+        </ns2:PayloadInfo>
+    </ns2:UserMessage>
+</ns2:Messaging></env:Header><env:Body/></env:Envelope>

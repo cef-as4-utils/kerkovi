@@ -1,21 +1,44 @@
+@(currentPage: Int = 0)
+
 <div class="levha">
 
   <script>
-    $ ( function ( ) {
-      var logfeed = $( "#logfeed" )[0];
-      var logpre = $("#logpre")
-      //new EventSource ( '/logFeed' ).onmessage = function ( event ) {
-     //   var newd  = event.data
-     //   logpre[0].textContent += "\n" + newd;
-     //   logdiv.scrollTop(logdiv.prop("scrollHeight"));
-      //}
-    });
-</script>
+
+      function prevPage(page){
+        var vnt = $(window.event);
+        vnt.stop();
+
+        $.ajax({
+          type: 'GET',
+          url: '/prevLogPage?currentPage=' + page,
+        }).
+        done(function (data) {
+          $("#haburdanOyOy").html(data)
+        }).
+        fail(function (data) {
+          showError(data.responseText)
+        })
+      }
+      function nextPage(page){
+        var vnt = $(window.event);
+        vnt.stop();
+
+        $.ajax({
+          type: 'GET',
+          url: '/nextLogPage?currentPage=' + page,
+        }).
+        done(function (data) {
+          $("#haburdanOyOy").html(data)
+        }).
+        fail(function (data) {
+          showError(data.responseText)
+        })
+      }
+  </script>
 
   <h3>Logs</h3>
 
-  <div style="overflow: scroll ; max-height:800px ;" id="logfeed">
-    <pre id="logpre">
-    </pre>
+  <div id="haburdanOyOy">
+  @logTableView(currentPage)
   </div>
 </div>

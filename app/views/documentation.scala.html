@@ -10,11 +10,11 @@
     The backend adapters are capable of sending AS4 messages as backend submission messages to the AS4 gateways. They can also receive <i>delivery</i>
     , <i>submission result</i> and <i>notification</i> messages.
 </p>
-  <p>For the PMODES of the backends, please click <strong><a href="#" onclick='triggerMainMenuItem("pmodes")'>here</a> </strong></p>
+  <p>For the PModes of the backends, please click <strong><a href="#" onclick='triggerMainMenuItem("pmodes")'>here</a> </strong></p>
 
   <p>
-  Kerkovi is responsible of tracking the addresses of the gateways with respect to the party ID's
-    and perform forwarding of messages with respect to the addresses it resolves from the party ID's.
+  Kerkovi is responsible of tracking the addresses of the gateways with respect to the party IDs
+    and perform forwarding of messages with respect to the addresses it resolves from the party IDs.
   </p>
 
   <h2>Sample Workflow</h2>
@@ -29,37 +29,39 @@
     <li >C2: Sending MSH, which sends messages to Corner 3 (C3).</li>
 
     <li>C3: Receiving MSH, which receives messages and sends back
-      receipts (i.e. in a ONE_WAY mep scenario).</li>
+      receipts (i.e. in a ONE_WAY MEP scenario).</li>
   </ol>
 
-  <h2>Sequence</h2>
+  <h3>Sequence</h3>
 
-  <ol>
-    <li ><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to SMSH</li>
+  <ol style="list-style-type: none;">
+    <li><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to C2</li>
 
-    <li ><b>Step 2 -</b> Producer receives a callback receipt from C2
+    <li><b>Step 2 -</b> Producer receives a callback receipt from C2
       containing details of the producer message - the receipt back to Producer is
       optional and may just be an HTTP Response 20x</li>
 
-    <li ><b>Step 3 -</b> Send: C2 constructs a message based on
+    <li><b>Step 3 -</b> Send: C2 constructs a message based on
       message received from Producer and sends this to C3</li>
 
-    <li ><b>Step 4 -</b> <i>SubmitResponse</i>: C2 constructs a
+    <li><b>Step 4 -</b> <i>SubmitResponse</i>: C2 constructs a
       message containing the refToMessageId of the step 1 messageId, as well as the
       messageId used in the message from C2 to C3</li>
 
-    <li ><b>Step 5 -</b> C2 receives a receipt (or error) signal from
+    <li><b>Step 5 -</b> C2 receives a receipt (or error) signal from
       C3 containing details of the C2 message</li>
 
-    <li ><b>Step 6 -</b> <i>Notify</i>: C2 constructs message
+    <li><b>Step 6 -</b> <i>Notify</i>: C2 constructs message
       detailing the result of the message from C2 to C3 and sends this to the
       producer</li>
 
-    <li ><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based
-      on the message it received, and delivers it to C4.</li>
+  <li><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based
+    on the message it received, and delivers it to C4.</li>
   </ol>
-  <p >The <i>SubmitResponse</i> message from C2 to C3 should then
+
+  <p>The <i>SubmitResponse</i> message from C2 to C3 should then
     include the Step 3 C2 to C3 messageId as a message property.</p>
+
 
   <h2>Adapters</h2>
   <p>
@@ -73,7 +75,7 @@
   <h3>Backend Adapters</h3>
 
   <p>
-    We have two backend adapters (i.e. corner1 and corner4). They send messages to and receive messages from the AS4 gateways as described in the PMODE documentation.
+    We have two backend adapters (i.e. corner1 and corner4). They send messages to and receive messages from the AS4 gateways as described in the PMode documentation.
     A generic AS4 backend sends a <i>Submit</i>
   </p>
   <h4>Corner 1 (generic AS4 backend) </h4>
@@ -112,7 +114,8 @@
   <p>We did not provide any information about the receipts as they are optional. If you want to respond with receipts,
     please refer to the <a target="_blank"
   href="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html">AS4 specification</a></p>
-  <h3>Sample Submission (from the minder to the sender backend)</h3>
+
+  <h3>Sample Submission (from Minder to the sender backend)</h3>
   @sampleCode("samplesubmission.xml", 1000, 600)
 
   <br />
@@ -135,5 +138,11 @@
 
   <h3>Sample AS4 Message (between corner 2 and corner 3)</h3>
   @sampleCode("sampleas4message.xml", 1000, 600)
+
+
+  <h3>Sample AS4 Receipt (between corner 3 and corner 2) </h3>
+
+  @sampleCode("sampleC3C2Receipt.xml", 1000, 650)
+
 
 </div>

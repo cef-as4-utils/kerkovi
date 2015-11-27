@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soapenv:Envelope xmlns:soapenv="http://www.w3.org/2003/05/soap-envelope">
+  <soapenv:Header>
+    <ns2:Messaging xmlns:ns2="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/"
+                   xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                   soapenv:mustUnderstand="true" wsu:Id="soapheader-1">
+      <ns2:UserMessage>
+        <ns2:MessageInfo>
+          <ns2:Timestamp>2015-11-11T21:11:04.886Z</ns2:Timestamp>
+          <ns2:MessageId>14d65e91-8702-4144-9e71-25fff0835bcb@1447276264883</ns2:MessageId>
+        </ns2:MessageInfo>
+        <ns2:PartyInfo>
+          <ns2:From>
+            <ns2:PartyId type="http://www.domibus.eu/exampleType">IBMgw</ns2:PartyId>
+            <ns2:Role>Initiator - Producer</ns2:Role>
+          </ns2:From>
+          <ns2:To>
+            <ns2:PartyId type="http://www.domibus.eu/exampleType">IBMgw2</ns2:PartyId>
+            <ns2:Role>Responder - Consumer</ns2:Role>
+          </ns2:To>
+        </ns2:PartyInfo>
+        <ns2:CollaborationInfo>
+          <ns2:Service>bdx:noprocess</ns2:Service>
+          <ns2:Action>TC1Leg1</ns2:Action>
+          <ns2:ConversationId>6088f067-d05e-4510-9264-179e903a9f8e</ns2:ConversationId>
+        </ns2:CollaborationInfo>
+        <ns2:MessageProperties>
+          <ns2:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</ns2:Property>
+          <ns2:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</ns2:Property>
+        </ns2:MessageProperties>
+        <ns2:PayloadInfo>
+          <ns2:PartInfo href="cid:f347a9c2-01d2-4f2a-9dca-edb1b6b7c177">
+            <ns2:PartProperties>
+              <ns2:Property name="MimeType">application/xml</ns2:Property>
+              <ns2:Property name="filename">OriginalFileName</ns2:Property>
+              <ns2:Property name="CompressionType">application/gzip</ns2:Property>
+            </ns2:PartProperties>
+          </ns2:PartInfo>
+        </ns2:PayloadInfo>
+      </ns2:UserMessage>
+    </ns2:Messaging>
+  </soapenv:Header>
+  <soapenv:Body xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                wsu:Id="soapbody"/>
+</soapenv:Envelope>

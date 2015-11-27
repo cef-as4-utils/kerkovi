@@ -1,18 +1,21 @@
 package utils
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{FileInputStream, ByteArrayInputStream, ByteArrayOutputStream}
 import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
+import javax.xml.namespace.{QName, NamespaceContext}
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.soap.{AttachmentPart, MimeHeaders, SOAPMessage}
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.{StreamResult, StreamSource}
+import javax.xml.xpath.XPathConstants._
+import javax.xml.xpath._
 
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.SAAJUtil
 import minder.as4Utils.SWA12Util._
-import org.w3c.dom.{Element, Node}
+import org.w3c.dom.{Document, Element, Node}
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc.{Controller, RawBuffer, Result}
 import play.api.{Logger, mvc}
@@ -22,20 +25,20 @@ import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
 /**
- * Author: yerlibilgin
- * Date:   28/10/15.
- */
+  * Author: yerlibilgin
+  * Date:   28/10/15.
+  */
 /**
- * Utility class
- */
+  * Utility class
+  */
 object Util extends Controller {
 
   /**
-   * See
-   * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html#__RefHeading__26454_1909778835
-   * @param soapMessage
-   * @return
-   */
+    * See
+    * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html#__RefHeading__26454_1909778835
+    * @param soapMessage
+    * @return
+    */
   def sendSuccessResponse(soapMessage: SOAPMessage) = {
     val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
     val stylesource = new StreamSource(this.getClass.getResourceAsStream("/receipt-generator.xslt"));
@@ -51,12 +54,12 @@ object Util extends Controller {
 
 
   /**
-   * Create a fault message based on the infro provided
-   * and return it
-   * @param soapMessage
-   * @param faultMessage
-   * @return
-   */
+    * Create a fault message based on the infro provided
+    * and return it
+    * @param soapMessage
+    * @param faultMessage
+    * @return
+    */
   def sendFault(soapMessage: SOAPMessage, faultMessage: String): Result = {
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/fault-template.xml")).mkString
 
@@ -137,15 +140,15 @@ object Util extends Controller {
 
 
   /**
-   * Return the text content of an org.w3c.dom.Element obj.
-   * saves us from creating a temporary variable
-   */
+    * Return the text content of an org.w3c.dom.Element obj.
+    * saves us from creating a temporary variable
+    */
   def getElementText(element: Element) = element.getTextContent
 
   /**
-   * @param request
-   * @return
-   */
+    * @param request
+    * @return
+    */
   def extractSOAPMessageFromRequest(request: mvc.Request[RawBuffer]): SOAPMessage = {
     try {
       val stream = request.body
@@ -155,8 +158,8 @@ object Util extends Controller {
 
       val soapMessage = createMessage(headers, new ByteArrayInputStream(bytes))
 
-     // Logger.debug("SOAP Message")
-     Logger.debug(prettyPrint(soapMessage.getSOAPHeader()));
+      // Logger.debug("SOAP Message")
+      Logger.debug(prettyPrint(soapMessage.getSOAPHeader()));
       soapMessage;
     } catch {
       case th: RuntimeException => {
@@ -170,11 +173,11 @@ object Util extends Controller {
 
 
   /**
-   * The conversion procedure goes here
-   *
-   * @param submissionData
-   * @return
-   */
+    * The conversion procedure goes here
+    *
+    * @param submissionData
+    * @return
+    */
   def convert2Soap(submissionData: SubmissionData, from: String, to: String, action: String,
                    targetService: String, targetAction: String): SOAPMessage = {
     Logger.debug("Convert submission data to SOAP Message")
@@ -240,18 +243,18 @@ object Util extends Controller {
   }
 
   /**
-   * <table><tr><th>Property name	</th><th>     Required?</th></tr>
-   * <tr><td>MessageId	    </td><td>     M (should be Y)</td></tr>
-   * <tr><td>ConversationId	</td><td>   Y</td></tr>
-   * <tr><td>RefToMessageId	</td><td>   N</td></tr>
-   * <tr><td>ToPartyId	    </td><td>     Y</td></tr>
-   * <tr><td>ToPartyRole	  </td><td>     Y</td></tr>
-   * <tr><td>Service	      </td><td>     Y</td></tr>
-   * <tr><td>ServiceType	  </td><td>     N // not used</td></tr>
-   * <tr><td>Action	        </td><td>   Y</td></tr>
-   * <tr><td>originalSender	</td><td>   Y</td></tr>
-   * <tr><td>finalRecipient	</td><td>   Y</td></tr></table>
-   */
+    * <table><tr><th>Property name	</th><th>     Required?</th></tr>
+    * <tr><td>MessageId	    </td><td>     M (should be Y)</td></tr>
+    * <tr><td>ConversationId	</td><td>   Y</td></tr>
+    * <tr><td>RefToMessageId	</td><td>   N</td></tr>
+    * <tr><td>ToPartyId	    </td><td>     Y</td></tr>
+    * <tr><td>ToPartyRole	  </td><td>     Y</td></tr>
+    * <tr><td>Service	      </td><td>     Y</td></tr>
+    * <tr><td>ServiceType	  </td><td>     N // not used</td></tr>
+    * <tr><td>Action	        </td><td>   Y</td></tr>
+    * <tr><td>originalSender	</td><td>   Y</td></tr>
+    * <tr><td>finalRecipient	</td><td>   Y</td></tr></table>
+    */
   def generateMessageProperties(submissionData: SubmissionData, targetService: String, targetAction: String): String = {
     val propertiesBuilder = new StringBuilder
     if (submissionData.messageId != null) {
@@ -302,18 +305,18 @@ object Util extends Controller {
   }
 
   /**
-   * <table><tr><th>Property name	     </th><th>Required?</th></tr>
-   * <tr><td>MessageId	         </td><td>N</td></tr>
-   * <tr><td>ConversationId	   </td><td>Y</td></tr>
-   * <tr><td>RefToMessageId	   </td><td>N</td></tr>
-   * <tr><td>ToPartyId	         </td><td>Y</td></tr>
-   * <tr><td>ToPartyRole	       </td><td>Y</td></tr>
-   * <tr><td>Service	           </td><td>Y</td></tr>
-   * <tr><td>ServiceType	       </td><td>N // not used</td></tr>
-   * <tr><td>Action	           </td><td>Y</td></tr>
-   * <tr><td>originalSender	   </td><td>Y</td></tr>
-   * <tr><td>finalRecipient	   </td><td>Y</td></tr></table>
-   */
+    * <table><tr><th>Property name	     </th><th>Required?</th></tr>
+    * <tr><td>MessageId	         </td><td>N</td></tr>
+    * <tr><td>ConversationId	   </td><td>Y</td></tr>
+    * <tr><td>RefToMessageId	   </td><td>N</td></tr>
+    * <tr><td>ToPartyId	         </td><td>Y</td></tr>
+    * <tr><td>ToPartyRole	       </td><td>Y</td></tr>
+    * <tr><td>Service	           </td><td>Y</td></tr>
+    * <tr><td>ServiceType	       </td><td>N // not used</td></tr>
+    * <tr><td>Action	           </td><td>Y</td></tr>
+    * <tr><td>originalSender	   </td><td>Y</td></tr>
+    * <tr><td>finalRecipient	   </td><td>Y</td></tr></table>
+    */
   def convert2SubmissionData(message: SOAPMessage): ExtendedSubmissionData = {
     Logger.debug("Convert message to submission data")
     Logger.debug(prettyPrint(message.getSOAPPart))
@@ -403,13 +406,13 @@ object Util extends Controller {
 
   def generateMessageProperties(messageNotification: MessageNotification) = {
     /**
-     * Property name	Required?
+      * Property name	Required?
        RefToMessageId	  Y
        SignalType	      Y
        ErrorCode	      N
        ShortDescription	N
        Description	    N
-     */
+      */
     val propertiesBuilder = new StringBuilder
     propertiesBuilder.append("<ns2:Property name=\"RefToMessageId\">" + messageNotification.messageId + "</ns2:Property>")
     propertiesBuilder.append("<ns2:Property name=\"SignalType\">" + messageNotification.status.name() + "</ns2:Property>")
@@ -430,13 +433,13 @@ object Util extends Controller {
 
   def convert2Soap(result: SubmissionResult, from: String, to: String, action: String): SOAPMessage = {
     /**
-     * Property name	Required?
+      * Property name	Required?
        RefToMessageId	  Y
        SignalType	      Y
        Error Code	      N
        ShortDescription	N
        Description	    N
-     */
+      */
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
 
     val keyTimeStamp = "${timeStamp}"
@@ -479,13 +482,13 @@ object Util extends Controller {
 
   def convert2Soap(messageNotification: MessageNotification, from: String, to: String, action: String): SOAPMessage = {
     /**
-     * Property name	Required?
+      * Property name	Required?
        RefToMessageId	  Y
        SignalType	      Y
        Error Code	      N
        ShortDescription	N
        Description	    N
-     */
+      */
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
 
     val keyTimeStamp = "${timeStamp}"
@@ -522,4 +525,34 @@ object Util extends Controller {
 
     return message
   }
+
+
+  def readFile(fileName: String): Array[Byte] = {
+    val fis = new FileInputStream(fileName)
+    val all = new Array[Byte](fis.available())
+    fis.read(all, 0, all.length)
+    all
+  }
+
+  val xpath: XPath = {
+    val xPath: XPath = XPathFactory.newInstance.newXPath
+    xPath.setNamespaceContext(new AnyNamespaceContext)
+    xPath
+  }
+
+  def evaluateXpath(expression: String, document: Node): Node = {
+    return evaluateXpath(expression, document, XPathConstants.NODE).asInstanceOf[Node]
+  }
+
+  def evaluateXpath(expression: String, document: Node, qname: QName): AnyRef = {
+    xpath.evaluate(expression, document, qname)
+  }
+}
+
+class AnyNamespaceContext extends NamespaceContext {
+  override def getNamespaceURI(prefix: String) = "*"
+
+  override def getPrefix(namespace: String) = null
+
+  override def getPrefixes(namespace: String) = null
 }
