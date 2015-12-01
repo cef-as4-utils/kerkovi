@@ -1,3 +1,4 @@
+@(target: String = "main")
 <!doctype html>
 <html lang="en">
   <head>
@@ -22,7 +23,7 @@
     <script>
     $(function(){
       initializeMainMenu($("#mainView"), $("ul.menu li > a"))
-      triggerMainMenuItem("main")
+      triggerMainMenuItem("@{target}")
     });
   </script>
   </head>
@@ -32,10 +33,10 @@
         <td>
           <table><tr class="titleFirstRow">
             <td style="width:1% ;">
-              <img src="img/zebra-small.png"
+              <img src="@routes.Assets.versioned("img/zebra-small.png")"
               height="70px"
               about="http://www.wpclipart.com" alt="Zebra"/>
-              <div class="kerkovi" style="display: inline ;"><b>Kerkovi</b> <sup style="font-size:small ; color:#2A00FF">v1.0</sup> <br/></div>
+              <div class="kerkovi" style="display: inline ;" id="top"><b>Kerkovi</b> <sup style="font-size:small ; color:#2A00FF">v1.0</sup> <br/></div>
             </td> <td align="right" style="width:99% ; vertical-align: bottom">&nbsp;
             <div style="font-size: small ;">
             @{
@@ -83,11 +84,6 @@
                 Backend PModes
             </a>
             </li>
-            <li><a href="#" page="@routes.Assets.versioned("pmodes2.htm")" id="pmodes2">
-                <!--<img src="      @routes.Assets.versioned("img/Rs 232 Male-64.png")" height="20" alt="Adapters"/> -->
-                C2-C3 PModes
-            </a>
-            </li>
             <li><a href="#" page="@routes.Application.kerkovi()" id="kerkovi" class="kerkovi">What is kerkovi?</a></li>
           </ul>
           <div id="mainView">
@@ -98,13 +94,14 @@
       </tr>
     </table>
 
+    <div align="center" style="position: fixed;top:95vh;left:0;width:100vw;height:15px;"><a style="font-size: xx-large;" href="#top" title="To the top">\u21e7\u21e7</a></div>
+
     <div id="errorDialog" class="errorDialog" title="Error">
       <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="padding:3px ;">
         <tr><th style="height:30px ;" align="left"><span>&nbsp;Error</span></th> <td align="right"><button class="bigcancel" onclick='disposeError()'>\u2718</button></td></tr>
         <tr>
           <td colspan="2">
             <div id="errorDialogContent" class="errorDialogContent">
-
             </div>
           </td>
         </tr>

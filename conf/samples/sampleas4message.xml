@@ -21,12 +21,12 @@ Content-ID: <root.message@cxf.apache.org>
             </eb:MessageInfo>
             <eb:PartyInfo>
                 <eb:From>
-                    <eb:PartyId>holodeckb2b</eb:PartyId>
+                    <eb:PartyId>holodeck</eb:PartyId>
                     <eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</eb:Role>
                 </eb:From>
                 <eb:To>
-                    <eb:PartyId type="http://www.domibus.eu/exampleType">domibusDe2</eb:PartyId>
-                    <eb:Role>GW</eb:Role>
+                    <eb:PartyId type="http://www.domibus.eu/exampleType">holodeck2</eb:PartyId>
+                    <eb:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb:Role>
                 </eb:To>
             </eb:PartyInfo>
             <eb:CollaborationInfo>

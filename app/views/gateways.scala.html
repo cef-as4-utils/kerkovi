@@ -25,8 +25,8 @@
     <table class="zebra">
       <tr>
         <th class="darkcolor">Name</th>
-        <th class="darkcolor">Party ID</th> <th>MSH Address<sup>1</sup></th> <th>Backend Address<sup>2</sup></th>
-        <th class=" darkcolor">Direct Mode<sup>3</sup></th>
+        <th class="darkcolor">Party ID</th> <th>Address<sup>1</sup></th> <!--<th>Backend Address<sup>2</sup>--> </th>
+        <th class=" darkcolor">Direct Mode<sup>2</sup></th>
       </tr>
       @for( gateway <- Application.registeredGateways()) {
         @if(gateway.approved) {
@@ -46,11 +46,14 @@
               <div class="editable" type="text" binding="@controllers.routes.Application.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
             </td>
 
-            <td>
-              <div class="editable" type="text"
-              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "backendAddress")"
-              >@gateway.backendAddress</div>
-            </td>
+            @{/*
+                <td>
+                  <div class="editable" type="text"
+                  binding="@controllers.routes.Application.gatewayMvc(gateway.id, " backendAddress ")">
+              @gateway.backendAddress
+              </div>
+              </td>
+            */}
             <td align="center">
               <div class="editable" type="text"
               binding="@controllers.routes.Application.gatewayMvc(gateway.id, "proxyMode")"

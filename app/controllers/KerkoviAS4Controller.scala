@@ -1,6 +1,6 @@
 package controllers
 
-import java.io.{ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{FileOutputStream, ByteArrayInputStream, ByteArrayOutputStream}
 import java.net.URL
 import java.util
 import javax.xml.soap.{MimeHeader, SOAPMessage}
@@ -71,17 +71,17 @@ object KerkoviAS4Controller extends Controller {
 
         logItem.setReply(reply)
 
-        //var bytes = SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage);
-        //var fileOutputStream = new FileOutputStream("david.txt");
-        //fileOutputStream.write(bytes);
-        //fileOutputStream.close();
+//        var bytes = SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage);
+//        var fileOutputStream = new FileOutputStream("domibus-c2-message.txt");
+//        fileOutputStream.write(bytes);
+//        fileOutputStream.close();
 
         Logger.info("Reply received")
         Logger.debug(SWA12Util.prettyPrint(reply.getSOAPPart));
-        //bytes = SWA12Util.serializeSOAPMessage(reply.getMimeHeaders, reply);
-        //fileOutputStream = new FileOutputStream("reply.txt");
-        //fileOutputStream.write(bytes);
-        //fileOutputStream.close();
+//        bytes = SWA12Util.serializeSOAPMessage(reply.getMimeHeaders, reply);
+//        fileOutputStream = new FileOutputStream("domibus-c3-reply.txt");
+//        fileOutputStream.write(bytes);
+//        fileOutputStream.close();
 
         logItem.success = true;
         try {

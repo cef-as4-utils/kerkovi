@@ -24,3 +24,5 @@ release
 sampleas4message.xml
 samplesubmission.xml
 *.7z
+
+.idea/modules/as4ManagementConsole-build.iml

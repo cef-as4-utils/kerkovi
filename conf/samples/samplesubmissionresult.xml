@@ -9,7 +9,7 @@
         </ns2:MessageInfo>
         <ns2:PartyInfo>
           <ns2:From>
-            <ns2:PartyId>holodeckb2b</ns2:PartyId>
+            <ns2:PartyId>holodeck</ns2:PartyId>
             <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
           </ns2:From>
           <ns2:To>

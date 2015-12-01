@@ -1,148 +1,332 @@
+@(interceptorAddresss: String = "https://193.140.74.199:15000/as4Interceptor",
+    interceptorAddress: String = "http://193.140.74.199:15001/as4Interceptor")
+
 <div class="levha">
-  <h2>Overview</h2>
+  <h2>Table of Contents</h2>
 
   <p>
-  Kerkovi is the e-SENS generic AS4 Conformance & Interoperability bridge that achieves connectivity between the testing system (<b>Minder Testbed</b>
-    ) and the AS4 compliant gateways.
-</p>
-  <p>
-  Kerkovi consists of three adapters (two national backend simulators and an AS4 interceptor).
-    The backend adapters are capable of sending AS4 messages as backend submission messages to the AS4 gateways. They can also receive <i>delivery</i>
-    , <i>submission result</i> and <i>notification</i> messages.
-</p>
-  <p>For the PModes of the backends, please click <strong><a href="#" onclick='triggerMainMenuItem("pmodes")'>here</a> </strong></p>
-
-  <p>
-  Kerkovi is responsible of tracking the addresses of the gateways with respect to the party IDs
-    and perform forwarding of messages with respect to the addresses it resolves from the party IDs.
+    <a href="#overview">Overview</a><br />
+    <a href="#sampleWorkflow">Sample Workflow</a><br />
+    <a href="#gwia">Gateway C2-C3 PModes</a><br />
+      &nbsp;&nbsp; &nbsp;<a href="#partyIdAddresses">Party ID -- Address Mapping</a><br />
+      &nbsp; &nbsp; <a href="#pmodeProfiles">PMode Profiles and Service-Action Mappings</a><br />
+      &nbsp; &nbsp; <a href="#payloadProfiles">Payload Profiles</a><br />
+      &nbsp; &nbsp; <a href="#keystores">Keystores and Certificates</a><br />
+    <a href="#adapters">Adapters</a><br />
+      &nbsp;&nbsp; <a href="#backendAdapters">Backend Adapters</a><br />
+      &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;<a href="#backendCorner1">Corner1</a><br />
+      &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="#backendCorner1Address">Endpoint Address</a><br />
+      &nbsp;&nbsp; &nbsp; &nbsp; &nbsp;<a href="#backendCorner4">Corner4</a><br />
+      &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <a href="#backendCorner4Address">Endpoint Address</a><br />
+      &nbsp;&nbsp; <a href="#interceptor">AS4 Interceptor</a><br />
+      &nbsp; &nbsp; &nbsp; &nbsp; <a href="#interceptorAddress">Endpoint Address</a><br />
+    <a href="#samples">Sample Messages</a><br />
+      &nbsp;&nbsp; &nbsp;&nbsp;<a href="#sample1">Sample Submission (from Minder to the sender backend)</a><br />
+      &nbsp;&nbsp; &nbsp;&nbsp;<a href="#sample2">Sample Submission Result (from the backend to Minder)</a><br />
+      &nbsp;&nbsp; &nbsp;&nbsp;<a href="#sample3">Sample Notification Message (from the backend to Minder)</a><br />
+      &nbsp;&nbsp; &nbsp;&nbsp;<a href="#sample4">Sample AS4 Message (between corner 2 and corner 3)</a><br />
+      &nbsp;&nbsp; &nbsp;&nbsp;<a href="#sample5">Sample AS4 Receipt (between corner 3 and corner 2)</a><br />
+      &nbsp;&nbsp; &nbsp;&nbsp;<a href="#sample6">Sample Delivery (between from the backend to Minder)</a><br />
+    <a href="#checklist">Checklist</a>
   </p>
 
-  <h2>Sample Workflow</h2>
-  <p >A sample message flow that includes the
-    journey of a message from Corner1 to Corner 4 has been given below.</p>
+  <p>&nbsp;</p>
+
+  <hr />
+  <h2 id="overview">Overview</h2>
+
+  <p>
+    Kerkovi is the e-SENS generic AS4 Conformance &amp; Interoperability bridge that achieves connectivity between the testing system (<b>
+    Minder Testbed</b> ) and the AS4 compliant gateways.</p>
+
+  <p>
+    Kerkovi consists of three adapters (two national backend simulators and an AS4 interceptor). The backend adapters are capable of sending AS4 messages as backend submission messages to the AS4 gateways. They can also receive <i>
+    delivery</i> , <i>submission result</i> and <i>notification</i> messages.</p>
+
+  <p>For the PModes of the backends, please click <strong><a href="#" onclick='triggerMainMenuItem("pmodes")'>
+    here</a> </strong></p>
+
+  <p>
+    Kerkovi is responsible of tracking the addresses of the gateways with respect to the party IDs and perform forwarding of messages with respect to the addresses it resolves from the party IDs.</p>
+
+  <h2 id="sampleWorkflow">Sample Workflow</h2>
+
+  <p>A sample message flow that includes the journey of a message from Corner1 to Corner 4 has been given below.</p>
 
   <h3>Assumptions</h3>
 
   <ol>
-    <li >Producer = Minder.</li>
-
-    <li >C2: Sending MSH, which sends messages to Corner 3 (C3).</li>
-
-    <li>C3: Receiving MSH, which receives messages and sends back
-      receipts (i.e. in a ONE_WAY MEP scenario).</li>
+    <li>Producer = Minder.</li>
+    <li>C2: Sending MSH, which sends messages to Corner 3 (C3).</li>
+    <li>C3: Receiving MSH, which receives messages and sends back receipts (i.e. in a ONE_WAY MEP scenario).</li>
   </ol>
 
   <h3>Sequence</h3>
 
-  <ol style="list-style-type: none;">
+  <ol style="list-style-type: none ;">
     <li><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to C2</li>
-
-    <li><b>Step 2 -</b> Producer receives a callback receipt from C2
-      containing details of the producer message - the receipt back to Producer is
-      optional and may just be an HTTP Response 20x</li>
-
-    <li><b>Step 3 -</b> Send: C2 constructs a message based on
-      message received from Producer and sends this to C3</li>
-
-    <li><b>Step 4 -</b> <i>SubmitResponse</i>: C2 constructs a
-      message containing the refToMessageId of the step 1 messageId, as well as the
-      messageId used in the message from C2 to C3</li>
-
-    <li><b>Step 5 -</b> C2 receives a receipt (or error) signal from
-      C3 containing details of the C2 message</li>
-
-    <li><b>Step 6 -</b> <i>Notify</i>: C2 constructs message
-      detailing the result of the message from C2 to C3 and sends this to the
-      producer</li>
-
-  <li><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based
-    on the message it received, and delivers it to C4.</li>
+    <li><b>Step 2 -</b>
+      Producer receives a callback receipt from C2 containing details of the producer message - the receipt back to Producer is optional and may just be an HTTP Response 20x</li>
+    <li><b>Step 3 -</b> Send: C2 constructs a message based on message received from Producer and sends this to C3</li>
+    <li><b>Step 4 -</b> <i>SubmitResponse</i>
+      : C2 constructs a message containing the refToMessageId of the step 1 messageId, as well as the messageId used in the message from C2 to C3</li>
+    <li><b>Step 5 -</b> C2 receives a receipt (or error) signal from C3 containing details of the C2 message</li>
+    <li><b>Step 6 -</b> <i>Notify</i>
+      : C2 constructs message detailing the result of the message from C2 to C3 and sends this to the producer</li>
+    <li><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based on the message it received, and delivers it to C4.</li>
   </ol>
 
-  <p>The <i>SubmitResponse</i> message from C2 to C3 should then
-    include the Step 3 C2 to C3 messageId as a message property.</p>
+  <p>The <i>SubmitResponse</i>
+    message from C2 to C3 should then include the Step 3 C2 to C3 messageId as a message property.</p>
 
-
-  <h2>Adapters</h2>
-  <p>
-    Kerkovi provides three adapters (i.e. actors in GITB terms) to create a bridge between <i>Minder</i> and the conformance testing environment.
-  </p>
-
-  <div align="center">
-  @theSVG()
-  </div>
-
-  <h3>Backend Adapters</h3>
+  <h2 id="gwia">Gateway C2-C3 PModes</h2>
 
   <p>
-    We have two backend adapters (i.e. corner1 and corner4). They send messages to and receive messages from the AS4 gateways as described in the PMode documentation.
-    A generic AS4 backend sends a <i>Submit</i>
+    The e-SENS Conformance and Interoperability Testing environment requires, a PMode setting for conformance tests. This PMode setting is based on the e-SENS AS4 profile.</p>
+
+  <p>
+    Click <a href="/PMode_Parameters_e-SENS_profile.pdf" target="_blank"><span style="font-size: large ; font-weight: bold ;">
+    HERE </span></a> to download the PMode parameters for e-SENS AS4 profile.</p>
+
+  <h3 id="partyIdAddresses">PartyID - Address Mapping</h3>
+
+  <h4>Gateway Addresses for Conformance Tests</h4>
+
+  <p>
+    Since the AS4 Conformance test architecture requires the interception of the message flow between C2&nbsp;and C3, all the participating gateways must send the messages directly to the interceptor and not the actual target gateway. The Interceptor address is @interceptorAddresss or @interceptorAddress. If the message should be forwarded to the receiver side with respect to the test scenario, then Minder will do it.</p>
+
+  <h4>Gateway Addresses for Interoperability Tests</h4>
+
+  <p>
+    The party id -- address mapping for interoperability tests can be achieved in two ways: i) direct and ii) indirect mapping.</p>
+
+  <p><strong>Direct Mapping: </strong>
+    In this mode, the gateway sends the message directly to the receiver side and not the interceptor.</p>
+
+  <p><strong>Indirect Mapping:</strong>
+    In this mode, the gateway sends the message to the interceptor (@interceptorAddresss or @interceptorAddress) and the interceptor is configured to forward the message directly to the receiver side (only logging) without sending it to Minder (see <em>
+      Direct Mode) </em>on gateways page.</p>
+
+  <p>
+    Both modes are applicable for interoperability testing. But we recommend the indirect mode because, the gateways won&#39;t have to change address configurations when they need to switch from conformance to interoperability and vice versa.</p>
+
+  <h3 id="pmodeProfiles">PMode Profiles and Service-Action Mappings</h3>
+
+  <p>
+    The gateways should be able to identify (i.e. configure their PModes) to select the correct PMode profile below, with respect to the&nbsp;<b>
+    Service</b>&nbsp;and&nbsp;<b>Action</b>&nbsp;parameters that they receive from the backend.&nbsp;<b>
+    It is up to the gateway to map its pmode by the Service or the Action, which are submitted as&nbsp;message properties to the gateway via the AS4&nbsp;backend.&nbsp;</b></p>
+
+  <p>All the other PMode parameters are the same for as the e-SENS AS4 profile PModes</p>
+
+  <p>The <a href="/TestAssertions_eSENS_AS4_Draft6.pdf" target="_blank">e-SENS test assertions</a>
+    require four different profiles based on the e-SENS AS4 profile PModes. They are provided below.</p>
+
+  <ol class="myinlineol">
+    <li><label>SIMPLE_ONEWAY</label>
+
+      <ol>
+        <li><b>MEP</b>: One way - push</li>
+        <li><b>Compress</b>: Yes</li>
+        <li><b>Retry</b>: None</li>
+        <li><b>Sign</b>: Yes</li>
+        <li><b>Encrypt</b>: Yes</li>
+        <li><b>Service</b>: SRV_SIMPLE_ONEWAY</li>
+        <li><b>Action</b>: ACT_SIMPLE_ONEWAY</li>
+      </ol>
+    </li>
+    <li><label>SIMPLE_TWOWAY</label>
+      <ol>
+        <li><b>MEP</b>: Two way push-and-push</li>
+        <li><b>Compress</b>: Yes</li>
+        <li><b>Retry</b>: None</li>
+        <li><b>Sign</b>: Yes</li>
+        <li><b>Encrypt</b>: Yes</li>
+        <li><b>Service</b>: SRV_SIMPLE_TWOWAY</li>
+        <li><b>Action</b>: ACT_SIMPLE_TWOWAY</li>
+      </ol>
+    </li>
+    <li><label>ONEWAY_RETRY</label>
+      <ol>
+        <li><b>MEP</b>: One way - push</li>
+        <li><b>Compress</b>: Yes</li>
+        <li><b>Retry</b>: 5</li>
+        <li><b>Sign</b>: Yes</li>
+        <li><b>Encrypt</b>: Yes</li>
+        <li><b>Service</b>: SRV_ONEWAY_RETRY</li>
+        <li><b>Action</b>: ACT_ONEWAY_RETRY</li>
+      </ol>
+    </li>
+    <li><label>ONEWAY_ONLY_SIGN</label>
+      <ol>
+        <li><b>MEP</b>: One way - push</li>
+        <li><b>Compress</b>: Yes</li>
+        <li><b>Retry</b>: None</li>
+        <li><b>Sign</b>: Yes</li>
+        <li><b>Encrypt</b>: No</li>
+        <li><b>Service</b>: SRV_ONEWAY_SIGNONLY</li>
+        <li><b>Action</b>: ACT_ONEWAY_SIGNONLY</li>
+      </ol>
+    </li>
+  </ol>
+
+  <h3 id="payloadProfiles">Payload Profiles</h3>
+
+  <p>
+    The test cases that are created for the test assertions submit a combination of types of payloads with the following information:</p>
+
+  <ol class="myinlineol">
+    <li><label>xmlpayload@@minder</label>
+
+      <ol>
+        <li><b>ContentId</b>=xmlpayload@@minder</li>
+        <li><b>MimeType</b>=application/xml</li>
+        <li><b>Required</b>=yes</li>
+        <li><b>Character Set</b>=utf-8 (optional)</li>
+      </ol>
+    </li>
+    <li><label>xmlpayload2@@minder</label>
+      <ol>
+        <li><b>ContentId</b>=xmlpayload2@@minder</li>
+        <li><b>MimeType</b>=application/xml</li>
+        <li><b>Required</b>=No</li>
+        <li><b>Character Set</b>=utf-8 (optional)</li>
+      </ol>
+    </li>
+    <li><label>custompayload@@minder</label>
+      <ol>
+        <li><b>ContentId</b>=custompayload@@minder</li>
+        <li><b>MimeType</b>=application/octet-stream</li>
+        <li><b>Required</b>=No</li>
+        <li>&nbsp;</li>
+      </ol>
+    </li>
+  </ol>
+
+  <h2 id="keystores">Keystores and Certificates</h2>
+
+  <p>
+    The keystores and certificates that are used for communication between C2 and C3 have to be known by Minder.
+    This is because some test assertions require decryption even modification of the messages. If you are already
+    registered, this means you already have a certificate/key that is shared with the conformance team. Otherwise,
+    please generate you own test keystores for two gateway instances (C2 and C3) and send them to us
+    (<b>muhammet.yildiz [at]<b></b><i></i> tubitak.gov.tr</b> /  <b>melis.cetinkaya [at]<b></b><i></i> tubitak.gov.tr</b>
+    )
   </p>
-  <h4>Corner 1 (generic AS4 backend) </h4>
-
-  <p>Plays to role of <strong><em>Corner 1</em></strong> &nbsp;(e.g. the sending national backend) and&nbsp;submits messages to the&nbsp; <strong><em>backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 2 (from Corner 3).</p>
-  <p><b>Endpoint address: </b> <br />
-    https://193.140.74.199:15000/corner1 <br />
-    http://193.140.74.199:15001/corner1 <br />
+  <p>
+    Another way is that we generate test certificates for you and send them via e-mail. In both cases, please contact us
+    via the above e-mails.
   </p>
 
-  <h4>Corner 4 (generic AS4 backend) </h4>
+  <p>In the near future, we will provide a utility to generate keystores for you from here.</p>
 
-  <p>Plays to role of&nbsp;<strong><em>Corner 4</em></strong> &nbsp;(e.g. the receiving national backend) and&nbsp;submits messages to the&nbsp; <strong><em>backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 3.</p>
+  <h2 id="adapters">Adapters</h2>
 
-  <p><b>Endpoint address: </b> <br />
-    https://193.140.74.199:15000/corner4 <br />
-    http://193.140.74.199:15001/corner4 <br />
-  </p>
+  <p>Kerkovi provides three adapters (i.e. actors in GITB terms) to create a bridge between <i>Minder</i>
+    and the conformance testing environment.</p>
 
-  <h3>Man in the middle (AS4-interceptor)</h3>
+  <div align="center">@theSVG()</div>
+
+  <h3 id="backendAdapters">Backend Adapters</h3>
+
+  <p>
+    We have two backend adapters (i.e. corner1 and corner4). They send messages to and receive messages from the AS4 gateways as described in the PMode documentation. A generic AS4 backend sends a <i>
+    Submit</i></p>
+
+  <h4 id="backendCorner1">Corner 1 (generic AS4 backend)</h4>
+
+  <p>Plays to role of <strong><em>
+    Corner 1</em></strong> &nbsp;(e.g. the sending national backend) and&nbsp;submits messages to the&nbsp; <strong><em>
+    backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 2 (from Corner 3).</p>
+
+  <p id="backendCorner1Address"><b>Endpoint address: </b><br />
+    https://193.140.74.199:15000/corner1<br />
+    http://193.140.74.199:15001/corner1</p>
+
+  <h4 id="backendCorner4">Corner 4 (generic AS4 backend)</h4>
+
+  <p>Plays to role of&nbsp;<strong><em>
+    Corner 4</em></strong> &nbsp;(e.g. the receiving national backend) and&nbsp;submits messages to the&nbsp; <strong><em>
+    backend</em></strong> &nbsp;of the AS4 compliant gateway. It also receives messages that have been relayed to Corner 3.</p>
+
+  <p id="backendCorner4Address"><b>Endpoint address: </b><br />
+    https://193.140.74.199:15000/corner4<br />
+    http://193.140.74.199:15001/corner4</p>
+
+  <h3 id="interceptor">Man in the middle (AS4-interceptor)</h3>
 
   <p>Intercepts the message flow between&nbsp;<em><strong>Corner2</strong></em> &nbsp;and <em><b>Corner3&nbsp;</b></em>
-    and depending on the <em><strong>Proxy</strong></em>
-    setting, forwards the message either to <em><strong>Minder</strong></em> or its <em>target</em> (resolved from the TO_PARTY_ID)</p>
+    and depending on the <em><strong>Proxy</strong></em> setting, forwards the message either to <em><strong>
+      Minder</strong></em> or its <em>target</em> (resolved from the TO_PARTY_ID)</p>
 
-  <p><b>Endpoint address: </b> <br />
-    https://193.140.74.199:15000/as4Interceptor <br />
-    http://193.140.74.199:15001/as4Interceptor <br />
+  <p id="interceptorAddress"><b>Endpoint address: </b><br />
+    @interceptorAddresss<br />
+    @interceptorAddress</p>
+
+  <h2 id="samples">Sample Messages</h2>
+
+  <p>
+    In this section we provide sample AS4 messages that may take place in a sample conformance or interoperability scenario. Please note that we have also depicted the multipart mime message format for the AS4 messages that carry attachments.<br />
+    These samples may be used as a starting point for a test attempts.</p>
+
+  <p>
+    We did not provide any information about the receipts as they are optional. If you want to respond with receipts, please refer to the <a href="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html" target="_blank">
+    AS4 specification</a></p>
+
+  <h3 id="sample1">Sample Submission (from Minder to the sender backend)</h3>
+  @sampleCode("sampleSubmission.xml", 1000, 650)
+  <br />
+
+  <h3 id="sample2">Sample Submission Result (from the backend to Minder)</h3>
+  @sampleCode("sampleSubmissionResult.xml", 1000, 400)
+  <br />
+
+  <h3 id="sample3">Sample Notification Message (from the backend to Minder)</h3>
+  @sampleCode("sampleNotification.xml", 1000, 400)
+  <br />
+
+  <h3 id="sample4">Sample AS4 Message (between corner 2 and corner 3)</h3>
+  @sampleCode("sampleAS4Message.xml", 1000, 600)
+  <br />
+
+  <h3 id="sample5">Sample AS4 Receipt (between corner 3 and corner 2)</h3>
+  @sampleCode("sampleC3C2Receipt.xml", 1000, 600)
+  <br />
+
+  <h3 id="sample6">Sample Delivery (between from the backend to Minder)</h3>
+  @sampleCode("sampleDelivery.xml", 1000, 650)
+  <br />
+
+  <h2 id="checklist">Checklist</h2>
+
+  <p>
+    The below checklist is a good summary of what must be done before we start conformance/interop testing via Minder and Kerkovi.
   </p>
 
-  <h2>Sample Messages</h2>
-
-  <p>In this section we provide sample AS4 messages that may take place in a sample conformance or interoperability scenario.
-    Please note that we have also depicted the multipart mime message format for the AS4 messages that carry attachments. <br />
-    These samples may be used as a starting point for a test attempts.</p>
-  <p>We did not provide any information about the receipts as they are optional. If you want to respond with receipts,
-    please refer to the <a target="_blank"
-  href="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html">AS4 specification</a></p>
-
-  <h3>Sample Submission (from Minder to the sender backend)</h3>
-  @sampleCode("samplesubmission.xml", 1000, 600)
-
-  <br />
-  <br />
-  <br />
-
-  <h3>Sample Submission Result (from the backend to Minder)</h3>
-  @sampleCode("samplesubmissionresult.xml", 1000, 450)
-
-  <br />
-  <br />
-  <br />
-
-  <h3>Sample Notification Message (from the backend to Minder)</h3>
-  @sampleCode("samplenotification.xml", 1000, 450)
-
-  <br />
-  <br />
-  <br />
-
-  <h3>Sample AS4 Message (between corner 2 and corner 3)</h3>
-  @sampleCode("sampleas4message.xml", 1000, 600)
-
-
-  <h3>Sample AS4 Receipt (between corner 3 and corner 2) </h3>
-
-  @sampleCode("sampleC3C2Receipt.xml", 1000, 650)
-
+  <ol>
+    <li>Register your gateway.</li>
+    <li>Backend
+      <ol>
+        <li>Study <a href="@routes.Application.index("pmodes")">PModes</a>
+          for the communication between C1 - C2 and C4-C3</li>
+        <li>Implement the&nbsp;<em>Submit</em>&nbsp;action&nbsp;</li>
+        <li>Implement the&nbsp;<em>SubmissionResponse</em>&nbsp;action</li>
+        <li>Implement the <em>Notify</em>&nbsp;action</li>
+        <li>Implement the&nbsp;<em>Deliver</em>&nbsp;action</li>
+      </ol>
+    </li>
+    <li>Backend-Interceptor: Study the <a href="@routes.Application.index("documentation")">documentation</a></li>
+    <li>Backend-Interceptor: Take a look at <a href="#samples">sample messages</a></li>
+    <li>Interceptor
+      <ol>
+        <li>Configure Conformance payload profiles</li>
+        <li>Interceptor: Configure <a href="#partyIdAddresses">party id addresses</a></li>
+        <li>Interceptor: Configure <a href="#pmodeProfiles">c2-c3 pmode mapping </a>
+          with respect to the service/action</li>
+        <li>Interceptor: Configure <a href="#keystores">keystores and certificates</a></li>
+      </ol>
+    </li>
+    <li>Hope for the best :-)</li>
+  </ol>
 
 </div>

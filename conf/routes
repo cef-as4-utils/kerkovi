@@ -6,7 +6,8 @@
 GET         /assets/javascript/routes.js        controllers.JSRoutesController.jsRoutes
 
 # Home page
-GET         /                                   controllers.Application.index()
+GET         /                                   controllers.Application.index(view="main")
+GET         /nav/:view                          controllers.Application.index(view)
 GET         /main                               controllers.Application.main()
 GET         /gateways                           controllers.Application.gateways()
 GET         /adapters                           controllers.Application.documentation()

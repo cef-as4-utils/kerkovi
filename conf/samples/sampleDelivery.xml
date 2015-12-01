@@ -12,35 +12,34 @@
         </ns2:MessageInfo>
         <ns2:PartyInfo>
           <ns2:From>
-            <ns2:PartyId>minder</ns2:PartyId>
-            <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
+            <ns2:PartyId>holodeck</ns2:PartyId>
+            <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
           </ns2:From>
           <ns2:To>
-            <ns2:PartyId>holodeckb2b</ns2:PartyId>
-            <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
+            <ns2:PartyId>minder</ns2:PartyId>
+            <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
           </ns2:To>
         </ns2:PartyInfo>
         <ns2:CollaborationInfo>
           <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
-          <ns2:Action>Submit</ns2:Action>
+          <ns2:Action>Deliver</ns2:Action>
           <ns2:ConversationId>1</ns2:ConversationId>
         </ns2:CollaborationInfo>
         <ns2:MessageProperties>
-          <!-- The id properties will be used to set the corresponding elements in the ebMS header of the message from C2 to C3
-              NOTE: Both MessageId and RefToMessageId are optional -->
+          <!-- The properties copied from the AS4 header fields of the MSH inbound message-->
           <ns2:Property name="MessageId">111a995c-1ed1-4d1b-b8fe-fb2d2f8c24a2</ns2:Property>
-          <ns2:Property name="RefToMessageId">actual-reftomsgid-id@corner1.eu</ns2:Property>
+          <ns2:Property name="RefToMessageId">actual-reftomsgid-id@corner2.eu</ns2:Property>
           <ns2:Property name="ConversationId">1</ns2:Property>
-          <!-- The following properties are used by C2 to determine which P-Mode should be used for sending the message to C3
-              NOTE: We assume that the From party in the communication between C2 and C3 is fixed.
-          -->
-          <eb3:Property name="ToPartyId">holodeck2</eb3:Property>
-          <eb3:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb3:Property>
-          <ns2:Property name="Service">SRV_SIMPLE_ONEWAY</ns2:Property>
-          <ns2:Property name="Action">ACT_SIMPLE_ONEWAY</ns2:Property>
+          <!-- The following properties are used by C2 to determine which P-Mode should be used for sending the message to C3 -->
+          <eb3:Property name="FromPartyId">holodeck2</eb3:Property>
+          <eb3:Property name="FromPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb3:Property>
+          <eb3:Property name="ToPartyId">holodeck</eb3:Property>
+          <eb3:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</eb3:Property>
+          <ns2:Property name="Service">SRV_SIMPLE_TWOWAY</ns2:Property>
+          <ns2:Property name="Action">ACT_SIMPLE_TWOWAY</ns2:Property>
           <!-- The following two properties will just be copied to the outgoing message from C2 to C3 -->
-          <eb3:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</eb3:Property>
-          <eb3:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</eb3:Property>
+          <eb3:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</eb3:Property>
+          <eb3:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</eb3:Property>
         </ns2:MessageProperties>
         <ns2:PayloadInfo>
           <ns2:PartInfo href="xmlpayload@minder">

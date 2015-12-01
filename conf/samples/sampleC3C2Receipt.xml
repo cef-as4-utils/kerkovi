@@ -17,12 +17,12 @@
         </eb3:MessageInfo>
         <eb3:PartyInfo>
           <eb3:From>
-            <eb3:PartyId>holodeckb2b</eb3:PartyId>
+            <eb3:PartyId>holodeck</eb3:PartyId>
             <eb3:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</eb3:Role>
           </eb3:From>
           <eb3:To>
-            <eb3:PartyId>ACTUAL_PARTYID_C3</eb3:PartyId>
-            <eb3:Role>ACTUAL_ROLE_C3</eb3:Role>
+            <eb3:PartyId>holodeck2</eb3:PartyId>
+            <eb3:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb3:Role>
           </eb3:To>
         </eb3:PartyInfo>
         <eb3:CollaborationInfo>

@@ -54,11 +54,23 @@ function triggerMainMenuItem(id) {
   $.ajax(lnk.attr('page'))
     .done(function (data) {
       mainMenu.html(data)
+      gotoHASH()
     })
     .fail(function (data) {
       alert(data.responseText);
     })
 }
+
+function gotoHASH() {
+  if (location.hash) {
+    //if ( $.browser.webkit == false ) {
+    //  window.location.hash = location.hash;
+    //} else {
+      window.location.href = location.hash;
+      window.location.href = location.hash;
+    //}
+  }
+};
 
 
 var htmlTemplate = '<div class="editable2" style="padding:4px">'

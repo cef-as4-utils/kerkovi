@@ -15,8 +15,8 @@ object Application extends Controller {
 
   val (logOut, logChannel) = Concurrent.broadcast[String];
 
-  def index = Action {
-    Ok(views.html.index())
+  def index(target: String) = Action {
+    Ok(views.html.index(target))
   }
 
   def main() = Action {
@@ -232,7 +232,7 @@ object Application extends Controller {
 
   @Security.Authenticated(classOf[Secured])
   def approvePage() = Action { implicit request =>
-    Ok(views.html.approve())
+    Ok(views.html.admin())
   }
 
   def showAS4Message(time: Long) = Action { implicit request =>

@@ -1,3 +1,5 @@
+<div class="levha">
+
 <style>
 <!--
  /* Font Definitions */
@@ -96,15 +98,22 @@ ul
 -->
 </style>
 
+<h2>Table of Contents</h2>
+    <a href="#introduction">Introduction</a><br />
+    <a href="#overview">Overview</a><br />
+    <a href="#sampleWorkflow">Sample Workflow</a><br />
+    <a href="#testOperations">Test Operations</a><br />
+    <a href="#submit">&nbsp;&nbsp;&nbsp;Submit</a><br />
+    <a href="#submitResponse">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SubmitResponse</a><br />
+    <a href="#deliver">&nbsp;&nbsp;&nbsp;Deliver</a><br />
+    <a href="#notify">&nbsp;&nbsp;&nbsp;Notify</a><br />
+    <a href="#revisions">Revisions</a><br />
 
-<div style='border:none;border-bottom:solid #5B9BD5 1.0pt;padding:0cm 0cm 4.0pt 0cm'>
+ <hr/>
+ <h1 id="header">Recommended Message Structure and P-Modes for Minder
+Conformance Testing</h1>
 
-<p class=MsoTitle>Recommended Message Structure and P-Modes for Minder
-Conformance Testing</p>
-
-</div>
-
-<h1>Introduction</h1>
+<h2 id="introduction">Introduction</h2>
 
 <p class=MsoNormal>This document provides a recommendation for P-Mode
 definitions as used in operations between Minder and the system under test
@@ -115,7 +124,7 @@ Corner 2 (C2) or Corner 3 (C3) in the four corner model.</p>
 document named '<i>TestAssertians_eSENS_AS4_Draft6.docx</i>' as shown below:</p>
 
 <p class=MsoNormal><span><img width=303 height=177 id="Picture 1"
-src="pmodes_files/image001.png"
+src="/pmodes_files/image001.png"
 alt="Description: worddav248b2390374ee32f0fb3dfecafa22a0b.png"></span></p>
 
 <p class=MsoNormal>For the P-Mode definition considered here Minder will act as
@@ -124,7 +133,7 @@ the <i>Message Producer</i> <i>/ Consumer</i> and the SUT is either the <i>Sendi
 Deliver</b> and <b>Notify</b> operations. The P-Modes that define the message
 exchanges between the MSHs is out of scope of this document.</p>
 
-<h1>General</h1>
+<h2 id="overview">Overview</h2>
 
 <p class=MsoNormal>All P-Modes use the Push MEP binding. Because the <b>submit</b>
 operation may require a response to inform the Message Producer (Minder) on the
@@ -162,12 +171,13 @@ with no type attribute.</p>
 <p class=MsoNormal>No security and reliability is used between the SUT and
 Minder.</p>
 
-<p class=MsoNormal>Sample WorkflowA sample message flow that includes the
+<h3 id="sampleWorkflow">Sample Workflow</h3>
+    <p class=MsoNormal> A sample message flow that includes the
 journey of a message from Corner1 to Corner 4 has been given below.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<h2>Assumptions</h2>
+<h4>Assumptions</h4>
 
 <p class=MsoNormal>Producer = Minder.</p>
 
@@ -178,7 +188,7 @@ receipts (i.e. in a ONE_WAY mep scenario).</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<h2>Sequence</h2>
+<h4>Sequence</h4>
 
 <p class=MsoNormal><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to C2</p>
 
@@ -191,7 +201,7 @@ message received from Producer and sends this to C3</p>
 
 <p class=MsoNormal><b>Step 4 -</b> <i>SubmitResponse</i>: C2 constructs a
 message containing the refToMessageId of the step 1 messageId, as well as the
-messageId used in the message from C2 to C3</p>
+messageId used in the message from C2 to C3 and sends this to the producer</p>
 
 <p class=MsoNormal><b>Step 5 -</b> C2 receives a receipt (or error) signal from
 C3 containing details of the C2 message</p>
@@ -205,17 +215,17 @@ on the message it received, and delivers it to C4.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<p class=MsoNormal>The <i>SubmitResponse</i> message from C2 to C3 should then
+<p class=MsoNormal>The <i>SubmitResponse</i> message from C2 to C1 should then
 include the Step 3 C2 to C3 messageId as a message property.</p>
 
-<h1>Test Operations</h1>
+<h2 id="testOperations">Test Operations</h2>
 
 <p class=MsoNormal>The operations associated with the three P-Modes include
 'submit', 'deliver' and 'notify'. Each operation message between Minder and the
 SUT includes a set of <i>Message Properties</i> defining the necessary
 instructions and properties for the test operation. These being as follows.</p>
 
-<h2>Submit</h2>
+<h3 id="submit">Submit</h3>
 
 <p class=MsoNormal>Instruction from Minder to C2 or C3 to submit a message to
 the opposite corner (C3 or C2 respectively). Because Minder needs to know the
@@ -223,7 +233,7 @@ ebMS MessageId that the SUT uses for the exchange with the other corner the
 submit operation consists of two legs with Minder always being the Initiator: &nbsp;<b>Initiator</b>
 = <i>Minder</i></p>
 
-<h3>Request leg</h3>
+<h4>Request leg</h4>
 
 <p class=MsoNormal>The request leg of the submit is the actual submission from Minder
 to the SUT. The value to use for <b>Action</b> is <i>Submit.</i></p>
@@ -383,7 +393,7 @@ SUT) and associated meta-data provided in <span style='font-size:11.0pt;
 font-family:"Courier New"'>eb:PayloadInfo</span> must also be included with the
 message sent by the SUT.</p>
 
-<h3>Reply leg</h3>
+<h4 id="submitResponse">Reply leg (SubmitResponse)</h4>
 
 <p class=MsoNormal>The reply leg of the submit is from SUT to Minder and used
 to report success or failure and, the ebMS MessageId in the case of a message exchange
@@ -431,7 +441,7 @@ of the failed submission.</p>
 
 <p class=MsoNormal>&nbsp;</p>
 
-<h2>Deliver</h2>
+<h3 id="deliver">Deliver</h3>
 
 <p class=MsoNormal>The deliver operation is between the opposite inner corner
 SUT and Minder. I.e. C3 or C2 where C2 or C3 received the corresponding Minder
@@ -453,7 +463,7 @@ submit operation.</p>
 formal specification, it is assumed that implementations are able to supply the
 specified meta-data on delivery.</p>
 
-<h2>Notify</h2>
+<h3 id="notify">Notify</h3>
 
 <p class=MsoNormal>The notify operation is from the corner which received a
 Minder submit operation in case of receipt/error signal from the opposite
@@ -616,7 +626,7 @@ style='font-size:11.0pt'> </span></i>and<i> </i><span style='font-size:11.0pt;
 font-family:"Courier New"'>eb:Error/eb:Description</span>) in case of a fault
 message.</p>
 
-<h1>Revisions</h1>
+<h2 id="revisions">Revisions</h2>
 
 <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
  style='border-collapse:collapse;border:none'>
