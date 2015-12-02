@@ -330,47 +330,6 @@ function doCancel(event) {
   dv.hide()
 }
 
-function undoDelete(theUrl){
-  var vnt = $(window.event);
-  vnt.stop();
-
-  if (editorBusy)
-    return;
-
-
-  $.ajax({
-    async: false,
-    url: theUrl,
-    success: function (data) {
-      triggerMainMenuItem("gateways")
-    },
-    fail: function (data) {
-      triggerMainMenuItem("gateways")
-    }
-  });
-}
-
-function deleteGateway(id, theUrl) {
-
-  var vnt = $(window.event);
-  vnt.stop();
-
-  if (editorBusy)
-    return;
-
-
-  $.ajax({
-    async: false,
-    url: theUrl,
-    success: function (data) {
-      triggerMainMenuItem("gateways")
-    },
-    fail: function (data) {
-      triggerMainMenuItem("gateways")
-    }
-  });
-}
-
 function showError(data) {
   $("#errorDialogContent").html(data);
   $("#errorDialog").show();

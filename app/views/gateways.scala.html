@@ -1,17 +1,3 @@
-<script>
-
-  var rendererMap = new Object()
-
-  rendererMap["booleanRenderer"] = function(bool){
-    if (bool === "true" || bool === true || bool === "True")
-      return '<span style="color:green;font-size: x-large">\u2713</span>'
-    return '<span style="color:red;font-size: x-large">\u2718</span>'
-  }
-
-  $(function(){
-    @{/*setUpEditable($(".editable"), rendererMap)*/}
-  });
-</script>
 <div class="levha">
   <p>The list of the AS4 compliant gateways has been given below.
     Each gateway should be provided in&nbsp;<strong>two</strong> &nbsp;instances.
@@ -25,7 +11,7 @@
     <table class="zebra">
       <tr>
         <th class="darkcolor">Name</th>
-        <th class="darkcolor">Party ID</th> <th>Address<sup>1</sup></th> <!--<th>Backend Address<sup>2</sup>--> </th>
+        <th class="darkcolor">Party ID</th> <th>Address<sup>1</sup></th> <!--<th>Backend Address<sup>2</sup></th>-->
         <th class=" darkcolor">Direct Mode<sup>2</sup></th>
       </tr>
       @for( gateway <- Application.registeredGateways()) {
@@ -84,17 +70,11 @@
       <tr><td colspan="5">
         <p>
 
-          <label>1-2: Adress</label> <br />
-          A gateway might be providing different HTTP/S endpoints for their Backend and MSH AS4 receiver. In this case please provide the backend address and MSH address separately.
-          <br />
-          If the backend address is provided, all the backend submission messages will be forwarded to the <b><i>Backend Address</i></b>
-          ,
-          while the inbound MSH messages will be forwarded the the <b><i>MSH Address</i></b>
-          . Otherwise, the <b><i>MSH Address</i></b> is used for the both endpoints.
-          Therefore, the <b><i>MSH Address</i></b> is obligatory, while the <b><i>Backend Address</i></b> is optional.
+          <label>1: Adress</label> <br />
+          The HTTP/S endpoint address of the AS4 gateway.
           <br />
           <br />
-          <label>3: Direct Mode:</label> <br />
+          <label>2: Direct Mode:</label> <br />
           <b>if (<span style="color:green ; font-size: x-large">\u2713</span>)</b>{<br />
             &nbsp;&nbsp;the intercepted message is directly passed to its receiver (i.e <i>TO PARTY</i>);
           <br /> }<b>else if(<span style="color:red ; font-size: x-large">\u2718</span>)</b>
@@ -113,7 +93,7 @@
         <tr><td class="shrink"><label>Name<sup>*</sup></label></td> <td class="expand"><input type="text" name="name" class="fancy fullw"/></td> </tr>
         <tr><td class="shrink"><label>Party ID<sup>*</sup></label></td> <td><input type="text" name="partyID" class="fancy fullw"/></td></tr>
         <tr><td class="shrink"><label>MSH Address<sup>*</sup></label></td> <td><input type="text" name="mshAddress" class="fancy fullw"/></td></tr>
-        <tr><td class="shrink"><label>Backend Address</label></td> <td><input type="text" name="backendAddress" class="fancy fullw"/></td></tr>
+       @{/* <tr><td class="shrink"><label>Backend Address</label></td> <td><input type="text" name="backendAddress" class="fancy fullw"/></td></tr> */}
       </table>
       </form> <br />
       <table width="100%"><tr><td align="right">

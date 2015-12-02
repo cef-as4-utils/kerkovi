@@ -15,14 +15,13 @@ target
 *.log
 *.css.map
 project/target
-target
 databeyz.yml
 .idea
-*.log
 logs
 release
 sampleas4message.xml
 samplesubmission.xml
 *.7z
-
-.idea/modules/as4ManagementConsole-build.iml
+.idea/*
+*.iml
+as4logs

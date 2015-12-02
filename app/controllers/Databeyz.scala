@@ -14,8 +14,6 @@ import scala.collection.mutable.Stack
 /**
   */
 object Databeyz {
-
-
   val yaml: Yaml = new Yaml(new CustomClassLoaderConstructor(Play.classloader(Play.current)));
   val currentDir: File = new File(".")
 
@@ -127,6 +125,18 @@ object Databeyz {
         persist
       }
     }
+  }
+
+
+  def reject(id: Int) = {
+    var found : AS4Gateway = null;
+    for (gw <- all) {
+      if (id == gw.id) {
+        found = gw;
+      }
+    }
+    all.remove(found)
+    persist
   }
 
   def get(id: Int) = {

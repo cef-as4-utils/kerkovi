@@ -332,6 +332,38 @@ button.fancy {
   text-decoration: none;
 }
 
+.fancySmall{
+  border: none;
+  background-image: -webkit-linear-gradient(top, @bgGreen, shade(@bgGreen, 40%));
+  background-image: -moz-linear-gradient(top, @bgGreen, shade(@bgGreen, 40%));
+  background-image: -ms-linear-gradient(top, @bgGreen, shade(@bgGreen, 40%));
+  background-image: -o-linear-gradient(top, @bgGreen, shade(@bgGreen, 40%));
+  background-image: linear-gradient(to bottom, @bgGreen, shade(@bgGreen, 40%));
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0px 1px 3px #666666;
+  -moz-box-shadow: 0px 1px 3px #666666;
+  box-shadow: 0px 1px 3px #666666;
+  text-decoration: none;
+}
+
+button.fancySmall {
+  .fancySmall;
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  color: blue;
+  background: @bgGreen;
+}
+
+button.fancySmallOpposite {
+  .fancySmall;
+  font-size: 12px;
+  padding: 5px 5px 5px 5px;
+  color: blue;
+  background: @bgRed;
+}
+
 .fancyBlueShadow {
   background: @minderfg;
   background-image: -webkit-linear-gradient(top, @minderfg, shade(@minderfg, 40%));

@@ -143,7 +143,7 @@ object Application extends Controller {
       val frm = json.asFormUrlEncoded;
       as4.name = frm.get("name").mkString
       as4.partyID = frm.get("partyID").mkString //json.getOrElse("", "UNKNOWN").toString
-      as4.backendAddress = frm.get("backendAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
+     // as4.backendAddress = frm.get("backendAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.mshAddress = frm.get("mshAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.proxyMode = false
 
@@ -221,6 +221,19 @@ object Application extends Controller {
   def approve(id: Int) = Action { implicit request =>
     try {
       Databeyz.approve(id);
+      Ok("OK");
+    } catch {
+      case th: Throwable => {
+        th.printStackTrace();
+        BadRequest(th.getMessage)
+      }
+    }
+  }
+
+  @Security.Authenticated(classOf[Secured])
+  def reject(id: Int) = Action { implicit request =>
+    try {
+      Databeyz.reject(id);
       Ok("OK");
     } catch {
       case th: Throwable => {

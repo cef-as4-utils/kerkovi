@@ -18,6 +18,21 @@
     <link href='https://fonts.googleapis.com/css?family=Titillium+Web:400,200,200italic,300,300italic,400italic,900,700italic,600italic,600,700&subset=latin,latin-ext' rel='stylesheet' type='text/css' />
     <link href='https://fonts.googleapis.com/css?family=Raleway:400,300,500,600' rel='stylesheet' type='text/css'>
     <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300italic,400italic,600,700' rel='stylesheet' type='text/css'>
+
+    <script>
+
+  var rendererMap = new Object()
+
+  rendererMap["booleanRenderer"] = function(bool){
+    if (bool === "true" || bool === true || bool === "True")
+      return '<span style="color:green;font-size: x-large">\u2713</span>'
+    return '<span style="color:red;font-size: x-large">\u2718</span>'
+  }
+
+  $(function(){
+    setUpEditable($(".editable"), rendererMap)
+  });
+</script>
   </head>
   <body>
     <table class="container" align="center">
@@ -46,15 +61,94 @@
             alert(data.responseText);
           })
     }
+    function deleteGateway(id){
+      if (confirm('Do you really want to delete this gateway?')) {
+        $.ajax('/deleteGateway?id='+id)
+            .done(function (data) {
+              alert(data)
+            })
+            .fail(function (data) {
+              alert(data.responseText);
+            })
+      }
+    }
+
+
+    function undoDelete(){
+      var vnt = $(window.event);
+      vnt.stop();
+      $.ajax({
+        async: false,
+        url: "/undoDelete",
+        success: function (data) {
+          location.reload();
+        },
+        fail: function (data) {
+          showError(data.responseText)
+        }
+      });
+    }
+
   </script>
             <h2>All gateways</h2>
-            <table>
-            @for( gw <- Databeyz.all) {
-              @if(!gw.approved) {
-                <tr><td>@gw.name</td><td>@gw.partyID</td><td>@gw.mshAddress</td><td>@gw.backendAddress</td><td><a onclick="approve(@gw.id)" href="#">
-                  Approve</a></td></tr>
+
+            <table class="zebra">
+              <tr>
+                <th class="darkcolor">Name</th>
+                <th class="darkcolor">Party ID</th> <th>Address</th> <!--<th>Backend Address<sup>2</sup> </th>-->
+                <th class=" darkcolor">Direct Mode</th>
+              </tr>
+              @for( gateway <- Databeyz.all) {
+                <tr>
+                  <td>
+                    <div class="editable" type="text"
+                    binding="@controllers.routes.Application.gatewayMvc(gateway.id, "name")"
+                    >@gateway.name</div>
+                  </td>
+                  <td>
+                    <div class="editable" type="text"
+                    binding="@controllers.routes.Application.gatewayMvc(gateway.id, "partyID")"
+                    >@gateway.partyID</div>
+                  </td>
+                  <td>
+
+                    <div class="editable" type="text" binding="@controllers.routes.Application.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
+                  </td>
+
+                  <td align="center">
+                    <div class="editable" type="text"
+                    binding="@controllers.routes.Application.gatewayMvc(gateway.id, "proxyMode")"
+                    renderer="booleanRenderer"
+                    >
+                    @if(gateway.proxyMode) {
+                      <span style="color:green ; font-size: x-large"> \u2713</span>
+                    } else {
+                      <span style="color:red ; font-size: x-large"> \u2718</span>
+                    }
+                    </div>
+                  </td>
+
+
+                  @{
+                    /*<td align="center">
+                      <div title="Delete"><a class="bigger shiny" href="#" onclick='deleteGateway(@gateway.id, "@controllers.routes.Application.deleteGateway(gateway.id)")'>-</a></div>
+                    </td>*/
+                  }
+                  <td>
+                <td>
+                  @if(!gateway.approved) {
+                    <button class="fancySmall" onclick="approve(@gateway.id)">
+                      Approve</button>
+                  } else {
+                      &nbsp;
+                  }
+                </td><td>
+                  <button class="fancySmallOpposite" onclick="deleteGateway(@gateway.id)">
+                      Delete</button>
+                </td></tr>
               }
-            }
+
+              <tr><td><button class="fancySmall" onclick="undoDelete()">Undo Delete</button></td></tr>
             </table>
 
           </div>
