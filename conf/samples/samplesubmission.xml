@@ -8,7 +8,7 @@
       <ns2:UserMessage>
         <ns2:MessageInfo>
           <ns2:Timestamp>2015-11-07T19:44:00.062Z</ns2:Timestamp>
-          <ns2:MessageId>submit-message-id@corner1.eu</ns2:MessageId>
+          <ns2:MessageId>submission@corner1</ns2:MessageId>
         </ns2:MessageInfo>
         <ns2:PartyInfo>
           <ns2:From>
@@ -16,7 +16,7 @@
             <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
           </ns2:From>
           <ns2:To>
-            <ns2:PartyId>holodeckb2b</ns2:PartyId>
+            <ns2:PartyId>holodeck-c2</ns2:PartyId>
             <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
           </ns2:To>
         </ns2:PartyInfo>
@@ -28,26 +28,25 @@
         <ns2:MessageProperties>
           <!-- The id properties will be used to set the corresponding elements in the ebMS header of the message from C2 to C3
               NOTE: Both MessageId and RefToMessageId are optional -->
-          <ns2:Property name="MessageId">111a995c-1ed1-4d1b-b8fe-fb2d2f8c24a2</ns2:Property>
-          <ns2:Property name="RefToMessageId">actual-reftomsgid-id@corner1.eu</ns2:Property>
+          <ns2:Property name="MessageId">as4message@corner2</ns2:Property>
           <ns2:Property name="ConversationId">1</ns2:Property>
           <!-- The following properties are used by C2 to determine which P-Mode should be used for sending the message to C3
               NOTE: We assume that the From party in the communication between C2 and C3 is fixed.
           -->
-          <eb3:Property name="ToPartyId">holodeck2</eb3:Property>
-          <eb3:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</eb3:Property>
-          <ns2:Property name="Service">SRV_SIMPLE_ONEWAY</ns2:Property>
-          <ns2:Property name="Action">ACT_SIMPLE_ONEWAY</ns2:Property>
+          <ns2:Property name="ToPartyId">holodeck-c3</ns2:Property>
+          <ns2:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Property>
+          <ns2:Property name="Service">SRV_SIMPLE_TWOWAY</ns2:Property>
+          <ns2:Property name="Action">ACT_SIMPLE_TWOWAY</ns2:Property>
           <!-- The following two properties will just be copied to the outgoing message from C2 to C3 -->
-          <eb3:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</eb3:Property>
-          <eb3:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</eb3:Property>
+          <ns2:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</ns2:Property>
+          <ns2:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</ns2:Property>
         </ns2:MessageProperties>
         <ns2:PayloadInfo>
           <ns2:PartInfo href="xmlpayload@minder">
             <!-- The PartProperties will be copied to the eb:PartInfo in the ebMS message between C2 and C3 -->
             <ns2:PartProperties>
               <ns2:Property name="MimeType">application/xml</ns2:Property>
-              <eb3:Property name="CharacterSet">utf-8</eb3:Property>
+              <ns2:Property name="CharacterSet">utf-8</ns2:Property>
             </ns2:PartProperties>
           </ns2:PartInfo>
           <ns2:PartInfo href="custompayload@minder">
@@ -65,11 +64,13 @@
 
     ------=_Part_2_1139158911.1446925440201
     Content-Type: application/xml
+    Content-Disposition: attachment; filename="test-1.xml"
     Content-ID: xmlpayload@minder
 
 <min><der>sample</der></min>
     ------=_Part_2_1139158911.1446925440201
     Content-Type: application/octet-stream
+    Content-Disposition: attachment; filename="test-1.bin"
     Content-ID: custompayload@minder
 
     !! Modify me after submission, if you dare!!

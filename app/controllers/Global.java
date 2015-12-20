@@ -37,7 +37,7 @@ public class Global extends GlobalSettings {
     LogDB.readDb();
 
     try {
-      new Thread() {
+      Thread thread = new Thread() {
         public void run() {
           Logger.info("Initializing Kerkovi");
 
@@ -76,50 +76,16 @@ public class Global extends GlobalSettings {
             System.exit(-1);
           }
         }
-      }.start();
+      };
+      thread.start();
     } catch (Exception ex) {
       Logger.error(ex.getMessage(), ex);
     }
   }
 
-  Thread logThread;
-
-  private void initiateLogWatcher() {
-    logThread = new Thread() {
-      @Override
-      public void run() {
-        try {
-          RandomAccessFile raf = new RandomAccessFile("logs/application.log", "r");
-
-          System.out.println("Opened log file");
-          byte[] fully = new byte[2048];
-          while (true) {
-            int read = raf.read(fully);
-
-            System.out.println("Read something");
-
-            controllers.Application.logFeedUpdate(new String(fully, 0, read));
-            if (Thread.interrupted()) {
-              Logger.warn("Watcher thread interrupted");
-              return;
-            }
-          }
-        } catch (Exception ex) {
-          Logger.error("Coudnt create log file watcher", ex);
-        }
-      }
-    };
-    logThread.start();
-  }
-
   @Override
   public void onStop(Application app) {
-    if (logThread != null) {
-      try {
-        logThread.interrupt();
-      } catch (Exception ex) {
-      }
-    }
+
   }
 
   /**

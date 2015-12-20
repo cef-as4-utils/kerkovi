@@ -36,11 +36,11 @@ public class AS4Gateway {
    * @return
    */
   public String getBackendAddress() {
-    if (backendAddress == null || backendAddress.length() == 0) {
-      return mshAddress;
-    }
+    //if (backendAddress == null || backendAddress.length() == 0) {
+    return mshAddress;
+    //}
 
-    return backendAddress;
+//    return backendAddress;
   }
 }
 

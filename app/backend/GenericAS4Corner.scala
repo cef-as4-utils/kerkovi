@@ -63,8 +63,12 @@ class GenericAS4Corner extends AbstractMSHBackend {
       logItem.fromPartyId = fromPartyId.getTextContent;
       logItem.messageType = "Submission " + label
 
-      val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, resolveBackendAddress(submissionData))
-      logItem.setReply(reply);
+      val address: URL = resolveBackendAddress(submissionData)
+
+      Logger.debug("URL of the backend: " + address)
+      val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, address)
+      if (reply != null)
+        logItem.setReply(reply);
 
       logItem.success = true;
       try {
@@ -79,6 +83,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       Logger.debug("====================")
     } catch {
       case th: Throwable => {
+        Logger.error(th.getMessage, th)
         logItem.setException(th);
       }
     } finally {
@@ -92,7 +97,8 @@ class GenericAS4Corner extends AbstractMSHBackend {
     if (gateway == null) {
       throw new IllegalArgumentException("A party with id [" + submissionData.from + "] was not found")
     }
-    new URL(gateway.getBackendAddress)
+    val address: String = gateway.getBackendAddress
+    new URL(address)
   }
 
   def process(request: Request[RawBuffer]): Result = {

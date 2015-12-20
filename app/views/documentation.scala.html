@@ -64,20 +64,20 @@
   <h3>Sequence</h3>
 
   <ol style="list-style-type: none ;">
-    <li><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to C2</li>
-    <li><b>Step 2 -</b>
-      Producer receives a callback receipt from C2 containing details of the producer message - the receipt back to Producer is optional and may just be an HTTP Response 20x</li>
-    <li><b>Step 3 -</b> Send: C2 constructs a message based on message received from Producer and sends this to C3</li>
-    <li><b>Step 4 -</b> <i>SubmitResponse</i>
-      : C2 constructs a message containing the refToMessageId of the step 1 messageId, as well as the messageId used in the message from C2 to C3</li>
-    <li><b>Step 5 -</b> C2 receives a receipt (or error) signal from C3 containing details of the C2 message</li>
-    <li><b>Step 6 -</b> <i>Notify</i>
+    <li id="step1"><b>Step 1 -</b> <i>Submit</i>: Producer sends a message to C2</li>
+    <li id="step2"><b>Step 2 -</b>
+      Producer receives a receipt from C2 containing details of the producer message - the receipt back to Producer is optional and may just be an HTTP Response 20x</li>
+    <li id="step3"><b>Step 3 -</b> Send: C2 constructs a message based on message received from Producer and sends this to C3</li>
+    <li id="step4"><b>Step 4 -</b> <i>SubmitResponse</i>
+      : C2 constructs a message containing the refToMessageId of the step 1 messageId, as well as the messageId used in the message from C2 to C3 and sends this to the producer</li>
+    <li id="step5"><b>Step 5 -</b> C2 receives a receipt (or error) signal from C3 containing details of the C2 message</li>
+    <li id="step6"><b>Step 6 -</b> <i>Notify</i>
       : C2 constructs message detailing the result of the message from C2 to C3 and sends this to the producer</li>
-    <li><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based on the message it received, and delivers it to C4.</li>
+    <li id="step7"><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based on the message it received, and delivers it to C4.</li>
   </ol>
 
   <p>The <i>SubmitResponse</i>
-    message from C2 to C3 should then include the Step 3 C2 to C3 messageId as a message property.</p>
+    message from C2 to C1 should then include the Step 3 C2 to C3 messageId as a message property.</p>
 
   <h2 id="gwia">Gateway C2-C3 PModes</h2>
 
@@ -266,35 +266,61 @@
   <h2 id="samples">Sample Messages</h2>
 
   <p>
-    In this section we provide sample AS4 messages that may take place in a sample conformance or interoperability scenario. Please note that we have also depicted the multipart mime message format for the AS4 messages that carry attachments.<br />
-    These samples may be used as a starting point for a test attempts.</p>
+    In this section we provide sample AS4 messages for a <b>TWO_WAY MEP</b>
+    that may take place in a sample conformance or interoperability scenario.
+    Please note that we have also depicted the multipart mime message format for the AS4 messages that carry attachments.
+    These samples may be used as a starting point for a test attempts.
+  </p>
+
+<style>
+  .largecell td{
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+  .rightborder{
+    border-right: 1px solid gray;
+  }
+</style>
+
+  <p>
+    The ebms ID's of the messages (MessageID) are given below with respect to their occurrence in the <a href="#sampleWorkflow">Sample Workflow</a>
+  </p>
+  <table class="zebra largecell">
+    <tr><th class="rightborder">Name</th><th class="rightborder">Value</th><th>Step</th></tr>
+    <tr><td class="rightborder"><b>Submission From C1 to C2:</b></td><td class="rightborder">submission@@corner1</td><td><a href="#step1">Step1</a></td></tr>
+    <tr><td class="rightborder"><b>AS4 Message from C2 to C3 (request leg):</b></td><td class="rightborder">as4message@@corner2</td><td><a href="#step3">Step3</a></td></tr>
+    <tr><td class="rightborder"><b>SubmitResponse from C2 to C1:</b></td><td class="rightborder">submitresponse@@corner2</td><td><a href="#step4">Step4</a></td></tr>
+    <tr><td class="rightborder"><b>Notification from C2 to C1:</b></td><td class="rightborder">notification@@corner2</td><td><a href="#step6">Step6</a></td></tr>
+    <tr><td class="rightborder"><b>Deliver from C3 to C4:</b></td><td class="rightborder">deliver@@corner3</td><td><a href="#step6">Step6</a></td></tr>
+    <tr><td class="rightborder"><b>AS4 Message from C3 to C2 (reply leg):</b></td><td class="rightborder">as4message@@corner3</td><td>Not given in steps</td></tr>
+  </table>
 
   <p>
     We did not provide any information about the receipts as they are optional. If you want to respond with receipts, please refer to the <a href="http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html" target="_blank">
     AS4 specification</a></p>
 
-  <h3 id="sample1">Sample Submission (from Minder to the sender backend)</h3>
+  <h3 id="sample1">Sample Submission (from Minder (C1) to C2)</h3>
   @sampleCode("sampleSubmission.xml", 1000, 650)
   <br />
 
-  <h3 id="sample2">Sample Submission Result (from the backend to Minder)</h3>
+  <h3 id="sample4">Sample Request Message (from <i>C2</i> to <i>C3</i>)</h3>
+  @sampleCode("sampleAS4Request.xml", 1000, 600)
+  <br />
+
+  <h3 id="sample2">Sample SubmitResponse (from the <i>C2</i> to <i>C1</i>)</h3>
   @sampleCode("sampleSubmissionResult.xml", 1000, 400)
   <br />
 
-  <h3 id="sample3">Sample Notification Message (from the backend to Minder)</h3>
+  <h3 id="sample3">Sample Notification (from the <i>C2</i> to <i>C1</i>)</h3>
   @sampleCode("sampleNotification.xml", 1000, 400)
   <br />
 
-  <h3 id="sample4">Sample AS4 Message (between corner 2 and corner 3)</h3>
-  @sampleCode("sampleAS4Message.xml", 1000, 600)
-  <br />
-
-  <h3 id="sample5">Sample AS4 Receipt (between corner 3 and corner 2)</h3>
-  @sampleCode("sampleC3C2Receipt.xml", 1000, 600)
-  <br />
-
-  <h3 id="sample6">Sample Delivery (between from the backend to Minder)</h3>
+  <h3 id="sample6">Sample Delivery (from <i>C3</i> to <i>C4</i>)</h3>
   @sampleCode("sampleDelivery.xml", 1000, 650)
+  <br />
+
+  <h3 id="sample5">Sample Reply Message (from <i>C3</i> to <i>C2</i>)</h3>
+  @sampleCode("sampleAS4Reply.xml", 1000, 600)
   <br />
 
   <h2 id="checklist">Checklist</h2>

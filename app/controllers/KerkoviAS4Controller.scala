@@ -52,14 +52,26 @@ object KerkoviAS4Controller extends Controller {
       logItem.fromPartyId = fromPartyId.getTextContent;
       logItem.messageType = "Interceptor"
 
-      val content: String = toPartyId.getTextContent
+      var toPartyIdStr: String = toPartyId.getTextContent
+
+      if(logItem.toPartyId.indexOf(':') != -1){
+        logItem.toPartyId = logItem.toPartyId.substring(logItem.toPartyId.lastIndexOf(':')+1);
+      }
+
+      if(logItem.fromPartyId.indexOf(':') != -1){
+        logItem.fromPartyId = logItem.fromPartyId.substring(logItem.fromPartyId.lastIndexOf(':')+1);
+      }
+
+
+      Logger.info("A message from " + logItem.fromPartyId + " to  " + logItem.toPartyId)
+
       //find the matching party in the database
       //and immediately forward it.
-      val gateway: AS4Gateway = Databeyz.findByPartyId(content)
+      val gateway: AS4Gateway = Databeyz.findByPartyId(logItem.toPartyId)
 
       if (gateway == null) {
-        logItem.setException(new IllegalArgumentException("A gateway with party id [" + content + "] not found"))
-        return Util.sendFault(null, "A gateway with party id [" + content + "] not found")
+        logItem.setException(new IllegalArgumentException("A gateway with party id [" + logItem.toPartyId + "] not found"))
+        return Util.sendFault(null, "A gateway with party id [" + logItem.toPartyId + "] not found")
       }
 
       Logger.info("Target gateway " + gateway.partyID + " ==> " + gateway.mshAddress)

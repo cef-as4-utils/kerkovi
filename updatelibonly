@@ -1,0 +1,2 @@
+cd target/universal/stage
+cat lib/esens.wp6.kerkovi-$1-sans-externalized.jar | ssh eid@eidrepo -p 8998 "cat > esens.wp6.kerkovi-$1-sans-externalized.jar"

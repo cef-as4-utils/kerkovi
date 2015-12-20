@@ -8,15 +8,15 @@
       <ns2:UserMessage>
         <ns2:MessageInfo>
           <ns2:Timestamp>2015-11-07T19:44:00.062Z</ns2:Timestamp>
-          <ns2:MessageId>deliver@corner3</ns2:MessageId>
+          <ns2:MessageId>deliver@corner2</ns2:MessageId>
         </ns2:MessageInfo>
         <ns2:PartyInfo>
           <ns2:From>
-            <ns2:PartyId>holodeck-c3</ns2:PartyId>
+            <ns2:PartyId>holodeck-c2</ns2:PartyId>
             <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
           </ns2:From>
           <ns2:To>
-            <ns2:PartyId>minder</ns2:PartyId> <!-- c4 this time -->
+            <ns2:PartyId>minder</ns2:PartyId> <!-- c1 this time -->
             <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
           </ns2:To>
         </ns2:PartyInfo>
@@ -27,17 +27,18 @@
         </ns2:CollaborationInfo>
         <ns2:MessageProperties>
           <!-- The properties copied from the AS4 header fields of the MSH inbound message-->
-          <ns2:Property name="MessageId">as4message@corner2</ns2:Property>
+          <ns2:Property name="MessageId">as4message@corner3</ns2:Property>
+          <ns2:Property name="RefToMessageId">as4message@corner2</ns2:Property>
           <ns2:Property name="ConversationId">1</ns2:Property>
           <!-- The following properties are used by C2 to determine which P-Mode should be used for sending the message to C3 -->
-          <ns2:Property name="FromPartyId">holodeck-c2</ns2:Property>
-          <ns2:Property name="FromPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Property>
-          <ns2:Property name="ToPartyId">holodeck-c3</ns2:Property>
-          <ns2:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Property>
+          <ns2:Property name="FromPartyId">holodeck-c3</ns2:Property>
+          <ns2:Property name="FromPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Property>
+          <ns2:Property name="ToPartyId">holodeck-c2</ns2:Property>
+          <ns2:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Property>
           <ns2:Property name="Service">SRV_SIMPLE_TWOWAY</ns2:Property>
           <ns2:Property name="Action">ACT_SIMPLE_TWOWAY</ns2:Property>
-          <ns2:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</ns2:Property>
-          <ns2:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</ns2:Property>
+          <ns2:Property name="originalSender">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C4</ns2:Property>
+          <ns2:Property name="finalRecipient">urn:oasis:names:tc:ebcore:partyid-type:unregistered:C1</ns2:Property>
         </ns2:MessageProperties>
         <ns2:PayloadInfo>
           <ns2:PartInfo href="xmlpayload@minder">
