@@ -14,7 +14,7 @@ scalaVersion := "2.11.7"
 
 libraryDependencies ++= Seq(
   "org.yaml" % "snakeyaml" % "1.15",
-  "esens.wp6" % "esens-msh-backend" % "0.1.8-4",
+  "esens.wp6" % "esens-msh-backend" % "1.0",
   "minder" % "as4-utils" % "1.2",
   "gov.tubitak.minder" % "minder-common" % "0.3.1",
   "gov.tubitak.minder" % "minder-client" % "0.3.3-1"

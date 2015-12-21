@@ -258,7 +258,7 @@ object Util extends Controller {
   def generateMessageProperties(submissionData: SubmissionData, targetService: String, targetAction: String): String = {
     val propertiesBuilder = new StringBuilder
     if (submissionData.messageId != null) {
-      propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + submissionData.messageId + "</ns2:Property>")
+      propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + submissionData.messageId + "</ns2:Property>\n")
     }
 
     val convId = if (submissionData.conversationId != null) {
@@ -266,16 +266,18 @@ object Util extends Controller {
     } else {
       "1"
     }
-    propertiesBuilder.append("<ns2:Property name=\"ConversationId\">" + convId + "</ns2:Property>")
+    propertiesBuilder.append("<ns2:Property name=\"ConversationId\">" + convId + "</ns2:Property>\n")
     if (submissionData.refToMessageId != null) {
-      propertiesBuilder.append("<ns2:Property name=\"RefToMessageId\">" + submissionData.refToMessageId + "</ns2:Property>")
+      propertiesBuilder.append("<ns2:Property name=\"RefToMessageId\">" + submissionData.refToMessageId + "</ns2:Property>\n")
     }
 
-    propertiesBuilder.append("<ns2:Property name=\"ToPartyId\">" + submissionData.to + "</ns2:Property>")
-    propertiesBuilder.append("<ns2:Property name=\"ToPartyRole\">" + submissionData.partyRole + "</ns2:Property>")
-    propertiesBuilder.append("<ns2:Property name=\"Service\">" + targetService + " </ns2:Property>")
-    propertiesBuilder.append("<ns2:Property name=\"Action\">" + targetAction + " </ns2:Property>")
-    propertiesBuilder.append("<ns2:Property name=\"originalSender\">" + submissionData.originalSender + "</ns2:Property>")
+    propertiesBuilder.append("<ns2:Property name=\"ToPartyId\">" + submissionData.to + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"ToPartyRole\">" + submissionData.toPartyRole + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"FromPartyId\">" + submissionData.from + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"FromPartyRole\">" + submissionData.fromPartyRole + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"Service\">" + targetService + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"Action\">" + targetAction + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"originalSender\">" + submissionData.originalSender + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"finalRecipient\">" + submissionData.finalRecipient + "</ns2:Property>")
 
 
@@ -343,8 +345,13 @@ object Util extends Controller {
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='ToPartyRole']/text()")
-      data.partyRole = node.getNodeValue
-      Logger.debug("data.partyRole: " + data.partyRole)
+      data.toPartyRole = node.getNodeValue
+      Logger.debug("data.partyRole: " + data.toPartyRole)
+    }
+    Try {
+      node = findSingleNode(properties, ".//:Property[@name='FromPartyRole']/text()")
+      data.fromPartyRole = node.getNodeValue
+      Logger.debug("data.partyRole: " + data.fromPartyRole)
     }
     Try {
       node = findSingleNode(properties, ".//:Property[@name='originalSender']/text()")

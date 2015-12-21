@@ -31,11 +31,10 @@
           <ns2:Property name="MessageId">as4message@corner3</ns2:Property>
           <ns2:Property name="RefToMessageId">as4message@corner2</ns2:Property>
           <ns2:Property name="ConversationId">1</ns2:Property>
-          <!-- The following properties are used by C2 to determine which P-Mode should be used for sending the message to C3
-              NOTE: We assume that the From party in the communication between C2 and C3 is fixed.
-          -->
-          <ns2:Property name="ToPartyId">holodeck2</ns2:Property>
-          <ns2:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Property>
+          <ns2:Property name="FromPartyId">holodeck-c3</ns2:Property>
+          <ns2:Property name="FromPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Property>
+          <ns2:Property name="ToPartyId">holodeck-c2</ns2:Property>
+          <ns2:Property name="ToPartyRole">http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Property>
           <ns2:Property name="Service">SRV_SIMPLE_ONEWAY</ns2:Property>
           <ns2:Property name="Action">ACT_SIMPLE_ONEWAY</ns2:Property>
           <!-- The following two properties will just be copied to the outgoing message from C2 to C3 -->
