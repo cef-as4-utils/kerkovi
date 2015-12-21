@@ -14,17 +14,17 @@
     <ns2:UserMessage>
       <ns2:MessageInfo>
         <ns2:Timestamp>2015-11-11T10:05:04.502Z</ns2:Timestamp>
-        <ns2:MessageId>as4message@corner3</ns2:MessageId>
-        <ns2:RefToMessageId>as4message@corner2</ns2:RefToMessageId>
+        <ns2:MessageId>actual-message-id@corner1.eu</ns2:MessageId>
+        <ns2:RefToMessageId>actual-reftomsgid-id@corner1.eu</ns2:RefToMessageId>
       </ns2:MessageInfo>
       <ns2:PartyInfo>
         <ns2:From>
-          <ns2:PartyId>holodeck-c3</ns2:PartyId>
-          <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Role>
+          <ns2:PartyId>holodeck</ns2:PartyId>
+          <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Role>
         </ns2:From>
         <ns2:To>
-          <ns2:PartyId>holodeck-c2</ns2:PartyId>
-          <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/initiator</ns2:Role>
+          <ns2:PartyId type="http://www.domibus.eu/exampleType">holodeck2</ns2:PartyId>
+          <ns2:Role>http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/responder</ns2:Role>
         </ns2:To>
       </ns2:PartyInfo>
       <ns2:CollaborationInfo>

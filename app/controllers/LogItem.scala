@@ -18,7 +18,7 @@ class LogItem {
   var messageType: String = null;
   var valid: Boolean = false;
   var directMode: Boolean = false;
-  var success: LogItemSuccess = LogItemSuccess.UNKNOWN;
+  var success: Boolean = false;
   var toPartyId: String = null;
   var fromPartyId: String = null;
   var as4Message: Array[Byte] = null
@@ -155,7 +155,7 @@ object LogDB {
           logItem.messageType = strOrNull(arr(2))
           logItem.valid = arr(3).toBoolean;
           logItem.directMode = arr(4).toBoolean;
-          logItem.success = LogItemSuccess.valueOf(arr(5).toUpperCase())
+          logItem.success = arr(5).toBoolean;
           logItem.toPartyId = strOrNull(arr(6));
           logItem.fromPartyId = strOrNull(arr(7));
 

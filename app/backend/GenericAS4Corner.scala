@@ -6,7 +6,7 @@ import java.util.UUID
 import javax.xml.soap.SOAPMessage
 
 import controllers.KerkoviAS4Controller._
-import controllers.{LogItemSuccess, LogItem, Databeyz, Global}
+import controllers.{LogItem, Databeyz, Global}
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.SWA12Util
 import model.AS4Gateway
@@ -67,23 +67,20 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
       Logger.debug("URL of the backend: " + address)
       val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, address)
-      if (reply != null) {
+      if (reply != null)
         logItem.setReply(reply);
 
-        logItem.success = LogItemSuccess.TRUE;
-        try {
-          val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
-          if (elm != null)
-            logItem.success = LogItemSuccess.TRUE;
-        } catch {
-          case _ =>
-        }
-        Logger.debug("[" + label + "] Receipt received from the AS4 backend")
-        Logger.debug(SWA12Util.describe(reply))
-        Logger.debug("====================")
-      } else {
-        logItem.success=LogItemSuccess.UNKNOWN
+      logItem.success = true;
+      try {
+        val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
+        if (elm != null)
+          logItem.success = false;
+      } catch {
+        case _ =>
       }
+      Logger.debug("[" + label + "] Receipt received from the AS4 backend")
+      Logger.debug(SWA12Util.describe(reply))
+      Logger.debug("====================")
     } catch {
       case th: Throwable => {
         Logger.error(th.getMessage, th)
@@ -161,7 +158,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
       //create a submissiondata object from the SOAP message
       deliver(Util.convert2SubmissionData(message))
-      logItem.success = LogItemSuccess.TRUE
+      logItem.success = true
     } catch {
       case th: Throwable => {
         logItem.setException(th);
@@ -211,7 +208,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       }
 
       processSubmissionResult(submissionResult)
-      logItem.success = LogItemSuccess.TRUE
+      logItem.success = true
     } catch {
       case th: Throwable => {
         logItem.setException(th);
@@ -253,7 +250,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       }
 
       processNotification(status);
-      logItem.success = LogItemSuccess.TRUE
+      logItem.success = true
     } catch {
       case th: Throwable => {
         logItem.setException(th);
