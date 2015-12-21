@@ -3,8 +3,9 @@
 @import java.util.concurrent.atomic.AtomicInteger
 
 
-
-<div align="center"><a class="pageLink" href="#" onclick="prevPage(@currentPage)">&lt;</a><span style="padding-left: 10px ; padding-right: 10px">@{currentPage+1}</span> <a class="pageLink" href="#" onclick="nextPage(@currentPage)">&gt;</a> </div>
+<div align="center"><a class="pageLink" href="#" onclick="prevPage(@currentPage)">&lt;</a><span style="padding-left: 10px ; padding-right: 10px">@{
+  currentPage + 1
+}</span> <a class="pageLink" href="#" onclick="nextPage(@currentPage)">&gt;</a> </div>
 <br />
 
 <table class="zebra" width="100%" style="text-align: center ;">
@@ -34,10 +35,14 @@
         } else {
           <span style="color:blue ; font-size: x-large"> \u2718</span>
         }</td>
-        <td> @if(logItem.success) {
+        <td> @if(logItem.success == LogItemSuccess.TRUE) {
           <span style="color:green ; font-size: x-large"> \u2713</span>
         } else {
-          <span style="color:red ; font-size: x-large"> \u2718</span>
+          @if(logItem.success == LogItemSuccess.FALSE) {
+            <span style="color:red ; font-size: x-large"> \u2718</span>
+          } else {
+            <span style="color:red ; font-size: x-large"> \u2753</span>
+          }
         }</td>
         <td>
         @if(logItem.as4MessageExists) {

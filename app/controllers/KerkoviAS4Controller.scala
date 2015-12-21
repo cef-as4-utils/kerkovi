@@ -95,11 +95,11 @@ object KerkoviAS4Controller extends Controller {
 //        fileOutputStream.write(bytes);
 //        fileOutputStream.close();
 
-        logItem.success = true;
+        logItem.success = LogItemSuccess.TRUE;
         try {
           val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
           if (elm != null)
-            logItem.success = false;
+            logItem.success = LogItemSuccess.FALSE;
         } catch {
           case _ =>
         }
@@ -135,11 +135,11 @@ object KerkoviAS4Controller extends Controller {
           return BadRequest("Couldn't receive receipt")
         }
 
-        logItem.success = true;
+        logItem.success = LogItemSuccess.TRUE;
         try {
           val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
           if (elm != null)
-            logItem.success = false;
+            logItem.success = LogItemSuccess.FALSE;
         } catch {
           case _ =>
         }
@@ -155,7 +155,7 @@ object KerkoviAS4Controller extends Controller {
     } catch {
       case th: Throwable => {
         Logger.error(th.getMessage, th)
-        logItem.success = false;
+        logItem.success = LogItemSuccess.FALSE;
         logItem.setException(th);
         BadRequest(th.getMessage)
       }
