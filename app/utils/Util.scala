@@ -13,7 +13,7 @@ import javax.xml.xpath.XPathConstants._
 import javax.xml.xpath._
 
 import esens.wp6.esensMshBackend._
-import minder.as4Utils.SAAJUtil
+import minder.as4Utils.{SWA12Util, SAAJUtil}
 import minder.as4Utils.SWA12Util._
 import org.w3c.dom.{Document, Element, Node}
 import play.api.libs.iteratee.Enumerator
@@ -43,7 +43,7 @@ object Util extends Controller {
     val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
     val stylesource = new StreamSource(this.getClass.getResourceAsStream("/receipt-generator.xslt"));
     val transformer = TransformerFactory.newInstance().newTransformer(stylesource);
-    transformer.setParameter("messageid", genereateEbmsMessageId("minder"));
+    transformer.setParameter("messageid", genereateEbmsMessageId("mindertestbed.org"));
     transformer.setParameter("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toString);
     val baos = new ByteArrayOutputStream()
     transformer.transform(new DOMSource(soapMessage.getSOAPPart), new StreamResult(baos))
@@ -71,7 +71,7 @@ object Util extends Controller {
 
     val fm = if (faultMessage == null) "UNKNOWN ERROR" else faultMessage
 
-    val ebmsMessageId = genereateEbmsMessageId("minder")
+    val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
     val category = "CONTENT"
     val errorCode = "EBMS:0004"
     val origin = "ebms"
@@ -191,7 +191,7 @@ object Util extends Controller {
     val keyMessageProps = "${messageProperties}"
     val keyPartInfo = "${partInfo}"
 
-    val ebmsMessageId = genereateEbmsMessageId("backend")
+    val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
 
     xml = xml
       .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
@@ -217,7 +217,7 @@ object Util extends Controller {
 
     submissionData.getPayloads.foreach(p => {
       val att = message.createAttachmentPart()
-      att.setContentId(p.payloadId)
+      att.setContentId('<' + p.payloadId + '>')
       att.setRawContentBytes(p.data, 0, p.data.length, p.mimeType)
       message.addAttachmentPart(att)
     })
@@ -289,7 +289,7 @@ object Util extends Controller {
 
     submissionData.getPayloads.foreach(payload => {
       partInfoBuilder
-        .append("<ns2:PartInfo href=\"")
+        .append("<ns2:PartInfo href=\"cid:")
         .append(payload.payloadId)
         .append("\">\n<ns2:PartProperties><ns2:Property name=\"MimeType\">")
         .append(payload.mimeType)
@@ -381,20 +381,34 @@ object Util extends Controller {
       val payload = new Payload
       val att: AttachmentPart = attObj.asInstanceOf[AttachmentPart];
 
-      val href = att.getContentId;
+      val href = att.getContentId.replaceAll("<|>", "");
 
       //throws exception if part info does not exist
-      val partInfo: Node = findSingleNode(message.getSOAPHeader, "//:PayloadInfo/:PartInfo[@href='" + href + "']")
-      val mimeType: Node = findSingleNode(partInfo, ".//:PartProperties/:Property[@name='MimeType']/text()")
+      val partInfo: Node = {
+        Try {
+          findSingleNode[Node](message.getSOAPHeader, "//:PayloadInfo/:PartInfo[@href='" + href + "']")
+        } orElse Try {
+          findSingleNode[Node](message.getSOAPHeader, "//:PayloadInfo/:PartInfo[@href='cid:" + href + "']")
+        }
+      }.get
 
-      if (mimeType.getNodeValue != att.getContentType)
-        throw new RuntimeException("Content type missmatch [" + mimeType.getNodeValue + " != " +
-          att.getContentType + "]")
+      if (partInfo == null) throw new RuntimeException("ContentId: " + href + " was not found in PartInfo")
 
+      var mimeType = findSingleNode[Node](partInfo, ".//:PartProperties/:Property[@name='MimeType']/text()").getNodeValue
+      if (mimeType.startsWith("cid"))
+        mimeType = mimeType.substring(4);
 
-      payload.mimeType = mimeType.getNodeValue
+      val contentType = att.getContentType
+
+      //if content type is application/gzip, we must decompress it
+      if (contentType == "application/gzip") {
+        payload.data = SWA12Util.gunzip(att.getRawContentBytes)
+      } else {
+        payload.data = att.getRawContentBytes
+      }
+
+      payload.mimeType = mimeType
       payload.payloadId = href;
-      payload.data = att.getRawContentBytes
       Logger.debug("\tpayload.payloadId: " + payload.payloadId)
       Logger.debug("\tpayload.mimeType: " + payload.mimeType)
       Logger.debug("\tpayload.data: " + payload.data.length)
@@ -457,7 +471,7 @@ object Util extends Controller {
     val keyMessageProps = "${messageProperties}"
     val keyPartInfo = "${partInfo}"
 
-    val ebmsMessageId = genereateEbmsMessageId("backend")
+    val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
 
     xml = xml
       .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
@@ -506,7 +520,7 @@ object Util extends Controller {
     val keyMessageProps = "${messageProperties}"
     val keyPartInfo = "${partInfo}"
 
-    val ebmsMessageId = genereateEbmsMessageId("backend")
+    val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
 
     xml = xml
       .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
@@ -532,7 +546,6 @@ object Util extends Controller {
 
     return message
   }
-
 
   def readFile(fileName: String): Array[Byte] = {
     val fis = new FileInputStream(fileName)

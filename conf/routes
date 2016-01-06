@@ -10,7 +10,7 @@ GET         /                                   controllers.Application.index(vi
 GET         /nav/:view                          controllers.Application.index(view)
 GET         /main                               controllers.Application.main()
 GET         /gateways                           controllers.Application.gateways()
-GET         /adapters                           controllers.Application.documentation()
+GET         /documentation                      controllers.Application.documentation()
 GET         /logs                               controllers.Application.logs()
 GET         /kerkovi                            controllers.Application.kerkovi()
 GET         /run                                controllers.Application.run()
@@ -30,8 +30,6 @@ GET         /showReply                          controllers.Application.showRepl
 GET         /showException                      controllers.Application.showException(time: Long)
 
 
-# Map the JS resource paths
-GET         /*file                              controllers.Assets.versioned(path="/public", file: Asset)
 
 POST        /corner1                            controllers.KerkoviAS4Controller.postCorner1()
 GET         /corner1                            controllers.KerkoviAS4Controller.getCorner1()
@@ -40,7 +38,7 @@ POST        /corner4                            controllers.KerkoviAS4Controller
 GET         /corner4                            controllers.KerkoviAS4Controller.getCorner4()
 
 POST        /as4Interceptor                     controllers.KerkoviAS4Controller.as4Interceptor()
-POST        /zeroAS4                            controllers.KerkoviAS4Controller.zeroAS4()
+GET         /as4Interceptor                     controllers.KerkoviAS4Controller.as4InterceptorError()
 
-GET         /lastHttpError                      as4Interceptor.LastHttpError.lastHttpError()
-GET         /lastError                          as4Interceptor.LastHttpError.lastError()
+# Map the JS resource paths
+GET         /*file                              controllers.Assets.versioned(path="/public", file: Asset)

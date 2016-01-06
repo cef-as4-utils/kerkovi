@@ -13,7 +13,7 @@ import model.AS4Gateway
 import org.w3c.dom.{Element, Node}
 import play.api.Logger
 import play.api.mvc.{RawBuffer, Request, Result}
-import utils.Util
+import utils.{Tic, Util}
 
 import scala.util.Try
 
@@ -43,7 +43,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
       //update the message id (if its null, generate one)
       if (submissionData.messageId == null) {
-        submissionData.messageId = UUID.randomUUID().toString
+        submissionData.messageId = Util.genereateEbmsMessageId("mindertestbed.org")
       }
 
       val message: SOAPMessage = Util.convert2Soap(submissionData, Global.myPartyID,
@@ -65,8 +65,10 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
       val address: URL = resolveBackendAddress(submissionData)
 
-      Logger.debug("URL of the backend: " + address)
+      Logger.debug("URL of the gateway: " + address)
+      Tic.tic()
       val reply: SOAPMessage = SWA12Util.sendSOAPMessage(message, address)
+      Logger.debug("Sending message to [" + label + "] took " + Tic.toc() + " milliseconds")
       if (reply != null) {
         logItem.setReply(reply);
 
@@ -114,7 +116,6 @@ class GenericAS4Corner extends AbstractMSHBackend {
         return BadRequest("Service [" + service + "] not supported")
       }
 
-      //TODO : process wrt sanders PMODE
       val action = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Action"))
 
       action match {

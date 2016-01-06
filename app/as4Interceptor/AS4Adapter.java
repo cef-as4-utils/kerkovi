@@ -9,6 +9,7 @@ import minderengine.Slot;
 import minderengine.Wrapper;
 import org.w3c.dom.Element;
 import play.Logger;
+import utils.Tic;
 
 import javax.xml.soap.SOAPMessage;
 import java.net.URL;
@@ -118,7 +119,9 @@ public abstract class AS4Adapter extends Wrapper {
       final String toPartyId = tmp.getTextContent();
       String targetUrlString = Databeyz.findByPartyId(toPartyId).mshAddress;
       Logger.debug("Send message to [" + toPartyId + "] with address " + targetUrlString);
+      Tic.tic();
       receipt = sendMessage(soapMessage, targetUrlString);
+      Logger.debug(">>>>>> Time between send-receive [" + toPartyId + "-targetUrlString] " + Tic.toc());
       if (receipt == null) {
         Logger.warn(toPartyId + " sent back NULL receipt, report error");
         beginReportSignalError(new SignalFailedException(toPartyId + " sent back NULL response"));
@@ -128,7 +131,7 @@ public abstract class AS4Adapter extends Wrapper {
         Logger.debug(SWA12Util.describe(receipt));
         //final String[] contentTypeHeader = receipt.getMimeHeaders().getHeader("content-type");
         //receipt.getMimeHeaders().removeAllHeaders();
-        //if (contentTypeHeader != null) {
+        //if (co ntentTypeHeader != null) {
           //receipt.getMimeHeaders().addHeader("content-type", contentTypeHeader[0]);
         //}
         replyReceived(SWA12Util.serializeSOAPMessage(receipt.getMimeHeaders(), receipt));

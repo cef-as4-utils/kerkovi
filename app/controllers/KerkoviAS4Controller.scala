@@ -11,7 +11,7 @@ import org.w3c.dom.Element
 import play.api.Logger
 import play.api.libs.iteratee.Enumerator
 import play.api.mvc._
-import utils.Util
+import utils.{Tic, Util}
 
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -24,7 +24,7 @@ object KerkoviAS4Controller extends Controller {
   }
 
   def postCorner4() = Action(parse.raw) { request =>
-    Logger.debug("Corner 1 received a message")
+    Logger.debug("Corner 4 received a message")
     Global.genericCorner4.process(request)
   }
 
@@ -54,12 +54,12 @@ object KerkoviAS4Controller extends Controller {
 
       var toPartyIdStr: String = toPartyId.getTextContent
 
-      if(logItem.toPartyId.indexOf(':') != -1){
-        logItem.toPartyId = logItem.toPartyId.substring(logItem.toPartyId.lastIndexOf(':')+1);
+      if (logItem.toPartyId.indexOf(':') != -1) {
+        logItem.toPartyId = logItem.toPartyId.substring(logItem.toPartyId.lastIndexOf(':') + 1);
       }
 
-      if(logItem.fromPartyId.indexOf(':') != -1){
-        logItem.fromPartyId = logItem.fromPartyId.substring(logItem.fromPartyId.lastIndexOf(':')+1);
+      if (logItem.fromPartyId.indexOf(':') != -1) {
+        logItem.fromPartyId = logItem.fromPartyId.substring(logItem.fromPartyId.lastIndexOf(':') + 1);
       }
 
 
@@ -80,39 +80,40 @@ object KerkoviAS4Controller extends Controller {
         logItem.directMode = true;
         Logger.info("Send message to " + gateway.mshAddress)
         val reply = SWA12Util.sendSOAPMessage(sOAPMessage, new URL(gateway.mshAddress))
+        //        var bytes = SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage);
+        //        var fileOutputStream = new FileOutputStream("domibus-c2-message.txt");
+        //        fileOutputStream.write(bytes);
+        //        fileOutputStream.close();
 
-        logItem.setReply(reply)
+        if (reply == null) {
+          logItem.success = LogItemSuccess.UNKNOWN
+          return Ok //empty response
+        } else {
+          logItem.setReply(reply)
+          Logger.info("Reply received")
+          Logger.debug(SWA12Util.prettyPrint(reply.getSOAPPart));
+          //        bytes = SWA12Util.serializeSOAPMessage(reply.getMimeHeaders, reply);
+          //        fileOutputStream = new FileOutputStream("domibus-c3-reply.txt");
+          //        fileOutputStream.write(bytes);
+          //        fileOutputStream.close();
 
-//        var bytes = SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage);
-//        var fileOutputStream = new FileOutputStream("domibus-c2-message.txt");
-//        fileOutputStream.write(bytes);
-//        fileOutputStream.close();
+          logItem.success = LogItemSuccess.TRUE;
+          try {
+            val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
+            if (elm != null)
+              logItem.success = LogItemSuccess.FALSE;
+          } catch {
+            case _ =>
+          }
 
-        Logger.info("Reply received")
-        Logger.debug(SWA12Util.prettyPrint(reply.getSOAPPart));
-//        bytes = SWA12Util.serializeSOAPMessage(reply.getMimeHeaders, reply);
-//        fileOutputStream = new FileOutputStream("domibus-c3-reply.txt");
-//        fileOutputStream.write(bytes);
-//        fileOutputStream.close();
+          val baos = new ByteArrayOutputStream()
+          reply.writeTo(baos)
+          Logger.debug("Reply headers")
+          val headers: Seq[(String, String)] = populateHeaders(reply)
+          val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(baos.toByteArray))
 
-        logItem.success = LogItemSuccess.TRUE;
-        try {
-          val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
-          if (elm != null)
-            logItem.success = LogItemSuccess.FALSE;
-        } catch {
-          case _ =>
+          return Ok.chunked(dataContent).withHeaders(headers: _*)
         }
-
-        val baos = new ByteArrayOutputStream()
-        reply.writeTo(baos)
-        Logger.debug("Reply headers")
-
-
-        val headers: Seq[(String, String)] = populateHeaders(reply)
-        val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(baos.toByteArray))
-
-        return Ok.chunked(dataContent).withHeaders(headers: _*)
       } else {
         logItem.directMode = false;
 
@@ -124,17 +125,20 @@ object KerkoviAS4Controller extends Controller {
         }
 
         //signal the minder adapter
+        Tic.tic()
         Global.as4Adapter.messageReceived(SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage));
         //wait for adapter to return the receipt
         val reply = Global.as4Adapter.consumeReceipt()
-        logItem.setReply(reply)
+        Logger.debug(">>>>>> Timeout between request and reply: " + Tic.toc)
 
         if (reply == null) {
           Logger.warn("Receipt is null. Send bad request")
           logItem.setException(new RuntimeException("Receipt is null. Send bad request"))
+          logItem.success = LogItemSuccess.FALSE;
           return BadRequest("Couldn't receive receipt")
         }
 
+        logItem.setReply(reply)
         logItem.success = LogItemSuccess.TRUE;
         try {
           val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
@@ -144,7 +148,6 @@ object KerkoviAS4Controller extends Controller {
           case _ =>
         }
 
-        //return the reply to the client
         val baos = new ByteArrayOutputStream()
         reply.writeTo(baos)
         Logger.debug("Reply headers")
@@ -201,5 +204,9 @@ object KerkoviAS4Controller extends Controller {
         BadRequest(th.getMessage)
       }
     }
+  }
+
+  def as4InterceptorError() = Action(parse.raw) {
+    request => Ok("Please use POST")
   }
 }

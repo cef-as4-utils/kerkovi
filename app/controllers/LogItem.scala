@@ -6,13 +6,15 @@ import java.util
 import java.util.{Collections, Base64}
 import javax.xml.soap.{SOAPConstants, MessageFactory, SOAPMessage}
 
+import scala.collection.JavaConversions._
+
 import scala.Predef
 
 /**
   * Author: yerlibilgin
   * Date:   24/11/15.
   */
-class LogItem {
+class LogItem extends Comparable[LogItem] {
   var longTime = System.currentTimeMillis()
   var time = ZonedDateTime.now(ZoneOffset.UTC).toString;
   var messageType: String = null;
@@ -48,12 +50,56 @@ class LogItem {
   }
 
   def persist(): Unit = {
-    LogDB.list.addFirst(this)
-    LogDB.persist()
+    LogDB.list.synchronized({
+      if (LogDB.list.isEmpty) {
+        LogDB.list.addFirst(this)
+        LogDB.persist()
+      } else {
+        val it = LogDB.list.listIterator()
+        while (it.hasNext) {
+          val nx = it.next()
+          if (nx.time.compareTo(this.time) < 0) {
+            it.previous()
+            it.add(this)
+            LogDB.persist()
+            return;
+          }
+        }
+      }
+    })
+  }
+
+  override def compareTo(o: LogItem): Int = {
+    this.time.compareTo(o.time)
   }
 }
 
 object LogDB {
+
+  def main(args: Array[String]): Unit = {
+    val link = new util.LinkedList[Int]()
+
+    for (i <- 1 to (14, 2)) {
+      link.addFirst(i)
+    }
+
+    def doIt() {
+      val trg = 6
+      val it = link.listIterator()
+      while (it.hasNext) {
+        val nx = it.next()
+        if (nx < trg) {
+          it.previous()
+          it.add(trg)
+          return;
+        }
+      }
+    }
+
+    doIt()
+
+    link.foreach(inti => println(inti))
+  }
   var PAGE_SIZE = 20
   var MAX_LOG_COUNT = 400;
 
@@ -62,9 +108,6 @@ object LogDB {
     if (max > list.size()) max = list.size()
     list.subList(page * PAGE_SIZE, max)
   }
-
-
-  import scala.collection.JavaConversions._
 
   val list = new util.LinkedList[LogItem]()
 
