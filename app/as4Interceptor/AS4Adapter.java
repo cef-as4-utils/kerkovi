@@ -3,10 +3,8 @@ package as4Interceptor;
 import controllers.Databeyz;
 import gov.tubitak.minder.client.MinderClient;
 import minder.as4Utils.SWA12Util;
-import minderengine.Signal;
-import minderengine.SignalFailedException;
-import minderengine.Slot;
-import minderengine.Wrapper;
+import minderengine.*;
+import model.AS4Gateway;
 import org.w3c.dom.Element;
 import play.Logger;
 import utils.Tic;
@@ -47,10 +45,15 @@ public abstract class AS4Adapter extends Wrapper {
   private MinderClient minderClient;
   private Object replyLock = new Object();
   private SOAPMessage reply = null;
+  private SUTIdentifiers sutIdentifiers;
+  private SUTIdentifiers defaultSutIdentifiers;
 
   public AS4Adapter() {
     Logger.info("Initiate AS4 Adapter");
+    defaultSutIdentifiers = new SUTIdentifiers();
+    defaultSutIdentifiers.getIdentifiers().add(createSUTIdentifier("GENERIC"));
   }
+
 
   /**
    */
@@ -65,7 +68,9 @@ public abstract class AS4Adapter extends Wrapper {
     finishTest();
     Logger.info("AS4Adapter Start Test");
     isRunning = true;
+    this.sutIdentifiers = defaultSutIdentifiers;
   }
+
 
   /**
    * Called by the server when a test case that conatins this wrapper is
@@ -75,6 +80,38 @@ public abstract class AS4Adapter extends Wrapper {
   public void finishTest() {
     Logger.info("AS4Adapter Finish Test");
     isRunning = false;
+    this.sutIdentifiers = defaultSutIdentifiers;
+  }
+
+
+  @Override
+  public SUTIdentifiers getSUTIdentifiers() {
+    return sutIdentifiers;
+  }
+
+  @Override
+  public void startTest(StartTestObject startTestObject) {
+    finishTest();
+    Logger.info("AS4Adapter Start Test");
+    isRunning = true;
+    this.sutIdentifiers = new SUTIdentifiers();
+    if (startTestObject.getProperties().contains("Corner2")) {
+      AS4Gateway corner2 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner2"));
+      if (corner2 != null) {
+        this.sutIdentifiers.getIdentifiers().add(createSUTIdentifier(corner2.name));
+      }
+    }
+    if (startTestObject.getProperties().contains("Corner3")) {
+      AS4Gateway corner3 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner3"));
+      if (corner3 != null) {
+        this.sutIdentifiers.getIdentifiers().add(createSUTIdentifier(corner3.name));
+      }
+    }
+  }
+
+  @Override
+  public void finishTest(FinishTestObject finishTestObject) {
+    this.finishTest();
   }
 
   /**
@@ -132,7 +169,7 @@ public abstract class AS4Adapter extends Wrapper {
         //final String[] contentTypeHeader = receipt.getMimeHeaders().getHeader("content-type");
         //receipt.getMimeHeaders().removeAllHeaders();
         //if (co ntentTypeHeader != null) {
-          //receipt.getMimeHeaders().addHeader("content-type", contentTypeHeader[0]);
+        //receipt.getMimeHeaders().addHeader("content-type", contentTypeHeader[0]);
         //}
         replyReceived(SWA12Util.serializeSOAPMessage(receipt.getMimeHeaders(), receipt));
       }
@@ -172,11 +209,6 @@ public abstract class AS4Adapter extends Wrapper {
     return null;
   }
 
-  @Override
-  public String getSUTName() {
-    return "";
-  }
-
   private SOAPMessage sendMessage(SOAPMessage soapMessage, String targetUrlString) {
     SOAPMessage receipt;
     try {
@@ -194,5 +226,12 @@ public abstract class AS4Adapter extends Wrapper {
 
   public void setMinderClient(MinderClient minderClient) {
     this.minderClient = minderClient;
+  }
+
+
+  private SUTIdentifier createSUTIdentifier(String name) {
+    SUTIdentifier id = new SUTIdentifier();
+    id.setSutName(name);
+    return id;
   }
 }

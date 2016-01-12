@@ -21,7 +21,7 @@
         <ns2:CollaborationInfo>
             <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
             <ns2:Action>${action}</ns2:Action>
-            <ns2:ConversationId>1</ns2:ConversationId>
+            <ns2:ConversationId>${conversationId}</ns2:ConversationId>
         </ns2:CollaborationInfo>
         <ns2:MessageProperties>
             ${messageProperties}

@@ -2,11 +2,7 @@ package wrapper;
 
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
-import esens.wp6.esensMshBackend.SubmissionResult;
-import minderengine.MinderException;
-import minderengine.Signal;
-import minderengine.Slot;
-import minderengine.Wrapper;
+import minderengine.*;
 import org.apache.log4j.Logger;
 
 /**
@@ -57,8 +53,6 @@ public abstract class MinderBackendAdapter extends Wrapper {
   public void submitMessage(SubmissionData submissionData) {
     if (!isRunning)
       throw new MinderException(MinderException.E_SUT_NOT_RUNNING);
-
-    SubmissionResult result = null;
     try {
       backendClient.submitMessage(submissionData);
     } catch (Throwable throwable) {
@@ -83,19 +77,14 @@ public abstract class MinderBackendAdapter extends Wrapper {
   @Signal
   public abstract void processNotification(MessageNotification status);
 
-  @Signal
-  public abstract void processSubmissionResult(SubmissionResult submissionResult);
-
-
   public void setBackendClient(MinderMSHBackendAdapter backendClient) {
     this.backendClient = backendClient;
   }
 
 
   @Override
-  public String getSUTName() {
-    return backendClient.getGatewayID().id;
+  public SUTIdentifiers getSUTIdentifiers() {
+    return null;
   }
-
 }
 

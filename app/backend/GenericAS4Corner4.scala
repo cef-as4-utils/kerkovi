@@ -1,8 +1,6 @@
 package backend
 
 import controllers.Global
-import esens.wp6.esensMshBackend.{SubmissionResult, SubmissionData}
-import play.api.Logger
 
 /**
   * Author: yerlibilgin

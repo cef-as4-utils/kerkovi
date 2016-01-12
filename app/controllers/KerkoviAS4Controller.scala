@@ -45,12 +45,14 @@ object KerkoviAS4Controller extends Controller {
 
       val toPartyId: Element = SWA12Util.findSingleNode(sOAPMessage.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
       val fromPartyId: Element = SWA12Util.findSingleNode(sOAPMessage.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
+      val conversationId: Element = SWA12Util.findSingleNode(sOAPMessage.getSOAPHeader, "//:eb:CollaborationInfo/:ConversationId")
 
       logItem.valid = true;
       logItem.setAS4Message(sOAPMessage)
       logItem.toPartyId = toPartyId.getTextContent;
       logItem.fromPartyId = fromPartyId.getTextContent;
       logItem.messageType = "Interceptor"
+      logItem.conversationId = conversationId.getTextContent
 
       var toPartyIdStr: String = toPartyId.getTextContent
 
@@ -73,10 +75,9 @@ object KerkoviAS4Controller extends Controller {
         logItem.setException(new IllegalArgumentException("A gateway with party id [" + logItem.toPartyId + "] not found"))
         return Util.sendFault(null, "A gateway with party id [" + logItem.toPartyId + "] not found")
       }
-
-      Logger.info("Target gateway " + gateway.partyID + " ==> " + gateway.mshAddress)
-
       if (gateway.proxyMode) {
+        Logger.info("Will send the message directly to the receiving party")
+        Logger.info("Target gateway " + gateway.partyID + " ==> " + gateway.mshAddress)
         logItem.directMode = true;
         Logger.info("Send message to " + gateway.mshAddress)
         val reply = SWA12Util.sendSOAPMessage(sOAPMessage, new URL(gateway.mshAddress))
@@ -115,6 +116,8 @@ object KerkoviAS4Controller extends Controller {
           return Ok.chunked(dataContent).withHeaders(headers: _*)
         }
       } else {
+
+        Logger.info("Forward the message to Minder")
         logItem.directMode = false;
 
         //forward to minder
@@ -128,6 +131,8 @@ object KerkoviAS4Controller extends Controller {
         Tic.tic()
         Global.as4Adapter.messageReceived(SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage));
         //wait for adapter to return the receipt
+
+        Logger.debug("Wait for minder response")
         val reply = Global.as4Adapter.consumeReceipt()
         Logger.debug(">>>>>> Timeout between request and reply: " + Tic.toc)
 

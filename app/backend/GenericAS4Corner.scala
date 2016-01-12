@@ -1,20 +1,21 @@
 package backend
 
-import java.io.FileOutputStream
+import java.io.ByteArrayInputStream
 import java.net.URL
-import java.util.UUID
 import javax.xml.soap.SOAPMessage
 
-import controllers.KerkoviAS4Controller._
-import controllers.{LogItemSuccess, LogItem, Databeyz, Global}
+import controllers.{Databeyz, Global, LogItem, LogItemSuccess}
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.SWA12Util
 import model.AS4Gateway
 import org.w3c.dom.{Element, Node}
 import play.api.Logger
+import play.api.libs.iteratee.Enumerator
 import play.api.mvc.{RawBuffer, Request, Result}
+import utils.Util._
 import utils.{Tic, Util}
 
+import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
 /**
@@ -23,12 +24,6 @@ import scala.util.Try
   */
 class GenericAS4Corner extends AbstractMSHBackend {
   var label: String = "Corner"
-
-  def getGatewayID: GatewayID = {
-    val d: GatewayID = new GatewayID
-    d.id = "Domibus3"
-    return d;
-  }
 
   /**
     * Convert the submissiondata object into an AS4 object and send it to the MSH
@@ -56,12 +51,14 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
       val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
       val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
+      val conversationId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:eb:CollaborationInfo/:ConversationId")
 
       logItem.valid = true;
       logItem.setAS4Message(message)
       logItem.toPartyId = toPartyId.getTextContent;
       logItem.fromPartyId = fromPartyId.getTextContent;
       logItem.messageType = "Submission " + label
+      logItem.conversationId = conversationId.getTextContent
 
       val address: URL = resolveBackendAddress(submissionData)
 
@@ -84,7 +81,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
         Logger.debug(SWA12Util.describe(reply))
         Logger.debug("====================")
       } else {
-        logItem.success=LogItemSuccess.UNKNOWN
+        logItem.success = LogItemSuccess.UNKNOWN
       }
     } catch {
       case th: Throwable => {
@@ -107,6 +104,8 @@ class GenericAS4Corner extends AbstractMSHBackend {
   }
 
   def process(request: Request[RawBuffer]): Result = {
+    val logItem = new LogItem();
+    logItem.valid = false;
     try {
       val message = Util.extractSOAPMessageFromRequest(request)
       //validate the service
@@ -116,20 +115,27 @@ class GenericAS4Corner extends AbstractMSHBackend {
         return BadRequest("Service [" + service + "] not supported")
       }
 
+      val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
+      val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
+      val conversationId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:eb:CollaborationInfo/:ConversationId")
+      logItem.setAS4Message(message);
+      logItem.valid = true;
+      logItem.toPartyId = toPartyId.getTextContent;
+      logItem.fromPartyId = fromPartyId.getTextContent;
+      logItem.conversationId = conversationId.getTextContent;
       val action = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Action"))
 
       action match {
         case "Deliver" => {
+          logItem.messageType = "Delivery " + label
           Logger.debug("Deliver message")
           processDelivery(message)
         }
         case "Notify" => {
+          logItem.valid = true;
           Logger.debug("Process notification")
           processNotification(message)
-        }
-        case "SubmitResponse" => {
-          Logger.debug("Process submission response")
-          processSubmissionResponse(message)
+          logItem.messageType = "Notification " + label
         }
         case _ => {
           Logger.error("Service [" + service + "] not supported")
@@ -137,130 +143,50 @@ class GenericAS4Corner extends AbstractMSHBackend {
         }
       }
 
+      logItem.success = LogItemSuccess.TRUE;
       Logger.debug("Success Receipt")
-      return Util.sendSuccessResponse(message);
+      val array: Array[Byte] = Util.createSuccessReceipt(message)
+      logItem.reply = array;
+      val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(array))
+      Ok.chunked(dataContent).as("application/soap+xml;charset=UTF-8")
     } catch {
       case th: Throwable => {
+        logItem.success = LogItemSuccess.FALSE;
+        logItem.setException(th)
         Logger.error(th.getMessage, th)
         BadRequest(th.getMessage)
       }
+    } finally {
+      if (logItem.valid)
+        logItem.persist();
     }
   }
 
 
   def processDelivery(message: SOAPMessage): Unit = {
-    val logItem = new LogItem();
-    try {
-      val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
-      val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
-
-      logItem.valid = true;
-      logItem.setAS4Message(message);
-      logItem.toPartyId = toPartyId.getTextContent;
-      logItem.fromPartyId = fromPartyId.getTextContent;
-      logItem.messageType = "Delivery " + label
-
-      //create a submissiondata object from the SOAP message
-      deliver(Util.convert2SubmissionData(message))
-      logItem.success = LogItemSuccess.TRUE
-    } catch {
-      case th: Throwable => {
-        logItem.setException(th);
-      }
-    } finally {
-      if (logItem.valid) logItem.persist()
-    }
+    //create a submissiondata object from the SOAP message
+    deliver(Util.convert2SubmissionData(message))
   }
-
-
-  /**
-  <table border="1" cellspacing="0"><tr><th>Property name</th><th>Required?</th></tr>
-    <tr><td>MessageId</td><td>N</td></tr>
-    <tr><td>RefToMessageId</td><td>Y</td></tr>
-    <tr><td>SignalType</td><td>Y</td></tr>
-    <tr><td>ErrorCode</td><td>Y if Error</td></tr>
-    <tr><td>ShortDescription </td><td>N</td></tr>
-    <tr><td>Description</td><td>N</td></tr>
-    </table>
-    */
-  def processSubmissionResponse(message: SOAPMessage): Unit = {
-    val logItem = new LogItem();
-    try {
-      val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
-      val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
-
-      logItem.valid = true;
-      logItem.setAS4Message(message)
-      logItem.toPartyId = toPartyId.getTextContent;
-      logItem.fromPartyId = fromPartyId.getTextContent;
-      logItem.messageType = "SubmissionResult " + label
-
-      val submissionResult = new SubmissionResult
-
-      val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
-
-      try {
-        val element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='MessageId']/text()")
-        submissionResult.ebmsMessageId = element.getNodeValue
-      } catch {
-        case th: Throwable => {
-          val element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='Error']/text()")
-          submissionResult.error = new SubmissionError;
-          submissionResult.error.errorCode = element.getNodeValue
-          submissionResult.error.description = ""
-        }
-      }
-
-      processSubmissionResult(submissionResult)
-      logItem.success = LogItemSuccess.TRUE
-    } catch {
-      case th: Throwable => {
-        logItem.setException(th);
-      }
-    } finally {
-      if (logItem.valid) logItem.persist()
-    }
-  }
-
 
   def processNotification(message: SOAPMessage): Unit = {
-    val logItem = new LogItem();
-    try {
-      val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
-      val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
+    val status = new MessageNotification
 
-      logItem.valid = true;
-      logItem.setAS4Message(message)
-      logItem.toPartyId = toPartyId.getTextContent;
-      logItem.fromPartyId = fromPartyId.getTextContent;
-      logItem.messageType = "Notification " + label
+    val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
-      val status = new MessageNotification
+    var element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
+    status.messageId = element.getNodeValue
+    element = SWA12Util.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
+    status.status = MessageDeliveryStatus.valueOf(element.getNodeValue)
 
-      val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
-
-      var element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
-      status.messageId = element.getNodeValue
-      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
-      status.status = MessageDeliveryStatus.valueOf(element.getNodeValue)
-
-      Try {
-        element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
-        status.errorCode = element.getNodeValue
-        element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
-        status.shortDescription = element.getNodeValue
-        element = SWA12Util.findSingleNode(properties, ".//:Property[@name='Description']/text()")
-        status.description = element.getNodeValue
-      }
-
-      processNotification(status);
-      logItem.success = LogItemSuccess.TRUE
-    } catch {
-      case th: Throwable => {
-        logItem.setException(th);
-      }
-    } finally {
-      if (logItem.valid) logItem.persist()
+    Try {
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
+      status.errorCode = element.getNodeValue
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
+      status.shortDescription = element.getNodeValue
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='Description']/text()")
+      status.description = element.getNodeValue
     }
+
+    processNotification(status);
   }
 }

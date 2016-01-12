@@ -29,6 +29,7 @@ class LogItem extends Comparable[LogItem] {
   var as4MessageExists: Boolean = false;
   var replyExists: Boolean = false;
   var exceptionExists: Boolean = false;
+  var conversationId: String = "";
 
   def setAS4Message(sm: SOAPMessage): Unit = {
     val baos = new ByteArrayOutputStream()
@@ -72,6 +73,7 @@ class LogItem extends Comparable[LogItem] {
   override def compareTo(o: LogItem): Int = {
     this.time.compareTo(o.time)
   }
+
 }
 
 object LogDB {
@@ -79,7 +81,7 @@ object LogDB {
   def main(args: Array[String]): Unit = {
     val link = new util.LinkedList[Int]()
 
-    for (i <- 1 to (14, 2)) {
+    for (i <- 1 to(14, 2)) {
       link.addFirst(i)
     }
 
@@ -100,6 +102,7 @@ object LogDB {
 
     link.foreach(inti => println(inti))
   }
+
   var PAGE_SIZE = 20
   var MAX_LOG_COUNT = 400;
 
@@ -147,6 +150,8 @@ object LogDB {
         writer.print(objOrEmpty(lg.toPartyId))
         writer.print('|')
         writer.print(objOrEmpty(lg.fromPartyId))
+        writer.print('|')
+        writer.print(lg.conversationId)
         writer.println()
 
         if (lg.as4Message != null) {
@@ -201,6 +206,9 @@ object LogDB {
           logItem.success = LogItemSuccess.valueOf(arr(5).toUpperCase())
           logItem.toPartyId = strOrNull(arr(6));
           logItem.fromPartyId = strOrNull(arr(7));
+          if (arr.length >= 9) {
+            logItem.conversationId = strOrNull(arr(8));
+          }
 
           logItem.as4MessageExists = new File("as4logs/aux/" + logItem.longTime + ".as4.txt").exists()
           logItem.replyExists = new File("as4logs/aux/" + logItem.longTime + ".reply.txt").exists()

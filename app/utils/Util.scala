@@ -52,6 +52,23 @@ object Util extends Controller {
     Ok.chunked(dataContent).as("application/soap+xml;charset=UTF-8")
   }
 
+  /**
+    * See
+    * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html#__RefHeading__26454_1909778835
+    * @param soapMessage
+    * @return
+    */
+  def createSuccessReceipt(soapMessage: SOAPMessage) = {
+    val builder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+    val stylesource = new StreamSource(this.getClass.getResourceAsStream("/receipt-generator.xslt"));
+    val transformer = TransformerFactory.newInstance().newTransformer(stylesource);
+    transformer.setParameter("messageid", genereateEbmsMessageId("mindertestbed.org"));
+    transformer.setParameter("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toString);
+    val baos = new ByteArrayOutputStream()
+    transformer.transform(new DOMSource(soapMessage.getSOAPPart), new StreamResult(baos))
+    baos.toByteArray
+  }
+
 
   /**
     * Create a fault message based on the infro provided
@@ -190,6 +207,7 @@ object Util extends Controller {
     val keyAction = "${action}"
     val keyMessageProps = "${messageProperties}"
     val keyPartInfo = "${partInfo}"
+    val keyConversationId = "${conversationId}"
 
     val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
 
@@ -201,6 +219,7 @@ object Util extends Controller {
       // because, we are submitting the message to the guy who has the equal to FROM.
       // He then, will send it to the TO
       .replace(keyTo, to)
+      .replace(keyConversationId, if(submissionData.conversationId!=null){submissionData.conversationId}else{"1"})
       .replace(keyAction, action)
       .replace(keyMessageProps, generateMessageProperties(submissionData, targetService, targetAction))
       .replace(keyPartInfo, generatePartInfo(submissionData))
@@ -227,19 +246,6 @@ object Util extends Controller {
 
     Logger.debug(describe(message))
     return message
-  }
-
-  def generateMessageProperties(result: SubmissionResult) = {
-    val propertiesBuilder = new StringBuilder
-
-    if (result.error != null) {
-      propertiesBuilder.append("<ns2:Property name=\"Error\">" + result.error.errorCode + "</ns2:Property>")
-      propertiesBuilder.append("<ns2:Property name=\"ErrorDescription\">" + result.error.description + "</ns2:Property>")
-    } else {
-      propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + result.ebmsMessageId + "</ns2:Property>")
-    }
-
-    propertiesBuilder.toString
   }
 
   /**
@@ -319,10 +325,10 @@ object Util extends Controller {
     * <tr><td>originalSender	   </td><td>Y</td></tr>
     * <tr><td>finalRecipient	   </td><td>Y</td></tr></table>
     */
-  def convert2SubmissionData(message: SOAPMessage): ExtendedSubmissionData = {
+  def convert2SubmissionData(message: SOAPMessage): SubmissionData = {
     Logger.debug("Convert message to submission data")
     Logger.debug(prettyPrint(message.getSOAPPart))
-    val data = new ExtendedSubmissionData
+    val data = new SubmissionData
     val properties: Element = findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
     var node: Node = findSingleNode(properties, ".//:Property[@name='ToPartyId']/text()")
@@ -450,55 +456,6 @@ object Util extends Controller {
     }
 
     propertiesBuilder.toString
-  }
-
-  def convert2Soap(result: SubmissionResult, from: String, to: String, action: String): SOAPMessage = {
-    /**
-      * Property name	Required?
-       RefToMessageId	  Y
-       SignalType	      Y
-       Error Code	      N
-       ShortDescription	N
-       Description	    N
-      */
-    var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
-
-    val keyTimeStamp = "${timeStamp}"
-    val keyMessageId = "${ebmsMessageID}"
-    val keyFrom = "${from}"
-    val keyTo = "${to}"
-    val keyAction = "${action}"
-    val keyMessageProps = "${messageProperties}"
-    val keyPartInfo = "${partInfo}"
-
-    val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
-
-    xml = xml
-      .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
-      .replace(keyMessageId, ebmsMessageId)
-      .replace(keyFrom, from)
-      //why from instead of to?
-      // because, we are submitting the message to the guy who has the equal to FROM.
-      // He then, will send it to the TO
-      .replace(keyTo, to)
-      .replace(keyAction, action)
-      .replace(keyMessageProps, generateMessageProperties(result))
-      .replace(keyPartInfo, "")
-
-    val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
-    instance.setNamespaceAware(true);
-    val document = instance.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("utf-8")))
-
-    //create a soap message based on this XML
-    val message = createMessage();
-    val element: Element = document.getDocumentElement
-    val importNode = message.getSOAPHeader.getOwnerDocument.importNode(element, true)
-    message.getSOAPHeader.appendChild(importNode)
-
-    if (message.saveRequired())
-      message.saveChanges()
-
-    return message
   }
 
   def convert2Soap(messageNotification: MessageNotification, from: String, to: String, action: String): SOAPMessage = {
