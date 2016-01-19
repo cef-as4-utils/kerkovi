@@ -407,13 +407,14 @@ object Util extends Controller {
       val contentType = att.getContentType
 
       //if content type is application/gzip, we must decompress it
-      if (contentType == "application/gzip") {
-        payload.data = SWA12Util.gunzip(att.getRawContentBytes)
-      } else {
+      //if (contentType == "application/gzip") {
+      //  payload.data = SWA12Util.gunzip(att.getRawContentBytes)
+      //} else {
         payload.data = att.getRawContentBytes
-      }
+      //}
 
       payload.mimeType = mimeType
+      payload.contentType = att.getContentType
       payload.payloadId = href;
       Logger.debug("\tpayload.payloadId: " + payload.payloadId)
       Logger.debug("\tpayload.mimeType: " + payload.mimeType)

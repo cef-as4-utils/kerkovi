@@ -117,15 +117,16 @@ object KerkoviAS4Controller extends Controller {
         }
       } else {
 
-        Logger.info("Forward the message to Minder")
         logItem.directMode = false;
 
         //forward to minder
         if (!Global.as4Adapter.isRunning) {
           Logger.warn("Test Not Started. Bad Request!")
           logItem.setException(new RuntimeException("Test Not Started. Bad Request!"))
-          return BadRequest("<html><head><title>Error</title></head><body><h1>Sorry, Minder Test Not Active</h1></body></html>".getBytes)
+          return Forbidden("Sorry, Minder Test Not Active".getBytes)
         }
+
+        Logger.info("Forward the message to Minder")
 
         //signal the minder adapter
         Tic.tic()
@@ -140,7 +141,7 @@ object KerkoviAS4Controller extends Controller {
           Logger.warn("Receipt is null. Send bad request")
           logItem.setException(new RuntimeException("Receipt is null. Send bad request"))
           logItem.success = LogItemSuccess.FALSE;
-          return BadRequest("Couldn't receive receipt")
+          return ServiceUnavailable("")
         }
 
         logItem.setReply(reply)
@@ -165,7 +166,7 @@ object KerkoviAS4Controller extends Controller {
         Logger.error(th.getMessage, th)
         logItem.success = LogItemSuccess.FALSE;
         logItem.setException(th);
-        BadRequest(th.getMessage)
+        InternalServerError(th.getMessage)
       }
     } finally {
       if (logItem.valid) logItem.persist()

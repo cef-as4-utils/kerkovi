@@ -27,7 +27,7 @@ public abstract class MinderBackendAdapter extends Wrapper {
    * to be run. Perform any initialization here
    */
   @Override
-  public void startTest() {
+  public void startTest(StartTestObject startTestObject) {
     if (isRunning)
       return;
     isRunning = true;
@@ -39,7 +39,7 @@ public abstract class MinderBackendAdapter extends Wrapper {
    * finished. Perform your own resource deallocation here.
    */
   @Override
-  public void finishTest() {
+  public void finishTest(FinishTestObject finishTestObject) {
     isRunning = false;
     backendClient.finishTest();
   }

@@ -17,7 +17,7 @@ libraryDependencies ++= Seq(
   "esens.wp6" % "esens-msh-backend" % "1.1",
   "minder" % "as4-utils" % "1.2",
   "gov.tubitak.minder" % "minder-common" % "0.4.2",
-  "gov.tubitak.minder" % "minder-client" % "0.4.2"
+  "gov.tubitak.minder" % "minder-client" % "0.4.3"
 )
 
 includeFilter in (Assets, LessKeys.less) := "main.less" | "children.less"

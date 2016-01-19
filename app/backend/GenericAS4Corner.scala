@@ -104,6 +104,11 @@ class GenericAS4Corner extends AbstractMSHBackend {
   }
 
   def process(request: Request[RawBuffer]): Result = {
+    if (!Global.as4Adapter.isRunning) {
+      Logger.warn("Test Not Started. Bad Request!")
+      return Forbidden("<html><head><title>Error</title></head><body><h1>Sorry, Minder Test Not Active</h1></body></html>".getBytes)
+    }
+
     val logItem = new LogItem();
     logItem.valid = false;
     try {
@@ -133,9 +138,9 @@ class GenericAS4Corner extends AbstractMSHBackend {
         }
         case "Notify" => {
           logItem.valid = true;
+          logItem.messageType = "Notification " + label
           Logger.debug("Process notification")
           processNotification(message)
-          logItem.messageType = "Notification " + label
         }
         case _ => {
           Logger.error("Service [" + service + "] not supported")
@@ -154,7 +159,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
         logItem.success = LogItemSuccess.FALSE;
         logItem.setException(th)
         Logger.error(th.getMessage, th)
-        BadRequest(th.getMessage)
+        InternalServerError(th.getMessage)
       }
     } finally {
       if (logItem.valid)

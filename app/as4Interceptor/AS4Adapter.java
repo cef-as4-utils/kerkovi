@@ -47,6 +47,7 @@ public abstract class AS4Adapter extends Wrapper {
   private SOAPMessage reply = null;
   private SUTIdentifiers sutIdentifiers;
   private SUTIdentifiers defaultSutIdentifiers;
+  Object sutListLock = new Object();
 
   public AS4Adapter() {
     Logger.info("Initiate AS4 Adapter");
@@ -66,7 +67,6 @@ public abstract class AS4Adapter extends Wrapper {
   @Override
   public void startTest() {
     finishTest();
-    Logger.info("AS4Adapter Start Test");
     isRunning = true;
     this.sutIdentifiers = defaultSutIdentifiers;
   }
@@ -86,25 +86,38 @@ public abstract class AS4Adapter extends Wrapper {
 
   @Override
   public SUTIdentifiers getSUTIdentifiers() {
-    return sutIdentifiers;
+    synchronized (sutListLock) {
+      Logger.info("GET SUT Identifiers");
+
+      for (SUTIdentifier identifier : sutIdentifiers.getIdentifiers()) {
+        Logger.info("GET SUT: " + identifier.getSutName());
+      }
+      return sutIdentifiers;
+    }
   }
 
   @Override
   public void startTest(StartTestObject startTestObject) {
-    finishTest();
-    Logger.info("AS4Adapter Start Test");
-    isRunning = true;
-    this.sutIdentifiers = new SUTIdentifiers();
-    if (startTestObject.getProperties().contains("Corner2")) {
-      AS4Gateway corner2 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner2"));
-      if (corner2 != null) {
-        this.sutIdentifiers.getIdentifiers().add(createSUTIdentifier(corner2.name));
+    synchronized (sutListLock) {
+      finishTest();
+      Logger.info("AS4Adapter Start Test");
+      isRunning = true;
+      this.sutIdentifiers = new SUTIdentifiers();
+      if (startTestObject.getProperties().containsKey("Corner2")) {
+        AS4Gateway corner2 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner2"));
+        if (corner2 != null) {
+          this.sutIdentifiers.getIdentifiers().add(createSUTIdentifier(corner2.name));
+        }
       }
-    }
-    if (startTestObject.getProperties().contains("Corner3")) {
-      AS4Gateway corner3 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner3"));
-      if (corner3 != null) {
-        this.sutIdentifiers.getIdentifiers().add(createSUTIdentifier(corner3.name));
+      if (startTestObject.getProperties().containsKey("Corner3")) {
+        AS4Gateway corner3 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner3"));
+        if (corner3 != null) {
+          this.sutIdentifiers.getIdentifiers().add(createSUTIdentifier(corner3.name));
+        }
+      }
+
+      for (SUTIdentifier identifier : sutIdentifiers.getIdentifiers()) {
+        Logger.info("SUT: " + identifier.getSutName());
       }
     }
   }
