@@ -36,6 +36,7 @@ object Util extends Controller {
   /**
     * See
     * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html#__RefHeading__26454_1909778835
+    *
     * @param soapMessage
     * @return
     */
@@ -55,6 +56,7 @@ object Util extends Controller {
   /**
     * See
     * http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/profiles/AS4-profile/v1.0/os/AS4-profile-v1.0-os.html#__RefHeading__26454_1909778835
+    *
     * @param soapMessage
     * @return
     */
@@ -73,6 +75,7 @@ object Util extends Controller {
   /**
     * Create a fault message based on the infro provided
     * and return it
+    *
     * @param soapMessage
     * @param faultMessage
     * @return
@@ -219,7 +222,11 @@ object Util extends Controller {
       // because, we are submitting the message to the guy who has the equal to FROM.
       // He then, will send it to the TO
       .replace(keyTo, to)
-      .replace(keyConversationId, if(submissionData.conversationId!=null){submissionData.conversationId}else{"1"})
+      .replace(keyConversationId, if (submissionData.conversationId != null) {
+        submissionData.conversationId
+      } else {
+        "1"
+      })
       .replace(keyAction, action)
       .replace(keyMessageProps, generateMessageProperties(submissionData, targetService, targetAction))
       .replace(keyPartInfo, generatePartInfo(submissionData))
@@ -277,12 +284,17 @@ object Util extends Controller {
       propertiesBuilder.append("<ns2:Property name=\"RefToMessageId\">" + submissionData.refToMessageId + "</ns2:Property>\n")
     }
 
+    if (submissionData.properties != null) {
+      for (key <- submissionData.properties.keySet()) {
+        propertiesBuilder.append("<ns2:Property name=\"" + key + "\">" + submissionData.properties.get(key) + "</ns2:Property>\n")
+      }
+    }
+    propertiesBuilder.append("<ns2:Property name=\"Service\">" + targetService + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"Action\">" + targetAction + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"ToPartyId\">" + submissionData.to + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"ToPartyRole\">" + submissionData.toPartyRole + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"FromPartyId\">" + submissionData.from + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"FromPartyRole\">" + submissionData.fromPartyRole + "</ns2:Property>\n")
-    propertiesBuilder.append("<ns2:Property name=\"Service\">" + targetService + "</ns2:Property>\n")
-    propertiesBuilder.append("<ns2:Property name=\"Action\">" + targetAction + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"originalSender\">" + submissionData.originalSender + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"finalRecipient\">" + submissionData.finalRecipient + "</ns2:Property>")
 
@@ -392,17 +404,23 @@ object Util extends Controller {
       //throws exception if part info does not exist
       val partInfo: Node = {
         Try {
-          findSingleNode[Node](message.getSOAPHeader, "//:PayloadInfo/:PartInfo[@href='" + href + "']")
-        } orElse Try {
           findSingleNode[Node](message.getSOAPHeader, "//:PayloadInfo/:PartInfo[@href='cid:" + href + "']")
         }
       }.get
 
       if (partInfo == null) throw new RuntimeException("ContentId: " + href + " was not found in PartInfo")
 
-      var mimeType = findSingleNode[Node](partInfo, ".//:PartProperties/:Property[@name='MimeType']/text()").getNodeValue
-      if (mimeType.startsWith("cid"))
-        mimeType = mimeType.substring(4);
+      var mimeType: String = "";
+
+      try {
+        mimeType = findSingleNode[Node](partInfo, ".//:PartProperties/:Property[@name='MimeType']/text()").getNodeValue
+        if (mimeType.startsWith("cid"))
+          mimeType = mimeType.substring(4);
+      } catch {
+        case _: Throwable => {
+          mimeType = att.getContentType
+        }
+      }
 
       val contentType = att.getContentType
 
@@ -410,7 +428,7 @@ object Util extends Controller {
       //if (contentType == "application/gzip") {
       //  payload.data = SWA12Util.gunzip(att.getRawContentBytes)
       //} else {
-        payload.data = att.getRawContentBytes
+      payload.data = att.getRawContentBytes
       //}
 
       payload.mimeType = mimeType
@@ -435,11 +453,11 @@ object Util extends Controller {
   def generateMessageProperties(messageNotification: MessageNotification) = {
     /**
       * Property name	Required?
-       RefToMessageId	  Y
-       SignalType	      Y
-       ErrorCode	      N
-       ShortDescription	N
-       Description	    N
+      * RefToMessageId	  Y
+      * SignalType	      Y
+      * ErrorCode	      N
+      * ShortDescription	N
+      * Description	    N
       */
     val propertiesBuilder = new StringBuilder
     propertiesBuilder.append("<ns2:Property name=\"RefToMessageId\">" + messageNotification.messageId + "</ns2:Property>")
@@ -462,11 +480,11 @@ object Util extends Controller {
   def convert2Soap(messageNotification: MessageNotification, from: String, to: String, action: String): SOAPMessage = {
     /**
       * Property name	Required?
-       RefToMessageId	  Y
-       SignalType	      Y
-       Error Code	      N
-       ShortDescription	N
-       Description	    N
+      * RefToMessageId	  Y
+      * SignalType	      Y
+      * Error Code	      N
+      * ShortDescription	N
+      * Description	    N
       */
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
 

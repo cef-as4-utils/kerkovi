@@ -4,6 +4,7 @@ import esens.wp6.esensMshBackend.AbstractMSHBackendAdapter;
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
 import gov.tubitak.minder.client.MinderClient;
+import minderengine.SignalFailedException;
 import play.api.Play;
 
 import java.util.Properties;
@@ -27,6 +28,14 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
       minderBackendAdapter.receiveMessage(submissionData);
   }
 
+  @Override
+  public void reportDeliverFailure(Throwable throwable) {
+    if (started) {
+      minderBackendAdapter.beginReportSignalError(new SignalFailedException(throwable));
+      minderBackendAdapter.receiveMessage(null);
+    }
+  }
+
   /**
    * Send a status update signal to Minder
    *
@@ -36,6 +45,14 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
   public void processNotification(MessageNotification messageNotification) {
     if (started)
       minderBackendAdapter.processNotification(messageNotification);
+  }
+
+  @Override
+  public void reportNotificationFailure(Throwable throwable) {
+    if (started) {
+      minderBackendAdapter.beginReportSignalError(new SignalFailedException(throwable));
+      minderBackendAdapter.processNotification(null);
+    }
   }
 
   @Override

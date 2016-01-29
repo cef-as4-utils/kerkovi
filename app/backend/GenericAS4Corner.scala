@@ -170,28 +170,40 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
   def processDelivery(message: SOAPMessage): Unit = {
     //create a submissiondata object from the SOAP message
-    deliver(Util.convert2SubmissionData(message))
+    try {
+      deliver(Util.convert2SubmissionData(message))
+    } catch {
+      case th: Throwable => {
+        reportDeliverFailure(th)
+      }
+    }
   }
 
   def processNotification(message: SOAPMessage): Unit = {
-    val status = new MessageNotification
+    try {
+      val status = new MessageNotification
 
-    val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
+      val properties: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:MessageProperties")
 
-    var element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
-    status.messageId = element.getNodeValue
-    element = SWA12Util.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
-    status.status = MessageDeliveryStatus.valueOf(element.getNodeValue)
+      var element: Node = SWA12Util.findSingleNode(properties, ".//:Property[@name='RefToMessageId']/text()")
+      status.messageId = element.getNodeValue
+      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='SignalType']/text()")
+      status.status = MessageDeliveryStatus.valueOf(element.getNodeValue)
 
-    Try {
-      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
-      status.errorCode = element.getNodeValue
-      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
-      status.shortDescription = element.getNodeValue
-      element = SWA12Util.findSingleNode(properties, ".//:Property[@name='Description']/text()")
-      status.description = element.getNodeValue
+      Try {
+        element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ErrorCode']/text()")
+        status.errorCode = element.getNodeValue
+        element = SWA12Util.findSingleNode(properties, ".//:Property[@name='ShortDescription']/text()")
+        status.shortDescription = element.getNodeValue
+        element = SWA12Util.findSingleNode(properties, ".//:Property[@name='Description']/text()")
+        status.description = element.getNodeValue
+      }
+
+      processNotification(status);
+    } catch {
+      case th: Throwable => {
+        reportNotificationFailure(th)
+      }
     }
-
-    processNotification(status);
   }
 }

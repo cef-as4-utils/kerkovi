@@ -68,16 +68,11 @@
     <li id="step2"><b>Step 2 -</b>
       Producer receives a receipt from C2 containing details of the producer message - the receipt back to Producer is optional and may just be an HTTP Response 20x</li>
     <li id="step3"><b>Step 3 -</b> Send: C2 constructs a message based on message received from Producer and sends this to C3</li>
-    <li id="step4"><b>Step 4 -</b> <i>SubmitResponse</i>
-      : C2 constructs a message containing the refToMessageId of the step 1 messageId, as well as the messageId used in the message from C2 to C3 and sends this to the producer</li>
-    <li id="step5"><b>Step 5 -</b> C2 receives a receipt (or error) signal from C3 containing details of the C2 message</li>
-    <li id="step6"><b>Step 6 -</b> <i>Notify</i>
+    <li id="step4"><b>Step 4 -</b> C2 receives a receipt (or error) signal from C3 containing details of the C2 message</li>
+    <li id="step5"><b>Step 5 -</b> <i>Notify</i>
       : C2 constructs message detailing the result of the message from C2 to C3 and sends this to the producer</li>
-    <li id="step7"><b>Step 7 -</b> <i>Deliver</i>: C3 constructs message based on the message it received, and delivers it to C4.</li>
+    <li id="step6"><b>Step 6 -</b> <i>Deliver</i>: C3 constructs message based on the message it received, and delivers it to C4.</li>
   </ol>
-
-  <p>The <i>SubmitResponse</i>
-    message from C2 to C1 should then include the Step 3 C2 to C3 messageId as a message property.</p>
 
   <h2 id="gwia">Gateway C2-C3 PModes</h2>
 
@@ -120,7 +115,7 @@
   <p>All the other PMode parameters are the same for as the e-SENS AS4 profile PModes</p>
 
   <p>The <a href="/TestAssertions_eSENS_AS4_Draft6.pdf" target="_blank">e-SENS test assertions</a>
-    require four different profiles based on the e-SENS AS4 profile PModes. They are provided below.</p>
+    require five different profiles based on the e-SENS AS4 profile PModes. They are provided below.</p>
 
   <ol class="myinlineol">
     <li><label>SIMPLE_ONEWAY</label>
@@ -166,6 +161,17 @@
         <li><b>Encrypt</b>: No</li>
         <li><b>Service</b>: SRV_ONEWAY_SIGNONLY</li>
         <li><b>Action</b>: ACT_ONEWAY_SIGNONLY</li>
+      </ol>
+    </li>
+    <li><label>PING</label>
+      <ol>
+        <li><b>MEP</b>: One way - push</li>
+        <li><b>Compress</b>: Yes</li>
+        <li><b>Retry</b>: None</li>
+        <li><b>Sign</b>: Yes</li>
+        <li><b>Encrypt</b>: Yes</li>
+        <li><b>Service</b>: http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/service</li>
+        <li><b>Action</b>: http://docs.oasis-open.org/ebxml-msg/ebms/v3.0/ns/core/200704/test</li>
       </ol>
     </li>
   </ol>
@@ -289,9 +295,8 @@
     <tr><th class="rightborder">Name</th><th class="rightborder">Value</th><th>Step</th></tr>
     <tr><td class="rightborder"><b>Submission From C1 to C2:</b></td><td class="rightborder">submission@@corner1</td><td><a href="#step1">Step1</a></td></tr>
     <tr><td class="rightborder"><b>AS4 Message from C2 to C3 (request leg):</b></td><td class="rightborder">as4message@@corner2</td><td><a href="#step3">Step3</a></td></tr>
-    <tr><td class="rightborder"><b>SubmitResponse from C2 to C1:</b></td><td class="rightborder">submitresponse@@corner2</td><td><a href="#step4">Step4</a></td></tr>
-    <tr><td class="rightborder"><b>Notification from C2 to C1:</b></td><td class="rightborder">notification@@corner2</td><td><a href="#step6">Step6</a></td></tr>
-    <tr><td class="rightborder"><b>Deliver from C3 to C4:</b></td><td class="rightborder">deliver@@corner3</td><td><a href="#step6">Step6</a></td></tr>
+    <tr><td class="rightborder"><b>Notification from C2 to C1:</b></td><td class="rightborder">notification@@corner2</td><td><a href="#step5">Step5</a></td></tr>
+    <tr><td class="rightborder"><b>Deliver from C3 to C4:</b></td><td class="rightborder">deliver@@corner3</td><td><a href="#step5">Step5</a></td></tr>
     <tr><td class="rightborder"><b>AS4 Message from C3 to C2 (reply leg):</b></td><td class="rightborder">as4message@@corner3</td><td>Not given in steps</td></tr>
   </table>
 
@@ -305,10 +310,6 @@
 
   <h3 id="sample4">Sample Request Message (from <i>C2</i> to <i>C3</i>)</h3>
   @sampleCode("sampleAS4Request.xml", 1000, 600)
-  <br />
-
-  <h3 id="sample2">Sample SubmitResponse (from the <i>C2</i> to <i>C1</i>)</h3>
-  @sampleCode("sampleSubmissionResult.xml", 1000, 400)
   <br />
 
   <h3 id="sample3">Sample Notification (from the <i>C2</i> to <i>C1</i>)</h3>
@@ -336,7 +337,6 @@
         <li>Study <a href="@routes.Application.index("pmodes")">PModes</a>
           for the communication between C1 - C2 and C4-C3</li>
         <li>Implement the&nbsp;<em>Submit</em>&nbsp;action&nbsp;</li>
-        <li>Implement the&nbsp;<em>SubmissionResponse</em>&nbsp;action</li>
         <li>Implement the <em>Notify</em>&nbsp;action</li>
         <li>Implement the&nbsp;<em>Deliver</em>&nbsp;action</li>
       </ol>
