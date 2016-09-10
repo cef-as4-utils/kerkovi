@@ -2,5 +2,5 @@ activator clean stage
 cd target/universal/stage/
 7z a ker-$1.7z *
 echo deploy ker-$1.7z
-cat ker-$1.7z | ssh eid@eidrepo -p 8998 "cat > ker-$1.7z"
+scp -P 8998 ker-$1.7z eid@eidrepo:ker-$1.7z
 ssh eid@eidrepo -p 8998

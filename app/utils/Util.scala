@@ -81,6 +81,11 @@ object Util extends Controller {
     * @return
     */
   def sendFault(soapMessage: SOAPMessage, faultMessage: String): Result = {
+    BadRequest.chunked(prepareFault(soapMessage, faultMessage)).as("application/soap+xml;charset=UTF-8")
+  }
+
+
+  def prepareFault(soapMessage: SOAPMessage, faultMessage: String): Enumerator[Array[Byte]] = {
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/fault-template.xml")).mkString
 
     val refToMessageInError = if (soapMessage != null) {
@@ -130,22 +135,20 @@ object Util extends Controller {
     val document = instance.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("utf-8")))
 
     //create a soap message based on this XML
-    val receipt = createMessage();
+    //val receipt = createMessage();
 
     val element: Element = document.getDocumentElement
 
-    val importNode = receipt.getSOAPHeader.getOwnerDocument.importNode(element, true)
-    receipt.getSOAPHeader.appendChild(importNode)
+    //val importNode = receipt.getSOAPHeader.getOwnerDocument.importNode(element, true)
+    //receipt.getSOAPHeader.appendChild(importNode)
 
-    Logger.info(prettyPrint(receipt.getSOAPPart))
+    Logger.info(xml);
 
-    val baos = new ByteArrayOutputStream()
-    receipt.writeTo(baos)
-    val array: Array[Byte] = baos.toByteArray
-    val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(array))
-    BadRequest.chunked(dataContent).as("application/soap+xml;charset=UTF-8")
+    //val baos = new ByteArrayOutputStream()
+    //receipt.writeTo(baos)
+    val array: Array[Byte] = xml.getBytes("utf-8")
+    Enumerator.fromStream(new ByteArrayInputStream(array))
   }
-
 
   def getHeaders(request: mvc.Request[RawBuffer]): MimeHeaders = {
     val headers: MimeHeaders = new MimeHeaders

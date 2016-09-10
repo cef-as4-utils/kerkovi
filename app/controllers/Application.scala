@@ -277,4 +277,8 @@ object Application extends Controller {
 
     Ok(views.html.logTableView.render(page));
   }
+
+  def visualLog() = Action {
+    Ok(views.html.visualLog())
+  }
 }

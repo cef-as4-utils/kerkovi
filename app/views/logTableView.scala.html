@@ -16,10 +16,8 @@
     <th>To</th>
     <th>ConversationId</th>
     <th>Message Type</th>
-    <th>Direct Mode</th>
     <th>Success</th>
     <th>AS4Message</th>
-    <th>AS4 Receipt</th>
     <th>Exception</th>
   </tr>
 
@@ -32,11 +30,6 @@
         <td>@logItem.toPartyId</td>
         <td>@logItem.conversationId</td>
         <td>@logItem.messageType</td>
-        <td>@if(logItem.directMode) {
-          <span style="color:green ; font-size: x-large"> \u2713</span>
-        } else {
-          <span style="color:blue ; font-size: x-large"> \u2718</span>
-        }</td>
         <td> @if(logItem.success == LogItemSuccess.TRUE) {
           <span style="color:green ; font-size: x-large"> \u2713</span>
         } else {
@@ -49,13 +42,6 @@
         <td>
         @if(logItem.as4MessageExists) {
           <a href="@controllers.routes.Application.showAS4Message(logItem.longTime)" target="_blank">View</a>
-        } else {
-
-        }
-        </td>
-        <td>
-        @if(logItem.replyExists) {
-          <a href="@controllers.routes.Application.showReply(logItem.longTime)" target="_blank">View</a>
         } else {
 
         }

@@ -10,11 +10,11 @@
         </ns2:MessageInfo>
         <ns2:PartyInfo>
             <ns2:From>
-                <ns2:PartyId>${from}</ns2:PartyId>
+                <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">${from}</ns2:PartyId>
                 <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
             </ns2:From>
             <ns2:To>
-                <ns2:PartyId>${to}</ns2:PartyId>
+                <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">${to}</ns2:PartyId>
                 <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
             </ns2:To>
         </ns2:PartyInfo>

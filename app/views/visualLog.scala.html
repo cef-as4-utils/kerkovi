@@ -1,0 +1,62 @@
+<style>
+input[ type = "number" ].mod: : -webkit-outer-spin-button,
+input[ type = "number" ].mod: : -webkit-inner-spin-button {
+-webkit-appearance: none ;
+background: #FFF url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAkAAAAJCAYAAADgkQYQAAAAKUlEQVQYlWNgwAT/sYhhKPiPT+F/LJgEsHv37v+EMGkmkuImoh2NoQAANlcun/q4OoYAAAAASUVORK5CYII=) no-repeat center center ;
+position: absolute ;
+top: 0 ;
+right: 0 ;
+bottom: 0 ;
+width: 1em ;
+border-left: 1px solid #BBB ;
+opacity: .5 ; /* shows Spin Buttons per default (Chrome >= 39) */
+}
+</style>
+
+<script type="text/javascript" src="@routes.Assets.versioned("js/AS4Simulation.js")"/>
+
+<table style="width:100%">
+  <tr><td style="vertical-align: top;" align="center">
+    <label>Corner 2:</label>
+    <select id="corner2">
+      <option>Flame</option>
+      <option>IBM</option>
+      <option>Holodeck</option>
+      <option>Domibus</option>
+    </select>
+
+    <label>Corner 3:</label>
+    <select id="corner3">
+      <option>Domibus</option>
+      <option>Holodeck</option>
+      <option>Flame</option>
+      <option>IBM</option>
+    </select>
+
+    <button onclick="simulate()">Simulate</button>
+    <br /> <label>Speed</label> <input type="number" name="speed" step="5" min="0" max="200" value="50" onchange='updateAnimationSpeed($(this).val())'/>
+      &nbsp;
+      &nbsp;
+      &nbsp;
+    <label>Current Rate: </label> <span id="currentRate"></span> <script>$('#currentRate').html(animationTimeout)</script>
+    <br />
+    <br />
+
+    <canvas id="animationCanvas" style="border: 1px solid gray ; background-color: white ;">
+
+
+</canvas>
+
+  </td>
+  </tr></table>
+
+<img style="display: none" src='@routes.Assets.versioned("img/ibm2.png")' onload='ibmLogo=new Logo(this, true);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/domibus.png")' onload='domibusLogo=new Logo(this, true);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/flame.png")' onload='flameLogo=new Logo(this, true);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/holodeck.png")' onload='holodeckLogo=new Logo(this, true);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/minder.png")' onload='minderLogo=new Logo(this, true);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/ballGreen2.png")' onload='ball=new Logo(this);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/ballGreen2.png")' onload='greenBall=new Logo(this);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/ballRed2.png")' onload='redBall=new Logo(this);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/tender.png")' onload='tenderIcon=new Logo(this);checkImages()'/>
+<img style="display: none" src='@routes.Assets.versioned("img/as4.png")' onload='as4Icon=new Logo(this);checkImages()'/>

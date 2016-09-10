@@ -106,7 +106,9 @@ class GenericAS4Corner extends AbstractMSHBackend {
   def process(request: Request[RawBuffer]): Result = {
     if (!Global.as4Adapter.isRunning) {
       Logger.warn("Test Not Started. Bad Request!")
-      return Forbidden("<html><head><title>Error</title></head><body><h1>Sorry, Minder Test Not Active</h1></body></html>".getBytes)
+
+      val fault: Enumerator[Array[Byte]] = Util.prepareFault(null, "Minder Test Not Active")
+      return InternalServerError.chunked(fault).as("application/soap+xml;charset=UTF-8")
     }
 
     val logItem = new LogItem();
@@ -117,7 +119,8 @@ class GenericAS4Corner extends AbstractMSHBackend {
       val service = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Service"))
       if ("http://www.esens.eu/as4/conformancetest" != service) {
         Logger.error("Service [" + service + "] not supported")
-        return BadRequest("Service [" + service + "] not supported")
+        val fault: Enumerator[Array[Byte]] = Util.prepareFault(null, "Service [" + service + "] not supported")
+        return BadRequest.chunked(fault).as("application/soap+xml;charset=UTF-8")
       }
 
       val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
@@ -144,7 +147,8 @@ class GenericAS4Corner extends AbstractMSHBackend {
         }
         case _ => {
           Logger.error("Service [" + service + "] not supported")
-          return BadRequest("Action [" + action + "] not supported")
+          val fault: Enumerator[Array[Byte]] = Util.prepareFault(null, "Action [" + action + "] not supported")
+          return BadRequest.chunked(fault).as("application/soap+xml;charset=UTF-8")
         }
       }
 

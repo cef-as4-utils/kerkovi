@@ -13,6 +13,7 @@ GET         /gateways                           controllers.Application.gateways
 GET         /documentation                      controllers.Application.documentation()
 GET         /logs                               controllers.Application.logs()
 GET         /kerkovi                            controllers.Application.kerkovi()
+GET         /visualLog                          controllers.Application.visualLog()
 GET         /run                                controllers.Application.run()
 GET         /gatewayMvc                         controllers.Application.gatewayMvc(id: Int, property: String, value: String ?= null)
 POST        /newGateway                         controllers.Application.newGateway()

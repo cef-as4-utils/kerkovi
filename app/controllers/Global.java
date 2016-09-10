@@ -29,7 +29,6 @@ public class Global extends GlobalSettings {
 
   @Override
   public void onStart(Application app) {
-
     //initiateLogWatcher();
     Logger.debug("Starting");
 

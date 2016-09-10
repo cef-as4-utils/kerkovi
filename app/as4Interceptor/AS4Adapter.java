@@ -79,6 +79,15 @@ public abstract class AS4Adapter extends Wrapper {
   @Override
   public void finishTest() {
     Logger.info("AS4Adapter Finish Test");
+    if (replyLock != null) {
+      try {
+        synchronized (replyLock) {
+          reply = null;
+          replyLock.notify();
+        }
+      } catch (Exception ex) {
+      }
+    }
     isRunning = false;
     this.sutIdentifiers = defaultSutIdentifiers;
   }
