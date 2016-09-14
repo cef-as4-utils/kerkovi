@@ -36,7 +36,7 @@
               <img src="@routes.Assets.versioned("img/zebra-small.png")"
               height="70px"
               about="http://www.wpclipart.com" alt="Zebra"/>
-              <div class="kerkovi" style="display: inline ;" id="top"><b>Kerkovi</b> <sup style="font-size:small ; color:#2A00FF">v1.5</sup> <br/></div>
+              <div class="kerkovi" style="display: inline ;" id="top"><b>Kerkovi</b> <sup style="font-size:small ; color:#2A00FF">v1.4.1</sup> <br/></div>
             </td> <td align="right" style="width:99% ; vertical-align: bottom">&nbsp;
             <div style="font-size: small ;">
             @{
@@ -84,10 +84,13 @@
                 Backend PModes
             </a>
             </li>
-            <li><a href="#" page="@routes.Application.visualLog()" id="visualLog">
+            @{/*
+                <li>
+                <a href="#" page="@routes.Application.visualLog()" id="visualLog">
                 Visual Log
-            </a>
-            </li>
+                </a>
+                </li>
+            */}
             <li><a href="#" page="@routes.Application.kerkovi()" id="kerkovi" class="kerkovi">What is kerkovi?</a></li>
           </ul>
           <div id="mainView">

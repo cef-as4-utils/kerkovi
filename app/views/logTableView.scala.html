@@ -1,58 +1,66 @@
 @(currentPage: Int = 1)
 
-@import java.util.concurrent.atomic.AtomicInteger
+  @import java.util.concurrent.atomic.AtomicInteger
 
 
-<div align="center"><a class="pageLink" href="#" onclick="prevPage(@currentPage)">&lt;</a><span style="padding-left: 10px ; padding-right: 10px">@{
-  currentPage + 1
-}</span> <a class="pageLink" href="#" onclick="nextPage(@currentPage)">&gt;</a> </div>
-<br />
+  <div align="center"><a class="pageLink" href="#" onclick="prevPage(@currentPage)">&lt;</a> <span style="padding-left: 10px ; padding-right: 10px">@{
+    currentPage + 1
+  }</span> <a class="pageLink" href="#" onclick="nextPage(@currentPage)">&gt;</a> </div>
+  <br />
 
-<table class="zebra" width="100%" style="text-align: center ;">
-  <tr>
-    <th>#</th>
-    <th>Time</th>
-    <th>From</th>
-    <th>To</th>
-    <th>ConversationId</th>
-    <th>Message Type</th>
-    <th>Success</th>
-    <th>AS4Message</th>
-    <th>Exception</th>
-  </tr>
+  <table class="zebra" width="100%" style="text-align: center ;">
+    <tr>
+      <th>#</th>
+      <th>Time</th>
+      <th>From</th>
+      <th>To</th>
+      <th>ConversationId</th>
+      <th>Message Type</th>
+      <th>Success</th>
+      <th>AS4Message</th>
+      <th>AS4Reply</th>
+      <th>Exception</th>
+    </tr>
 
-  @defining(new AtomicInteger(currentPage * LogDB.PAGE_SIZE)) { counter =>
-    @for( logItem <- LogDB.listPage(currentPage)) {
-      <tr>
-        <td>@counter.incrementAndGet()</td>
-        <td>@logItem.time</td>
-        <td>@logItem.fromPartyId</td>
-        <td>@logItem.toPartyId</td>
-        <td>@logItem.conversationId</td>
-        <td>@logItem.messageType</td>
-        <td> @if(logItem.success == LogItemSuccess.TRUE) {
-          <span style="color:green ; font-size: x-large"> \u2713</span>
-        } else {
-          @if(logItem.success == LogItemSuccess.FALSE) {
-            <span style="color:red ; font-size: x-large"> \u2718</span>
+    @defining(new AtomicInteger(currentPage * LogDB.PAGE_SIZE)) { counter =>
+      @for(logItem <- LogDB.listPage(currentPage)) {
+        <tr>
+          <td>@counter.incrementAndGet()</td>
+          <td>@logItem.time</td>
+          <td>@logItem.fromPartyId</td>
+          <td>@logItem.toPartyId</td>
+          <td>@logItem.conversationId</td>
+          <td>@logItem.messageType</td>
+          <td> @if(logItem.success == LogItemSuccess.TRUE) {
+            <span style="color:green ; font-size: x-large"> \u2713</span>
           } else {
-            <span style="color:red ; font-size: x-large"> \u2753</span>
+            @if(logItem.success == LogItemSuccess.FALSE) {
+              <span style="color:red ; font-size: x-large"> \u2718</span>
+            } else {
+              <span style="color:red ; font-size: x-large"> \u2753</span>
+            }
+          }</td>
+          <td>
+          @if(logItem.as4MessageExists) {
+            <a href="@controllers.routes.Application.showAS4Message(logItem.longTime)" target="_blank">View</a>
+          } else {
+
           }
-        }</td>
-        <td>
-        @if(logItem.as4MessageExists) {
-          <a href="@controllers.routes.Application.showAS4Message(logItem.longTime)" target="_blank">View</a>
-        } else {
+          </td>
+          <td>
+          @if(logItem.replyExists) {
+            <a href="@controllers.routes.Application.showReply(logItem.longTime)" target="_blank">View</a>
+          } else {
 
-        }
-        </td>
-        <td>
-        @if(logItem.exceptionExists) {
-          <a href="@controllers.routes.Application.showException(logItem.longTime)" target="_blank">View</a>
-        } else {
+          }
+          </td>
+          <td>
+          @if(logItem.exceptionExists) {
+            <a href="@controllers.routes.Application.showException(logItem.longTime)" target="_blank">View</a>
+          } else {
 
-        }</td>
-      </tr>
+          }</td>
+        </tr>
+      }
     }
-  }
-</table>
+  </table>
