@@ -14,7 +14,7 @@ import scala.collection.mutable.Stack
 /**
   */
 object Databeyz {
-  val yaml: Yaml = new Yaml(new CustomClassLoaderConstructor(Play.classloader(Play.current)));
+  val yaml: Yaml = new Yaml(new CustomClassLoaderConstructor(this.getClass.getClassLoader));
   val currentDir: File = new File(".")
 
   val db: File = new File(currentDir.getAbsoluteFile + "/databeyz.yml")

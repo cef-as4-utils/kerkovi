@@ -14,7 +14,7 @@
         <th class="darkcolor">Party ID</th> <th>Address<sup>1</sup></th> <!--<th>Backend Address<sup>2</sup></th>-->
         <th class=" darkcolor">Direct Mode<sup>2</sup></th>
       </tr>
-      @for( gateway <- Application.registeredGateways()) {
+      @for( gateway <- Databeyz.list()) {
         @if(gateway.approved) {
           <tr>
             <td>

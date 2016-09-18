@@ -22,7 +22,9 @@ GET         /undoDelete                         controllers.Application.undoDele
 GET         /logFeed                            controllers.Application.logFeed()
 GET         /approve                            controllers.Application.approve(id: Int)
 GET         /reject                             controllers.Application.reject(id: Int)
-GET         /remzoRemzo                         controllers.Application.approvePage()
+GET         /admin                              controllers.Application.admin()
+GET         /login                              controllers.LoginControl.login()
+POST        /login                              controllers.LoginControl.doLogin()
 GET         /prevLogPage                        controllers.Application.prevLogPage(currentPage: Int)
 GET         /nextLogPage                        controllers.Application.nextLogPage(currentPage: Int)
 

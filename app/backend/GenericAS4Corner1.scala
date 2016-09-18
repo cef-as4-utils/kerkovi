@@ -1,12 +1,12 @@
 package backend
 
-import controllers.Global
+import controllers.KerkoviApplicationContext
 
 /**
   * Author: yerlibilgin
   * Date: 04/08/15.
   */
 class GenericAS4Corner1 extends GenericAS4Corner {
-  Global.genericCorner1 = this
+  KerkoviApplicationContext.genericCorner1 = this
   label = "Corner1"
 }

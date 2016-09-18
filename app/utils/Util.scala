@@ -1,27 +1,31 @@
 package utils
 
-import java.io.{FileInputStream, ByteArrayInputStream, ByteArrayOutputStream}
+import java.io.{ByteArrayInputStream, ByteArrayOutputStream, FileInputStream}
 import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
-import javax.xml.namespace.{QName, NamespaceContext}
+import javax.xml.namespace.{NamespaceContext, QName}
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.soap.{AttachmentPart, MimeHeaders, SOAPMessage}
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.dom.DOMSource
 import javax.xml.transform.stream.{StreamResult, StreamSource}
-import javax.xml.xpath.XPathConstants._
 import javax.xml.xpath._
 
+import akka.actor.ActorSystem
+import akka.stream._
+import akka.stream.scaladsl._
+import akka.util.ByteString
 import esens.wp6.esensMshBackend._
-import minder.as4Utils.{SWA12Util, SAAJUtil}
 import minder.as4Utils.SWA12Util._
-import org.w3c.dom.{Document, Element, Node}
-import play.api.libs.iteratee.Enumerator
+import org.w3c.dom.{Element, Node}
+import play.api.libs.iteratee.{Concurrent, Enumerator}
+import play.api.libs.streams.Streams
 import play.api.mvc.{Controller, RawBuffer, Result}
 import play.api.{Logger, mvc}
 
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 import scala.util.Try
 
 /**
@@ -50,7 +54,7 @@ object Util extends Controller {
     transformer.transform(new DOMSource(soapMessage.getSOAPPart), new StreamResult(baos))
     val array: Array[Byte] = baos.toByteArray
     val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(array))
-    Ok.chunked(dataContent).as("application/soap+xml;charset=UTF-8")
+    Ok.chunked(StreamConverters.fromInputStream(() => new ByteArrayInputStream(baos.toByteArray))).as("application/soap+xml;charset=UTF-8")
   }
 
   /**
@@ -85,7 +89,7 @@ object Util extends Controller {
   }
 
 
-  def prepareFault(soapMessage: SOAPMessage, faultMessage: String): Enumerator[Array[Byte]] = {
+  def prepareFault(soapMessage: SOAPMessage, faultMessage: String): Source[ByteString, Future[IOResult]] = {
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/fault-template.xml")).mkString
 
     val refToMessageInError = if (soapMessage != null) {
@@ -147,7 +151,7 @@ object Util extends Controller {
     //val baos = new ByteArrayOutputStream()
     //receipt.writeTo(baos)
     val array: Array[Byte] = xml.getBytes("utf-8")
-    Enumerator.fromStream(new ByteArrayInputStream(array))
+    StreamConverters.fromInputStream(() => new ByteArrayInputStream(array))
   }
 
   def getHeaders(request: mvc.Request[RawBuffer]): MimeHeaders = {
@@ -175,13 +179,12 @@ object Util extends Controller {
   def extractSOAPMessageFromRequest(request: mvc.Request[RawBuffer]): SOAPMessage = {
     try {
       val stream = request.body
-      val bytes = stream.asBytes().get
+      val bytes : Array[Byte] = stream.asBytes().get.toArray
       val headers: MimeHeaders = new MimeHeaders
       headers.addHeader("content-type", request.headers.get("content-type").get)
 
       val soapMessage = createMessage(headers, new ByteArrayInputStream(bytes))
 
-      // Logger.debug("SOAP Message")
       Logger.debug(prettyPrint(soapMessage.getSOAPHeader()));
       soapMessage;
     } catch {
@@ -546,7 +549,40 @@ object Util extends Controller {
   def evaluateXpath(expression: String, document: Node, qname: QName): AnyRef = {
     xpath.evaluate(expression, document, qname)
   }
+
+  def main(args : Array[String]): Unit ={
+    implicit val system = ActorSystem("QuickStart")
+    implicit val materializer = ActorMaterializer()
+
+    val (enumerator, channel)  = Concurrent.broadcast[String];
+    val source = Source.fromPublisher(Streams.enumeratorToPublisher(enumerator))
+    val helloSource = source.filter(message => message.startsWith("Hello"))
+
+    val ref = Flow[String].to(Sink.foreach(k => {
+      println(k + "dd")
+      println(Thread.currentThread().getName)
+    })).runWith(helloSource)
+
+    println(Thread.currentThread().getName + "<<>>")
+    channel push "Hi there!"
+    Thread.sleep(100)
+    channel push "Hello there! 1"
+    //Thread.sleep(100)
+    channel push "Hello there! 2"
+    //Thread.sleep(100)
+    channel push "Hello there! 3"
+    //Thread.sleep(100)
+    channel push "Hello there! 4"
+    //Thread.sleep(100)
+    channel push "Hello there! 5"
+    //Thread.sleep(100)
+    channel push  "Hello there! 6"
+    //Thread.sleep(100)
+    channel push  "Hello there! 7"
+  }
 }
+
+
 
 class AnyNamespaceContext extends NamespaceContext {
   override def getNamespaceURI(prefix: String) = "*"

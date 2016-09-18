@@ -4,7 +4,8 @@ import java.io.ByteArrayInputStream
 import java.net.URL
 import javax.xml.soap.SOAPMessage
 
-import controllers.{Databeyz, Global, LogItem, LogItemSuccess}
+import akka.stream.scaladsl.{Source, StreamConverters}
+import controllers._
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.SWA12Util
 import model.AS4Gateway
@@ -41,9 +42,9 @@ class GenericAS4Corner extends AbstractMSHBackend {
         submissionData.messageId = Util.genereateEbmsMessageId("mindertestbed.org")
       }
 
-      val message: SOAPMessage = Util.convert2Soap(submissionData, Global.myPartyID,
-        submissionData.from, "Submit", Global.serviceProperties.getProperty(submissionData.pModeId),
-        Global.actionProperties.getProperty(submissionData.pModeId))
+      val message: SOAPMessage = Util.convert2Soap(submissionData, KerkoviApplicationContext.myPartyID,
+        submissionData.from, "Submit", KerkoviApplicationContext.serviceProperties.getProperty(submissionData.pModeId),
+        KerkoviApplicationContext.actionProperties.getProperty(submissionData.pModeId))
 
       Logger.debug("[" + label + "] Submit AS4 Message to backend")
       Logger.debug(SWA12Util.describe(message))
@@ -75,7 +76,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
           if (elm != null)
             logItem.success = LogItemSuccess.TRUE;
         } catch {
-          case _ =>
+          case th : Throwable =>
         }
         Logger.debug("[" + label + "] Receipt received from the AS4 backend")
         Logger.debug(SWA12Util.describe(reply))
@@ -104,10 +105,10 @@ class GenericAS4Corner extends AbstractMSHBackend {
   }
 
   def process(request: Request[RawBuffer]): Result = {
-    if (!Global.as4Adapter.isRunning) {
+    if (!KerkoviApplicationContext.as4Adapter.isRunning) {
       Logger.warn("Test Not Started. Bad Request!")
 
-      val fault: Enumerator[Array[Byte]] = Util.prepareFault(null, "Minder Test Not Active")
+      val fault = Util.prepareFault(null, "Minder Test Not Active")
       return InternalServerError.chunked(fault).as("application/soap+xml;charset=UTF-8")
     }
 
@@ -119,7 +120,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       val service = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Service"))
       if ("http://www.esens.eu/as4/conformancetest" != service) {
         Logger.error("Service [" + service + "] not supported")
-        val fault: Enumerator[Array[Byte]] = Util.prepareFault(null, "Service [" + service + "] not supported")
+        val fault = Util.prepareFault(null, "Service [" + service + "] not supported")
         return BadRequest.chunked(fault).as("application/soap+xml;charset=UTF-8")
       }
 
@@ -147,7 +148,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
         }
         case _ => {
           Logger.error("Service [" + service + "] not supported")
-          val fault: Enumerator[Array[Byte]] = Util.prepareFault(null, "Action [" + action + "] not supported")
+          val fault = Util.prepareFault(null, "Action [" + action + "] not supported")
           return BadRequest.chunked(fault).as("application/soap+xml;charset=UTF-8")
         }
       }
@@ -157,7 +158,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       val array: Array[Byte] = Util.createSuccessReceipt(message)
       logItem.reply = array;
       val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(array))
-      Ok.chunked(dataContent).as("application/soap+xml;charset=UTF-8")
+      Ok.chunked(StreamConverters.fromInputStream(()=>new ByteArrayInputStream(array))).as("application/soap+xml;charset=UTF-8")
     } catch {
       case th: Throwable => {
         logItem.success = LogItemSuccess.FALSE;

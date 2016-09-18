@@ -58,7 +58,7 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
   @Override
   public void initialize(Properties properties) {
     //do anything arbitrary here
-    MinderClient minderClient = new MinderClient(properties, Play.current().classloader());
+    MinderClient minderClient = new MinderClient(properties, this.getClass().getClassLoader());
     minderBackendAdapter = (MinderBackendAdapter) minderClient.wrapper();
     minderBackendAdapter.setBackendClient(this);
   }

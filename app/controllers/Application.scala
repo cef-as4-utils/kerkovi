@@ -3,17 +3,41 @@ package controllers
 import java.io.{PrintWriter, StringWriter}
 import java.lang.reflect.Field
 import java.net.URL
+import javax.inject._
 
+import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Source
 import model.AS4Gateway
 import play.api.libs.EventSource
 import play.api.libs.iteratee.Concurrent
 import play.api.libs.json._
-import play.api.mvc.{Result, Action, Controller}
+import play.api.libs.streams.Streams
+import play.api.mvc.{Action, Controller, Result}
 import play.mvc.Security
 
-object Application extends Controller {
+class Application @Inject()(implicit environment: play.api.Environment,
+                            configuration: play.api.Configuration, actorSystem: ActorSystem) extends Controller {
 
-  val (logOut, logChannel) = Concurrent.broadcast[String];
+  val (logEnumerator, logChannel) = Concurrent.broadcast[String]
+  val source = Source.fromPublisher(Streams.enumeratorToPublisher(logEnumerator))
+  val materializer: ActorMaterializer = ActorMaterializer()
+
+  /**
+    * An action that provides information about the current
+    * running job.
+    *
+    * @return
+    */
+  def logFeed() = Action {
+    println("Log feed")
+    Ok.chunked(source via EventSource.flow).as("text/event-stream")
+  }
+
+  def logFeedUpdate(log: String): Unit = {
+    logChannel push log
+  }
+
 
   def index(target: String) = Action {
     Ok(views.html.index(target))
@@ -41,11 +65,6 @@ object Application extends Controller {
 
   def run() = Action {
     Ok(views.html.runTests())
-  }
-
-
-  def registeredGateways(): List[AS4Gateway] = {
-    Databeyz.list()
   }
 
   import play.api.libs.json.Json._
@@ -98,7 +117,7 @@ object Application extends Controller {
         th.printStackTrace()
         BadRequest(th.getMessage)
       }
-      case _ => {
+      case th: Throwable => {
         BadRequest("Unknown")
       }
     }
@@ -143,7 +162,7 @@ object Application extends Controller {
       val frm = json.asFormUrlEncoded;
       as4.name = frm.get("name").mkString
       as4.partyID = frm.get("partyID").mkString //json.getOrElse("", "UNKNOWN").toString
-     // as4.backendAddress = frm.get("backendAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
+      // as4.backendAddress = frm.get("backendAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.mshAddress = frm.get("mshAddress").mkString //json.getOrElse("c2Address", "UNKNOWN").toString
       as4.proxyMode = false
 
@@ -170,7 +189,7 @@ object Application extends Controller {
       try {
         new URL(as4.mshAddress)
       } catch {
-        case _ => {
+        case th: Throwable => {
           return BadRequest("Please provide valid URL for the msh backend")
         }
       }
@@ -179,7 +198,7 @@ object Application extends Controller {
         try {
           new URL(as4.backendAddress)
         } catch {
-          case _ => {
+          case th: Throwable => {
             return BadRequest("Please provide valid backend address or leave it blank")
           }
         }
@@ -201,20 +220,6 @@ object Application extends Controller {
 
   def decideCssForTests(gateway: AS4Gateway): String = {
     ""
-  }
-
-  /**
-    * An action that provides information about the current
-    * running job.
-    * @return
-    */
-  def logFeed() = Action {
-    println("Log feed")
-    Ok.chunked(logOut &> EventSource()).as("text/event-stream")
-  }
-
-  def logFeedUpdate(log: String): Unit = {
-    logChannel.push(log)
   }
 
   @Security.Authenticated(classOf[Secured])
@@ -244,7 +249,7 @@ object Application extends Controller {
   }
 
   @Security.Authenticated(classOf[Secured])
-  def approvePage() = Action { implicit request =>
+  def admin() = Action { implicit request =>
     Ok(views.html.admin())
   }
 

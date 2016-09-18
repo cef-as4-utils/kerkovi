@@ -5,6 +5,9 @@ import java.net.URL
 import java.util
 import javax.xml.soap.{MimeHeader, SOAPMessage}
 
+import akka.stream.IOResult
+import akka.stream.scaladsl.{StreamConverters, Source}
+import akka.util.ByteString
 import minder.as4Utils.SWA12Util
 import model.AS4Gateway
 import org.w3c.dom.Element
@@ -15,17 +18,18 @@ import utils.{Tic, Util}
 
 import scala.collection.JavaConversions._
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
-object KerkoviAS4Controller extends Controller {
+class KerkoviAS4Controller extends Controller {
 
   def postCorner1() = Action(parse.raw) { request =>
     Logger.debug("Corner 1 received a message")
-    Global.genericCorner1.process(request)
+    KerkoviApplicationContext.genericCorner1.process(request)
   }
 
   def postCorner4() = Action(parse.raw) { request =>
     Logger.debug("Corner 4 received a message")
-    Global.genericCorner4.process(request)
+    KerkoviApplicationContext.genericCorner4.process(request)
   }
 
   def getCorner1() = Action { request =>
@@ -104,23 +108,22 @@ object KerkoviAS4Controller extends Controller {
             if (elm != null)
               logItem.success = LogItemSuccess.FALSE;
           } catch {
-            case _ =>
+            case th : Throwable =>
           }
 
           val baos = new ByteArrayOutputStream()
           reply.writeTo(baos)
           Logger.debug("Reply headers")
           val headers: Seq[(String, String)] = populateHeaders(reply)
-          val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(baos.toByteArray))
-
-          return Ok.chunked(dataContent).withHeaders(headers: _*)
+          val source: Source[ByteString, Future[IOResult]] = StreamConverters.fromInputStream(() => new ByteArrayInputStream(baos.toByteArray))
+          return Ok.chunked(source).withHeaders(headers: _*)
         }
       } else {
 
         logItem.directMode = false;
 
         //forward to minder
-        if (!Global.as4Adapter.isRunning) {
+        if (!KerkoviApplicationContext.as4Adapter.isRunning) {
           Logger.warn("Test Not Started. Bad Request!")
           logItem.setException(new RuntimeException("Test Not Started. Bad Request!"))
           return Forbidden("Sorry, Minder Test Not Active".getBytes)
@@ -130,11 +133,11 @@ object KerkoviAS4Controller extends Controller {
 
         //signal the minder adapter
         Tic.tic()
-        Global.as4Adapter.messageReceived(SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage));
+        KerkoviApplicationContext.as4Adapter.messageReceived(SWA12Util.serializeSOAPMessage(sOAPMessage.getMimeHeaders, sOAPMessage));
         //wait for adapter to return the receipt
 
         Logger.debug("Wait for minder response")
-        val reply = Global.as4Adapter.consumeReceipt()
+        val reply = KerkoviApplicationContext.as4Adapter.consumeReceipt()
         Logger.debug(">>>>>> Timeout between request and reply: " + Tic.toc)
 
         if (reply == null) {
@@ -151,15 +154,15 @@ object KerkoviAS4Controller extends Controller {
           if (elm != null)
             logItem.success = LogItemSuccess.FALSE;
         } catch {
-          case _ =>
+          case th : Throwable =>
         }
 
         val baos = new ByteArrayOutputStream()
         reply.writeTo(baos)
         Logger.debug("Reply headers")
         val headers: Seq[(String, String)] = populateHeaders(reply)
-        val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(baos.toByteArray))
-        return Ok.chunked(dataContent).withHeaders(headers: _*)
+
+        return Ok.chunked(StreamConverters.fromInputStream(() => new ByteArrayInputStream(baos.toByteArray))).withHeaders(headers: _*)
       }
     } catch {
       case th: Throwable => {
