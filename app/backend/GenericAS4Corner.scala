@@ -41,11 +41,13 @@ class GenericAS4Corner extends AbstractMSHBackend {
         submissionData.messageId = Util.genereateEbmsMessageId("mindertestbed.org")
       }
 
+      val action: String = if(submissionData.action != null) submissionData.action else "Submit"
+
       val message: SOAPMessage = Util.convert2Soap(submissionData, Global.myPartyID,
-        submissionData.from, "Submit", Global.serviceProperties.getProperty(submissionData.pModeId),
+        submissionData.from, action, Global.serviceProperties.getProperty(submissionData.pModeId),
         Global.actionProperties.getProperty(submissionData.pModeId))
 
-      Logger.debug("[" + label + "] Submit AS4 Message to backend")
+      Logger.debug("[" + label + "] " + action + " AS4 Message to backend")
       Logger.debug(SWA12Util.describe(message))
       Logger.debug("====================")
 

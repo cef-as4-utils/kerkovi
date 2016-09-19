@@ -1,0 +1,1 @@
+the c1 or c4 submissiondata action isn't ignored any more. While the default is "submit", if submissiondata.action is not null, it is taken into account

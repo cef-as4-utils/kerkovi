@@ -4,7 +4,7 @@ name := """kerkovi"""
 
 lazy val kerkovi = (project in file(".")).enablePlugins(PlayScala)
 
-version := "1.4.1"
+version := "1.4.2"
 
 resolvers += "Eid public repository" at "http://193.140.74.199:8081/nexus/content/groups/public/"
 
