@@ -42,11 +42,13 @@ class GenericAS4Corner extends AbstractMSHBackend {
         submissionData.messageId = Util.genereateEbmsMessageId("mindertestbed.org")
       }
 
+      val action: String = if(submissionData.action != null) submissionData.action else "Submit"
+
       val message: SOAPMessage = Util.convert2Soap(submissionData, KerkoviApplicationContext.myPartyID,
-        submissionData.from, "Submit", KerkoviApplicationContext.serviceProperties.getProperty(submissionData.pModeId),
+        submissionData.from, action, KerkoviApplicationContext.serviceProperties.getProperty(submissionData.pModeId),
         KerkoviApplicationContext.actionProperties.getProperty(submissionData.pModeId))
 
-      Logger.debug("[" + label + "] Submit AS4 Message to backend")
+      Logger.debug("[" + label + "] " + action + " AS4 Message to backend")
       Logger.debug(SWA12Util.describe(message))
       Logger.debug("====================")
 
@@ -71,13 +73,17 @@ class GenericAS4Corner extends AbstractMSHBackend {
         logItem.setReply(reply);
 
         logItem.success = LogItemSuccess.TRUE;
-        try {
-          val elm = utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
-          if (elm != null)
-            logItem.success = LogItemSuccess.TRUE;
+        val elm = try {
+          utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
         } catch {
           case th : Throwable =>
         }
+
+        if (elm != null) {
+          logItem.success = LogItemSuccess.FALSE;
+          throw new RuntimeException("Failed to submit the message:\n" + elm.asInstanceOf[Element].getTextContent)
+        }
+
         Logger.debug("[" + label + "] Receipt received from the AS4 backend")
         Logger.debug(SWA12Util.describe(reply))
         Logger.debug("====================")
@@ -88,6 +94,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       case th: Throwable => {
         Logger.error(th.getMessage, th)
         logItem.setException(th);
+        throw th;
       }
     } finally {
       if (logItem.valid) logItem.persist()
@@ -157,7 +164,6 @@ class GenericAS4Corner extends AbstractMSHBackend {
       Logger.debug("Success Receipt")
       val array: Array[Byte] = Util.createSuccessReceipt(message)
       logItem.reply = array;
-      val dataContent: Enumerator[Array[Byte]] = Enumerator.fromStream(new ByteArrayInputStream(array))
       Ok.chunked(StreamConverters.fromInputStream(()=>new ByteArrayInputStream(array))).as("application/soap+xml;charset=UTF-8")
     } catch {
       case th: Throwable => {
