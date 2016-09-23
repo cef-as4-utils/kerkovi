@@ -1,6 +1,7 @@
 package as4Interceptor;
 
 import controllers.Databeyz;
+import controllers.KerkoviApplicationContext;
 import gov.tubitak.minder.client.MinderClient;
 import minder.as4Utils.SWA12Util;
 import minderengine.*;
@@ -57,17 +58,13 @@ public abstract class AS4Adapter extends Wrapper {
 
 
   /**
-   */
-  public boolean isRunning = false;
-
-  /**
    * Called by the server when a test case that contains this wrapper is about
    * to be run. Perform any initialization here
    */
   @Override
   public void startTest() {
     finishTest();
-    isRunning = true;
+    KerkoviApplicationContext.isTestActive = true;
     this.sutIdentifiers = defaultSutIdentifiers;
   }
 
@@ -88,7 +85,7 @@ public abstract class AS4Adapter extends Wrapper {
       } catch (Exception ex) {
       }
     }
-    isRunning = false;
+    KerkoviApplicationContext.isTestActive = false;
     this.sutIdentifiers = defaultSutIdentifiers;
   }
 
@@ -110,7 +107,7 @@ public abstract class AS4Adapter extends Wrapper {
     synchronized (sutListLock) {
       finishTest();
       Logger.info("AS4Adapter Start Test");
-      isRunning = true;
+      KerkoviApplicationContext.isTestActive = true;
       this.sutIdentifiers = new SUTIdentifiers();
       if (startTestObject.getProperties().containsKey("Corner2")) {
         AS4Gateway corner2 = Databeyz.findByPartyId(startTestObject.getProperties().getProperty("Corner2"));

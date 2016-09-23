@@ -112,7 +112,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
   }
 
   def process(request: Request[RawBuffer]): Result = {
-    if (!KerkoviApplicationContext.as4Adapter.isRunning) {
+    if (!KerkoviApplicationContext.isTestActive) {
       Logger.warn("Test Not Started. Bad Request!")
 
       val fault = Util.prepareFault(null, "Minder Test Not Active")

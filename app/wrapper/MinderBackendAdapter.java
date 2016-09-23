@@ -1,5 +1,6 @@
 package wrapper;
 
+import controllers.KerkoviApplicationContext;
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
 import minderengine.*;
@@ -18,19 +19,16 @@ public abstract class MinderBackendAdapter extends Wrapper {
   private MinderMSHBackendAdapter backendClient;
 
   /**
-   * A dummy status flag
-   */
-  private boolean isRunning = false;
-
-  /**
    * Called by the server when a test case that contains this wrapper is about
    * to be run. Perform any initialization here
    */
   @Override
   public void startTest(StartTestObject startTestObject) {
-    if (isRunning)
+    if (KerkoviApplicationContext.isTestActive)
       return;
-    isRunning = true;
+
+    play.Logger.info("Backend Start Test");
+    KerkoviApplicationContext.isTestActive = true;
     backendClient.startTest();
   }
 
@@ -40,8 +38,10 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Override
   public void finishTest(FinishTestObject finishTestObject) {
-    isRunning = false;
+    KerkoviApplicationContext.isTestActive = false;
     backendClient.finishTest();
+
+    play.Logger.info("Backend Finish Test");
   }
 
   /**
@@ -51,7 +51,7 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Slot
   public void submitMessage(SubmissionData submissionData) {
-    if (!isRunning)
+    if (!KerkoviApplicationContext.isTestActive)
       throw new MinderException(MinderException.E_SUT_NOT_RUNNING);
     try {
       backendClient.submitMessage(submissionData);
