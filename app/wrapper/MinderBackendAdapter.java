@@ -24,12 +24,11 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Override
   public void startTest(StartTestObject startTestObject) {
-    if (KerkoviApplicationContext.isTestActive)
+    if (backendClient.isStarted())
       return;
 
     play.Logger.info("Backend Start Test");
-    KerkoviApplicationContext.isTestActive = true;
-    backendClient.startTest();
+    backendClient.startTest(startTestObject);
   }
 
   /**
@@ -38,9 +37,7 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Override
   public void finishTest(FinishTestObject finishTestObject) {
-    KerkoviApplicationContext.isTestActive = false;
-    backendClient.finishTest();
-
+    backendClient.finishTest(finishTestObject);
     play.Logger.info("Backend Finish Test");
   }
 
@@ -51,8 +48,9 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Slot
   public void submitMessage(SubmissionData submissionData) {
-    if (!KerkoviApplicationContext.isTestActive)
+    if (!backendClient.isStarted())
       throw new MinderException(MinderException.E_SUT_NOT_RUNNING);
+
     try {
       backendClient.submitMessage(submissionData);
     } catch (Throwable throwable) {

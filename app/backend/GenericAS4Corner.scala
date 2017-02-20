@@ -25,6 +25,7 @@ import scala.util.Try
   */
 class GenericAS4Corner extends AbstractMSHBackend {
   var label: String = "Corner"
+  private var isActive : Boolean = false;
 
   /**
     * Convert the submissiondata object into an AS4 object and send it to the MSH
@@ -112,12 +113,13 @@ class GenericAS4Corner extends AbstractMSHBackend {
   }
 
   def process(request: Request[RawBuffer]): Result = {
-    if (!KerkoviApplicationContext.isTestActive) {
+    if (!isActive) {
       Logger.warn("Test Not Started. Bad Request!")
 
       val fault = Util.prepareFault(null, "Minder Test Not Active")
       return InternalServerError.chunked(fault).as("application/soap+xml;charset=UTF-8")
     }
+
 
     val logItem = new LogItem();
     logItem.valid = false;
@@ -216,5 +218,16 @@ class GenericAS4Corner extends AbstractMSHBackend {
         reportNotificationFailure(th)
       }
     }
+  }
+
+  override def startTest(context: Object) = {
+    Logger.info(label + " start test")
+    isActive = true;
+  }
+
+
+  override def finishTest(context: Object) = {
+    Logger.info(label + " finish test")
+    isActive = false;
   }
 }

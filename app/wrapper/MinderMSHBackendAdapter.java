@@ -15,6 +15,7 @@ import java.util.Properties;
  */
 public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
   private MinderBackendAdapter minderBackendAdapter;
+
   private boolean started = false;
 
   /**
@@ -63,11 +64,19 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
     minderBackendAdapter.setBackendClient(this);
   }
 
-  public void startTest() {
+  @Override
+  public void onStartTest(Object context) {
     started = true;
   }
 
-  public void finishTest() {
+  @Override
+  public void onFinishTest(Object context) {
     started = false;
   }
+
+
+  public boolean isStarted() {
+    return started;
+  }
+
 }

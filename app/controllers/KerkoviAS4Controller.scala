@@ -123,7 +123,7 @@ class KerkoviAS4Controller extends Controller {
         logItem.directMode = false;
 
         //forward to minder
-        if (!KerkoviApplicationContext.isTestActive) {
+        if (!KerkoviApplicationContext.as4Adapter.isTestActive) {
           Logger.warn("Test Not Started. Bad Request!")
           logItem.setException(new RuntimeException("Test Not Started. Bad Request!"))
           return Forbidden("Sorry, Minder Test Not Active".getBytes)

@@ -13,5 +13,4 @@ public class KerkoviApplicationContext{
   public static Properties serviceProperties;
   public static Properties actionProperties;
   public static String myPartyID;
-  public static Boolean isTestActive = false;
 }
