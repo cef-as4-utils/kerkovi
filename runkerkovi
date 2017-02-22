@@ -1,2 +1,2 @@
 #!/bin/sh
-activator -Dhttp.port=15001 run
+activator -Dhttp.port=15001 start
