@@ -1,7 +1,6 @@
 package utils
 
 /**
-  * @author Bulut
   */
 class PMODE {
   var fromPartyID: String = null;

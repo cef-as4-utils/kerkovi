@@ -1,21 +1,47 @@
 package controllers
 
-import java.io.{PrintWriter, StringWriter}
-import java.lang.reflect.Field
-import java.net.URL
+import java.util
+import javax.inject.{Inject, Singleton}
 
-import model.AS4Gateway
-import play.api.libs.EventSource
-import play.api.libs.iteratee.Concurrent
-import play.api.libs.json._
-import play.api.mvc.{Action, Controller, Result}
+import play.api.Logger
+import play.api.mvc.{Action, Controller}
 
-class LoginControl extends Controller {
+import scala.io.Source
+
+@Singleton
+class LoginControl @Inject()() extends Controller {
+  val adminMap = new util.HashMap[String, String]()
+  try {
+    val stream = this.getClass.getResourceAsStream("/admins.txt")
+    Source.fromInputStream(stream).mkString.split("\\n").foreach {
+      line => {
+        val indexOf = line.indexOf(':')
+        adminMap.put(line.substring(0, indexOf), line.substring(indexOf + 1))
+      }
+    }
+    stream.close()
+  } catch {
+    case th: Throwable => {
+      Logger.error(th.getMessage, th);
+    }
+  }
   def login() = Action {
     Ok(views.html.login())
   }
 
-  def doLogin() = Action {
-    Ok
+  def logout() = Action {
+    Redirect("/login").withSession()
+  }
+
+  def doLogin() = Action { implicit request =>
+    Logger.debug(request.body.asText.toString)
+    val encoded = request.body.asFormUrlEncoded
+    val email = encoded.get("email").mkString
+
+    if (adminMap.containsKey(email) && adminMap.get(email)==encoded.get("password").mkString) {
+      Redirect("/admin").withSession(request.session + ("email" -> email))
+    } else {
+      BadRequest(views.html.login("Invalid Username or password"))
+    }
   }
 }

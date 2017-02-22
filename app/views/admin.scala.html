@@ -23,13 +23,13 @@
 
   var rendererMap = new Object()
 
-  rendererMap["booleanRenderer"] = function(bool){
+  rendererMap["booleanRenderer"] = function (bool) {
     if (bool === "true" || bool === true || bool === "True")
       return '<span style="color:green;font-size: x-large">\u2713</span>'
     return '<span style="color:red;font-size: x-large">\u2718</span>'
   }
 
-  $(function(){
+  $(function () {
     setUpEditable($(".editable"), rendererMap)
   });
 </script>
@@ -39,10 +39,19 @@
       <tr>
         <td>
           <table><tr class="titleFirstRow">
-            <td style="width:1% ;">
-              <div class="kerkovi" style="display: inline ;" id="top"><b style="color:red ;">admin</b> <br/></div>
-            </td> <td align="right" style="width:99% ; vertical-align: bottom">&nbsp;
-          </td>
+            <td style="width: 1% ;">
+              <div class="kerkovi" style="display: inline ;" id="top"><b style="color: red ;">admin</b>
+                <br/></div>
+            </td>
+            <td align="right" style="width: 99% ;
+              vertical-align: bottom">;
+              &nbsp;
+            </td>
+            <td align="right">&nbsp;
+              <a style="display: block;
+                border: 1px solid gray;
+                border-radius: 5px; margin-right: 10px;padding-left: 5px;padding-right:5px;background-color: rgba(255, 0, 16, 0.31)" href="@controllers.routes.LoginControl.logout()">Logout</a>
+            </td>
           </tr>
           </table>
           <ul class="menu">
@@ -52,8 +61,8 @@
           <div id="mainView">
 
             <script>
-    function approve(id){
-      $.ajax('/approve?id='+id)
+    function approve(id) {
+      $.ajax('/approve?id=' + id)
           .done(function (data) {
             alert(data)
           })
@@ -61,9 +70,9 @@
             alert(data.responseText);
           })
     }
-    function deleteGateway(id){
+    function deleteGateway(id) {
       if (confirm('Do you really want to delete this gateway?')) {
-        $.ajax('/deleteGateway?id='+id)
+        $.ajax('/deleteGateway?id=' + id)
             .done(function (data) {
               alert(data)
             })
@@ -74,7 +83,7 @@
     }
 
 
-    function undoDelete(){
+    function undoDelete() {
       var vnt = $(window.event);
       vnt.stop();
       $.ajax({
@@ -95,35 +104,39 @@
             <table class="zebra">
               <tr>
                 <th class="darkcolor">Name</th>
-                <th class="darkcolor">Party ID</th> <th>Address</th> <!--<th>Backend Address<sup>2</sup> </th>-->
+                <th class="darkcolor">Party ID</th>
+                <th>Address</th>
+                  <!--<th>Backend Address<sup>2</sup> </th>-->
                 <th class=" darkcolor">Direct Mode</th>
               </tr>
-              @for( gateway <- Databeyz.all) {
+              @for(gateway <- Databeyz.all) {
                 <tr>
                   <td>
                     <div class="editable" type="text"
-                    binding="@controllers.routes.Application.gatewayMvc(gateway.id, "name")"
+                    binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "name")"
                     >@gateway.name</div>
                   </td>
                   <td>
                     <div class="editable" type="text"
-                    binding="@controllers.routes.Application.gatewayMvc(gateway.id, "partyID")"
+                    binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "partyID")"
                     >@gateway.partyID</div>
                   </td>
                   <td>
 
-                    <div class="editable" type="text" binding="@controllers.routes.Application.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
+                    <div class="editable" type="text" binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
                   </td>
 
                   <td align="center">
                     <div class="editable" type="text"
-                    binding="@controllers.routes.Application.gatewayMvc(gateway.id, "proxyMode")"
+                    binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "proxyMode")"
                     renderer="booleanRenderer"
                     >
                     @if(gateway.proxyMode) {
-                      <span style="color:green ; font-size: x-large"> \u2713</span>
+                      <span style="color: green ;
+                        font-size: x-large"> \u2713</span>
                     } else {
-                      <span style="color:red ; font-size: x-large"> \u2718</span>
+                      <span style="color: red ;
+                        font-size: x-large"> \u2718</span>
                     }
                     </div>
                   </td>
@@ -158,8 +171,9 @@
     </table>
 
     <div id="errorDialog" class="errorDialog" title="Error">
-      <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="padding:3px ;">
-        <tr><th style="height:30px ;" align="left"><span>&nbsp;Error</span></th> <td align="right"><button class="bigcancel" onclick='disposeError()'>\u2718</button></td></tr>
+      <table width="100%" height="100%" cellpadding="0" cellspacing="0" style="padding: 3px ;">
+        <tr><th style="height: 30px ;" align="left"><span>&nbsp;Error</span></th>
+          <td align="right"><button class="bigcancel" onclick='disposeError()'>\u2718</button></td></tr>
         <tr>
           <td colspan="2">
             <div id="errorDialogContent" class="errorDialogContent">

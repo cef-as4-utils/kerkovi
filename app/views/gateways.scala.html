@@ -19,17 +19,17 @@
           <tr>
             <td>
               <div class="editable" type="text"
-              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "name")"
+              binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "name")"
               >@gateway.name</div>
             </td>
             <td>
               <div class="editable" type="text"
-              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "partyID")"
+              binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "partyID")"
               >@gateway.partyID</div>
             </td>
             <td>
 
-              <div class="editable" type="text" binding="@controllers.routes.Application.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
+              <div class="editable" type="text" binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "mshAddress")">@gateway.mshAddress</div>
             </td>
 
             @{/*
@@ -42,7 +42,7 @@
             */}
             <td align="center">
               <div class="editable" type="text"
-              binding="@controllers.routes.Application.gatewayMvc(gateway.id, "proxyMode")"
+              binding="@controllers.routes.GatewayMVC.gatewayMvc(gateway.id, "proxyMode")"
               renderer="booleanRenderer"
               >
               @if(gateway.proxyMode) {
@@ -98,7 +98,7 @@
       </form> <br />
       <table width="100%"><tr><td align="right">
         <button class="fancyOpposite" onclick="doCancel(event)">\u2718 Cancel</button></td> <td align="left">
-        <button class="fancy" onclick='doCreateNew("@controllers.routes.Application.newGateway")'>\u2713 Save</button></td>
+        <button class="fancy" onclick='doCreateNew("@controllers.routes.GatewayMVC.newGateway")'>\u2713 Save</button></td>
       </tr>
       </table>
       <br />

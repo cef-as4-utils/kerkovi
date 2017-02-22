@@ -11,7 +11,7 @@ class JSRoutesController  extends Controller {
   def jsRoutes = Action { implicit request =>
     Ok(
       JavaScriptReverseRouter("jsRoutes")(
-        routes.javascript.Application.gatewayMvc
+        routes.javascript.GatewayMVC.gatewayMvc
       )
     ).as("text/javascript")
   }
