@@ -12,5 +12,6 @@ public class KerkoviApplicationContext{
   public static GenericAS4Corner4 genericCorner4;
   public static Properties serviceProperties;
   public static Properties actionProperties;
+  public static Properties pmodes;
   public static String myPartyID;
 }

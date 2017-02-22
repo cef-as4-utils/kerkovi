@@ -1,3 +1,3 @@
 #!/bin/sh
 cd /home/kerkovi/kerkovibin/kerkovi -Dhttps.port=15000 -Dhttp.port=15001 -Dhttps.keyStore=kerkovi.jks -Dhttps.keyStorePassword=123456 &
-cd /
+cd -

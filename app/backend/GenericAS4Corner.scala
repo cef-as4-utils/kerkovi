@@ -4,19 +4,18 @@ import java.io.ByteArrayInputStream
 import java.net.URL
 import javax.xml.soap.SOAPMessage
 
-import akka.stream.scaladsl.{Source, StreamConverters}
+import akka.stream.scaladsl.StreamConverters
 import controllers._
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.SWA12Util
 import model.AS4Gateway
 import org.w3c.dom.{Element, Node}
 import play.api.Logger
-import play.api.libs.iteratee.Enumerator
 import play.api.mvc.{RawBuffer, Request, Result}
 import utils.Util._
-import utils.{Tic, Util}
+import utils.{PMODE, Tic, Util}
+import scala.collection.JavaConversions._
 
-import scala.concurrent.ExecutionContext.Implicits.global
 import scala.util.Try
 
 /**
@@ -25,7 +24,7 @@ import scala.util.Try
   */
 class GenericAS4Corner extends AbstractMSHBackend {
   var label: String = "Corner"
-  private var isActive : Boolean = false;
+  private var isActive: Boolean = false;
 
   /**
     * Convert the submissiondata object into an AS4 object and send it to the MSH
@@ -43,20 +42,17 @@ class GenericAS4Corner extends AbstractMSHBackend {
         submissionData.messageId = Util.genereateEbmsMessageId("mindertestbed.org")
       }
 
-      val action: String = if(submissionData.action != null) submissionData.action else "Submit"
+      val submitPMODE = getBackendPMODE("SUBMIT");
 
-      val message: SOAPMessage = Util.convert2Soap(submissionData, KerkoviApplicationContext.myPartyID,
-        submissionData.from, action, KerkoviApplicationContext.serviceProperties.getProperty(submissionData.pModeId),
-        KerkoviApplicationContext.actionProperties.getProperty(submissionData.pModeId))
+      val message: SOAPMessage = Util.convert2Soap(submissionData, submitPMODE)
 
-      Logger.debug("[" + label + "] " + action + " AS4 Message to backend")
+      Logger.debug("[" + label + "] " + submitPMODE.action + " AS4 Message to backend")
       Logger.debug(SWA12Util.describe(message))
       Logger.debug("====================")
 
       val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
       val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
       val conversationId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:eb:CollaborationInfo/:ConversationId")
-
       logItem.valid = true;
       logItem.setAS4Message(message)
       logItem.toPartyId = toPartyId.getTextContent;
@@ -77,7 +73,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
         val elm = try {
           utils.Util.evaluateXpath("//:SignalMessage/:Error", reply.getSOAPPart)
         } catch {
-          case th : Throwable =>
+          case th: Throwable =>
         }
 
         if (elm != null) {
@@ -127,11 +123,6 @@ class GenericAS4Corner extends AbstractMSHBackend {
       val message = Util.extractSOAPMessageFromRequest(request)
       //validate the service
       val service = Util.getElementText(SWA12Util.findSingleNode(message.getSOAPHeader, "//:CollaborationInfo/:Service"))
-      if ("http://www.esens.eu/as4/conformancetest" != service) {
-        Logger.error("Service [" + service + "] not supported")
-        val fault = Util.prepareFault(null, "Service [" + service + "] not supported")
-        return BadRequest.chunked(fault).as("application/soap+xml;charset=UTF-8")
-      }
 
       val toPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:To/:PartyId")
       val fromPartyId: Element = SWA12Util.findSingleNode(message.getSOAPHeader, "//:PartyInfo/:From/:PartyId")
@@ -166,7 +157,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
       Logger.debug("Success Receipt")
       val array: Array[Byte] = Util.createSuccessReceipt(message)
       logItem.reply = array;
-      Ok.chunked(StreamConverters.fromInputStream(()=>new ByteArrayInputStream(array))).as("application/soap+xml;charset=UTF-8")
+      Ok.chunked(StreamConverters.fromInputStream(() => new ByteArrayInputStream(array))).as("application/soap+xml;charset=UTF-8")
     } catch {
       case th: Throwable => {
         logItem.success = LogItemSuccess.FALSE;
@@ -229,5 +220,18 @@ class GenericAS4Corner extends AbstractMSHBackend {
   override def finishTest(context: Object) = {
     Logger.info(label + " finish test")
     isActive = false;
+  }
+
+
+  def getBackendPMODE(key: String): PMODE = {
+    val pMODE = new PMODE
+    val pmodes = KerkoviApplicationContext.pmodes
+    pMODE.service = pmodes.getProperty(key + ".SERVICE")
+    pMODE.action = pmodes.getProperty(key + ".ACTION")
+    pMODE.fromPartyID = pmodes.getProperty(key + ".FROM_PARTY_ID")
+    pMODE.fromPartyRole = pmodes.getProperty(key + ".FROM_PARTY_ROLE")
+    pMODE.toPartyID = pmodes.getProperty(key + ".TO_PARTY_ID")
+    pMODE.toPartyRole = pmodes.getProperty(key + ".TO_PARTY_ROLE")
+    pMODE
   }
 }

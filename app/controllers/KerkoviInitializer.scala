@@ -54,6 +54,7 @@ class KerkoviInitializer @Inject()(environment: Environment, configuration: Conf
             BackendLauncher.initialize(properties, environment.classLoader())
             KerkoviApplicationContext.serviceProperties = filterConfiguration("SERVICES.")
             KerkoviApplicationContext.actionProperties = filterConfiguration("ACTIONS.")
+            KerkoviApplicationContext.pmodes = filterConfiguration("BACKEND_PMODES.")
             KerkoviApplicationContext.myPartyID = configuration.getString("MYPARTYID", "minder")
           }
           catch {

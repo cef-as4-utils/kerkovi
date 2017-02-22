@@ -11,15 +11,15 @@
         <ns2:PartyInfo>
             <ns2:From>
                 <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">${from}</ns2:PartyId>
-                <ns2:Role>http://www.esens.eu/as4/conformancetest/testdriver</ns2:Role>
+                <ns2:Role>${fromRole}</ns2:Role>
             </ns2:From>
             <ns2:To>
                 <ns2:PartyId type="urn:oasis:names:tc:ebcore:partyid-type:unregistered">${to}</ns2:PartyId>
-                <ns2:Role>http://www.esens.eu/as4/conformancetest/sut</ns2:Role>
+                <ns2:Role>${toRole}</ns2:Role>
             </ns2:To>
         </ns2:PartyInfo>
         <ns2:CollaborationInfo>
-            <ns2:Service>http://www.esens.eu/as4/conformancetest</ns2:Service>
+            <ns2:Service>${service}</ns2:Service>
             <ns2:Action>${action}</ns2:Action>
             <ns2:ConversationId>${conversationId}</ns2:ConversationId>
         </ns2:CollaborationInfo>

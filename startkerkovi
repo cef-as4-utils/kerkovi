@@ -1,0 +1,2 @@
+#!/bin/sh
+activator -Dhttps.port=15000 -Dhttp.port=15001 -Dapplication.secret="dsgfsdfg.hedehodadfgsghdhasdfasdfdfg___3fffddfnkjsdfhkjsdfg" -Dhttps.keyStore=kerkovi.jks -Dhttps.keyStorePassword=123456 start

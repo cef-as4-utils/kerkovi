@@ -15,6 +15,7 @@ import akka.actor.ActorSystem
 import akka.stream._
 import akka.stream.scaladsl._
 import akka.util.ByteString
+import controllers.KerkoviApplicationContext
 import esens.wp6.esensMshBackend._
 import minder.as4Utils.SWA12Util._
 import org.w3c.dom.{Element, Node}
@@ -121,18 +122,18 @@ object Util extends Controller {
     val keyFaultCode = "${faultCode}"
     val keyReason = "${reason}"
     xml = xml
-      .replace("${timeStamp}", ZonedDateTime.now(ZoneOffset.UTC).toString)
-      .replace("${refToMessageInError}", refToMessageInError)
-      .replace("${messageId}", ebmsMessageId)
-      .replace(keyCategory, category)
-      .replace(keyErrorCode, errorCode)
-      .replace(keyOrigin, origin)
-      .replace(keySeverity, severity)
-      .replace(keyShortDescription, shortDescription)
-      .replace(keyDescription, description)
-      .replace(keyErrorDetail, errorDetail)
-      .replace(keyFaultCode, faultCode)
-      .replace(keyReason, reason)
+        .replace("${timeStamp}", ZonedDateTime.now(ZoneOffset.UTC).toString)
+        .replace("${refToMessageInError}", refToMessageInError)
+        .replace("${messageId}", ebmsMessageId)
+        .replace(keyCategory, category)
+        .replace(keyErrorCode, errorCode)
+        .replace(keyOrigin, origin)
+        .replace(keySeverity, severity)
+        .replace(keyShortDescription, shortDescription)
+        .replace(keyDescription, description)
+        .replace(keyErrorDetail, errorDetail)
+        .replace(keyFaultCode, faultCode)
+        .replace(keyReason, reason)
 
     val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
     instance.setNamespaceAware(true);
@@ -179,7 +180,7 @@ object Util extends Controller {
   def extractSOAPMessageFromRequest(request: mvc.Request[RawBuffer]): SOAPMessage = {
     try {
       val stream = request.body
-      val bytes : Array[Byte] = stream.asBytes().get.toArray
+      val bytes: Array[Byte] = stream.asBytes().get.toArray
       val headers: MimeHeaders = new MimeHeaders
       headers.addHeader("content-type", request.headers.get("content-type").get)
 
@@ -204,38 +205,44 @@ object Util extends Controller {
     * @param submissionData
     * @return
     */
-  def convert2Soap(submissionData: SubmissionData, from: String, to: String, action: String,
-                   targetService: String, targetAction: String): SOAPMessage = {
+  def convert2Soap(submissionData: SubmissionData, submitPMODE: PMODE): SOAPMessage = {
     Logger.debug("Convert submission data to SOAP Message")
     var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
 
     val keyTimeStamp = "${timeStamp}"
     val keyMessageId = "${ebmsMessageID}"
     val keyFrom = "${from}"
+    val keyFromPartyRole = "${fromRole}"
     val keyTo = "${to}"
+    val keyToPartyRole = "${toRole}"
     val keyAction = "${action}"
+    val keyService = "${service}"
     val keyMessageProps = "${messageProperties}"
     val keyPartInfo = "${partInfo}"
     val keyConversationId = "${conversationId}"
 
     val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
 
+    var toPartyId = submitPMODE.toPartyID
+    if(toPartyId == "*")
+      toPartyId = submissionData.from; //take the inner corner as target.
+
     xml = xml
-      .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
-      .replace(keyMessageId, ebmsMessageId)
-      .replace(keyFrom, from)
-      //why from instead of to?
-      // because, we are submitting the message to the guy who has the equal to FROM.
-      // He then, will send it to the TO
-      .replace(keyTo, to)
-      .replace(keyConversationId, if (submissionData.conversationId != null) {
-        submissionData.conversationId
-      } else {
-        "1"
-      })
-      .replace(keyAction, action)
-      .replace(keyMessageProps, generateMessageProperties(submissionData, targetService, targetAction))
-      .replace(keyPartInfo, generatePartInfo(submissionData))
+        .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
+        .replace(keyMessageId, ebmsMessageId)
+        .replace(keyFrom, submitPMODE.fromPartyID)
+        .replace(keyFromPartyRole, submitPMODE.fromPartyRole)
+        .replace(keyTo, toPartyId)
+        .replace(keyToPartyRole, submitPMODE.toPartyRole)
+        .replace(keyConversationId, if (submissionData.conversationId != null) {
+          submissionData.conversationId
+        } else {
+          "1"
+        })
+        .replace(keyAction, submitPMODE.action)
+        .replace(keyService, submitPMODE.service)
+        .replace(keyMessageProps, generateMessageProperties(submissionData))
+        .replace(keyPartInfo, generatePartInfo(submissionData))
 
     val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
     instance.setNamespaceAware(true);
@@ -274,7 +281,7 @@ object Util extends Controller {
     * <tr><td>originalSender	</td><td>   Y</td></tr>
     * <tr><td>finalRecipient	</td><td>   Y</td></tr></table>
     */
-  def generateMessageProperties(submissionData: SubmissionData, targetService: String, targetAction: String): String = {
+  def generateMessageProperties(submissionData: SubmissionData): String = {
     val propertiesBuilder = new StringBuilder
     if (submissionData.messageId != null) {
       propertiesBuilder.append("<ns2:Property name=\"MessageId\">" + submissionData.messageId + "</ns2:Property>\n")
@@ -295,8 +302,12 @@ object Util extends Controller {
         propertiesBuilder.append("<ns2:Property name=\"" + key + "\">" + submissionData.properties.get(key) + "</ns2:Property>\n")
       }
     }
-    propertiesBuilder.append("<ns2:Property name=\"Service\">" + targetService + "</ns2:Property>\n")
-    propertiesBuilder.append("<ns2:Property name=\"Action\">" + targetAction + "</ns2:Property>\n")
+
+    val c23Service = KerkoviApplicationContext.serviceProperties.getProperty(submissionData.pModeId)
+    val c23Action = KerkoviApplicationContext.actionProperties.getProperty(submissionData.pModeId)
+
+    propertiesBuilder.append("<ns2:Property name=\"Service\">" + c23Service + "</ns2:Property>\n")
+    propertiesBuilder.append("<ns2:Property name=\"Action\">" + c23Action + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"ToPartyId\">" + submissionData.to + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"ToPartyRole\">" + submissionData.toPartyRole + "</ns2:Property>\n")
     propertiesBuilder.append("<ns2:Property name=\"FromPartyId\">" + submissionData.from + "</ns2:Property>\n")
@@ -313,16 +324,16 @@ object Util extends Controller {
 
     submissionData.getPayloads.foreach(payload => {
       partInfoBuilder
-        .append("<ns2:PartInfo href=\"cid:")
-        .append(payload.payloadId)
-        .append("\">\n<ns2:PartProperties><ns2:Property name=\"MimeType\">")
-        .append(payload.mimeType)
-        .append("</ns2:Property>\n");
+          .append("<ns2:PartInfo href=\"cid:")
+          .append(payload.payloadId)
+          .append("\">\n<ns2:PartProperties><ns2:Property name=\"MimeType\">")
+          .append(payload.mimeType)
+          .append("</ns2:Property>\n");
 
       if (payload.characterSet != null) {
         partInfoBuilder.append("<ns2:Property name=\"CharacterSet\">")
-          .append(payload.characterSet)
-          .append("</ns2:Property>\n");
+            .append(payload.characterSet)
+            .append("</ns2:Property>\n");
       }
       partInfoBuilder.append("</ns2:PartProperties>\n</ns2:PartInfo>\n")
     })
@@ -483,52 +494,6 @@ object Util extends Controller {
     propertiesBuilder.toString
   }
 
-  def convert2Soap(messageNotification: MessageNotification, from: String, to: String, action: String): SOAPMessage = {
-    /**
-      * Property name	Required?
-      * RefToMessageId	  Y
-      * SignalType	      Y
-      * Error Code	      N
-      * ShortDescription	N
-      * Description	    N
-      */
-    var xml = scala.io.Source.fromInputStream(getClass.getResourceAsStream("/as4template.xml")).mkString
-
-    val keyTimeStamp = "${timeStamp}"
-    val keyMessageId = "${ebmsMessageID}"
-    val keyFrom = "${from}"
-    val keyTo = "${to}"
-    val keyAction = "${action}"
-    val keyMessageProps = "${messageProperties}"
-    val keyPartInfo = "${partInfo}"
-
-    val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
-
-    xml = xml
-      .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
-      .replace(keyMessageId, ebmsMessageId)
-      .replace(keyFrom, from)
-      .replace(keyAction, action)
-      .replace(keyTo, to)
-      .replace(keyMessageProps, generateMessageProperties(messageNotification))
-      .replace(keyPartInfo, "")
-
-    val instance: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
-    instance.setNamespaceAware(true);
-    val document = instance.newDocumentBuilder().parse(new ByteArrayInputStream(xml.getBytes("utf-8")))
-
-    //create a soap message based on this XML
-    val message = createMessage();
-    val element: Element = document.getDocumentElement
-    val importNode = message.getSOAPHeader.getOwnerDocument.importNode(element, true)
-    message.getSOAPHeader.appendChild(importNode)
-
-    if (message.saveRequired())
-      message.saveChanges()
-
-    return message
-  }
-
   def readFile(fileName: String): Array[Byte] = {
     val fis = new FileInputStream(fileName)
     val all = new Array[Byte](fis.available())
@@ -550,11 +515,11 @@ object Util extends Controller {
     xpath.evaluate(expression, document, qname)
   }
 
-  def main(args : Array[String]): Unit ={
+  def main(args: Array[String]): Unit = {
     implicit val system = ActorSystem("QuickStart")
     implicit val materializer = ActorMaterializer()
 
-    val (enumerator, channel)  = Concurrent.broadcast[String];
+    val (enumerator, channel) = Concurrent.broadcast[String];
     val source = Source.fromPublisher(Streams.enumeratorToPublisher(enumerator))
     val helloSource = source.filter(message => message.startsWith("Hello"))
 
@@ -576,12 +541,11 @@ object Util extends Controller {
     //Thread.sleep(100)
     channel push "Hello there! 5"
     //Thread.sleep(100)
-    channel push  "Hello there! 6"
+    channel push "Hello there! 6"
     //Thread.sleep(100)
-    channel push  "Hello there! 7"
+    channel push "Hello there! 7"
   }
 }
-
 
 
 class AnyNamespaceContext extends NamespaceContext {
