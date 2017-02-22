@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.{FileWriter, PrintWriter}
 import javax.inject._
 
 import akka.actor.ActorSystem
@@ -46,4 +47,21 @@ class Admin @Inject()(implicit environment: play.api.Environment,
   def admin() = UserAction { implicit request =>
     Ok(views.html.admin())
   }
+
+  def setMode(mode: Int) = UserAction { implicit request =>
+
+    KerkoviApplicationContext.testMode = mode
+    if (mode == 0)
+      KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.conformancePmodes
+    else
+      KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.interopPmodes
+
+    val pw = new PrintWriter(new FileWriter("backendPmode.txt"))
+    pw.println(mode)
+    pw.close()
+
+
+    Ok
+  }
+
 }

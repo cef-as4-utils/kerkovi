@@ -225,7 +225,7 @@ class GenericAS4Corner extends AbstractMSHBackend {
 
   def getBackendPMODE(key: String): PMODE = {
     val pMODE = new PMODE
-    val pmodes = KerkoviApplicationContext.pmodes
+    val pmodes = KerkoviApplicationContext.currentBackendPmodes
     pMODE.service = pmodes.getProperty(key + ".SERVICE")
     pMODE.action = pmodes.getProperty(key + ".ACTION")
     pMODE.fromPartyID = pmodes.getProperty(key + ".FROM_PARTY_ID")

@@ -32,6 +32,7 @@ GET         /undoDelete                         controllers.Admin.undoDelete()
 GET         /approve                            controllers.Admin.approve(id: Int)
 GET         /reject                             controllers.Admin.reject(id: Int)
 GET         /admin                              controllers.Admin.admin()
+GET         /setMode                            controllers.Admin.setMode(mode: Int)
 
 GET         /login                              controllers.LoginControl.login()
 POST        /doLogin                            controllers.LoginControl.doLogin()

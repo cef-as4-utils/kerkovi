@@ -44,18 +44,22 @@
                 <br/></div>
             </td>
             <td align="right" style="width: 99% ;
-              vertical-align: bottom">;
-              &nbsp;
+              vertical-align: bottom">
+                &nbsp;
             </td>
             <td align="right">&nbsp;
               <a style="display: block;
                 border: 1px solid gray;
-                border-radius: 5px; margin-right: 10px;padding-left: 5px;padding-right:5px;background-color: rgba(255, 0, 16, 0.31)" href="@controllers.routes.LoginControl.logout()">Logout</a>
+                border-radius: 5px;
+                margin-right: 10px;
+                padding-left: 5px;
+                padding-right: 5px;
+                background-color: rgba(255, 0, 16, 0.31)" href="@controllers.routes.LoginControl.logout()">Logout</a>
             </td>
           </tr>
           </table>
           <ul class="menu">
-            <li><a href="#">Nowhere</a></li>
+            <li><a href="#">Administrator</a></li>
             <li>&nbsp;</li>
           </ul>
           <div id="mainView">
@@ -99,7 +103,30 @@
     }
 
   </script>
-            <h2>All gateways</h2>
+
+            <h2>Backend PMODE Setting</h2>
+
+
+            <input type="radio" name="testConfig" onclick="setMode(0)" @if(KerkoviApplicationContext.testMode == 0) {
+              checked='checked'
+            }
+            /> Conformance Test <br />
+            <input type="radio" name="testConfig" onclick="setMode(1)" @if(KerkoviApplicationContext.testMode == 1) {
+              checked='checked'
+            }/> Interoperability Test <br/>
+
+            <script>
+              function setMode(mode) {
+                var jsCall = jsRoutes.controllers.Admin.setMode(mode)
+                jsCall.ajax({
+                  type: 'GET',
+                  end: function (data) {
+                    location.reload()
+                  }
+                })
+              }
+            </script>
+            <h2>Manage gateways</h2>
 
             <table class="zebra">
               <tr>

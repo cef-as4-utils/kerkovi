@@ -1,5 +1,6 @@
 package controllers
 
+import java.io.{FileInputStream, FileWriter, PrintWriter}
 import java.security.cert.X509Certificate
 import java.security.{KeyManagementException, NoSuchAlgorithmException}
 import java.util.Properties
@@ -14,6 +15,7 @@ import play.api.inject.ApplicationLifecycle
 
 import scala.collection.JavaConversions._
 import scala.concurrent.Future
+import scala.io.Source
 
 @Singleton
 class KerkoviInitializer @Inject()(environment: Environment, configuration: Configuration, lifecycle: ApplicationLifecycle) {
@@ -29,7 +31,7 @@ class KerkoviInitializer @Inject()(environment: Environment, configuration: Conf
     try {
       disableSslVerification
     } catch {
-      case th : Throwable =>
+      case th: Throwable =>
     }
 
     LogDB.readDb
@@ -54,7 +56,28 @@ class KerkoviInitializer @Inject()(environment: Environment, configuration: Conf
             BackendLauncher.initialize(properties, environment.classLoader())
             KerkoviApplicationContext.serviceProperties = filterConfiguration("SERVICES.")
             KerkoviApplicationContext.actionProperties = filterConfiguration("ACTIONS.")
-            KerkoviApplicationContext.pmodes = filterConfiguration("BACKEND_PMODES.")
+            KerkoviApplicationContext.conformancePmodes = filterConfiguration("BACKEND_PMODES.0.")
+            KerkoviApplicationContext.interopPmodes = filterConfiguration("BACKEND_PMODES.1.")
+
+
+            try {
+              val is = new FileInputStream("backendPmode.txt")
+              KerkoviApplicationContext.testMode = Source.fromInputStream(is).mkString.trim.toInt
+              if (KerkoviApplicationContext.testMode == 0)
+                KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.conformancePmodes
+              else
+                KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.interopPmodes
+              is.close()
+            } catch {
+              case th: Throwable => {
+                Logger.error(th.getMessage, th)
+                KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.conformancePmodes
+                val pw = new PrintWriter(new FileWriter("backendPmode.txt"))
+                pw.println(0)
+                KerkoviApplicationContext.testMode = 0
+                pw.close()
+              }
+            }
             KerkoviApplicationContext.myPartyID = configuration.getString("MYPARTYID", "minder")
           }
           catch {
