@@ -62,7 +62,13 @@ class KerkoviInitializer @Inject()(environment: Environment, configuration: Conf
 
             try {
               val is = new FileInputStream("backendPmode.txt")
-              KerkoviApplicationContext.testMode = Source.fromInputStream(is).mkString.trim.toInt
+              val string = Source.fromInputStream(is).mkString
+              println(s"$string")
+              val trim = string.split("\n").map{f => if (f.startsWith("#"))
+              "" else f
+              }.foldLeft("")((z, b) => z + b).trim
+              println(trim)
+              KerkoviApplicationContext.testMode = trim.toInt
               if (KerkoviApplicationContext.testMode == 0)
                 KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.conformancePmodes
               else
@@ -73,7 +79,7 @@ class KerkoviInitializer @Inject()(environment: Environment, configuration: Conf
                 Logger.error(th.getMessage, th)
                 KerkoviApplicationContext.currentBackendPmodes = KerkoviApplicationContext.conformancePmodes
                 val pw = new PrintWriter(new FileWriter("backendPmode.txt"))
-                pw.println(0)
+                pw.println("#set value to 0 for conformance test pmodes\n#set value to 1 for interop test pmodes.\n#The difference is that for conformance the service and roles are:\n# http://www.esens.eu/as4/conformancetest and http://www.esens.eu/as4/conformancetest/...\n#And for interop the values are\n# http://www.esens.eu/as4/interoptest and http://www.esens.eu/as4/interoptest/...\n#Current Value\n0")
                 KerkoviApplicationContext.testMode = 0
                 pw.close()
               }
