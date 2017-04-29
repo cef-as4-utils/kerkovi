@@ -5,6 +5,7 @@ import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
 import gov.tubitak.minder.client.MinderClient;
 import minderengine.SignalFailedException;
+import play.Logger;
 import play.api.Play;
 
 import java.util.Properties;
@@ -16,8 +17,6 @@ import java.util.Properties;
 public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
   private MinderBackendAdapter minderBackendAdapter;
 
-  private boolean started = false;
-
   /**
    * Send a receiveMessage signal to Minder
    *
@@ -25,16 +24,23 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
    */
   @Override
   public void deliver(SubmissionData submissionData) {
-    if (started)
-      minderBackendAdapter.receiveMessage(submissionData);
+    synchronized (this) {
+      String conversationId = submissionData.conversationId;
+    Logger.debug("Deliver a message with ConversationID: " + conversationId + " to MINDER.");
+      if (minderBackendAdapter.sessionMap.containsKey(conversationId)) {
+        minderBackendAdapter.setSessionId(minderBackendAdapter.sessionMap.get(conversationId));
+        minderBackendAdapter.sessionMap.remove(conversationId);
+        minderBackendAdapter.receiveMessage(submissionData);
+      } else {
+        Logger.warn("A test session for Conversation ID " + submissionData.conversationId + " wasn't found in the map. This delivery will be lost");
+      }
+    }
   }
 
   @Override
   public void reportDeliverFailure(Throwable throwable) {
-    if (started) {
-      minderBackendAdapter.beginReportSignalError(new SignalFailedException(throwable));
-      minderBackendAdapter.receiveMessage(null);
-    }
+    minderBackendAdapter.beginReportSignalError(new SignalFailedException(throwable));
+    minderBackendAdapter.receiveMessage(null);
   }
 
   /**
@@ -44,16 +50,13 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
    */
   @Override
   public void processNotification(MessageNotification messageNotification) {
-    if (started)
-      minderBackendAdapter.processNotification(messageNotification);
+    minderBackendAdapter.processNotification(messageNotification);
   }
 
   @Override
   public void reportNotificationFailure(Throwable throwable) {
-    if (started) {
-      minderBackendAdapter.beginReportSignalError(new SignalFailedException(throwable));
-      minderBackendAdapter.processNotification(null);
-    }
+    minderBackendAdapter.beginReportSignalError(new SignalFailedException(throwable));
+    minderBackendAdapter.processNotification(null);
   }
 
   @Override
@@ -66,17 +69,17 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
 
   @Override
   public void onStartTest(Object context) {
-    started = true;
+
   }
 
   @Override
   public void onFinishTest(Object context) {
-    started = false;
+
   }
 
 
   public boolean isStarted() {
-    return started;
+    return true;
   }
 
 }

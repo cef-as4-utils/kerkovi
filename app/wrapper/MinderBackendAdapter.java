@@ -1,10 +1,11 @@
 package wrapper;
 
-import controllers.KerkoviApplicationContext;
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
 import minderengine.*;
 import org.apache.log4j.Logger;
+
+import java.util.HashMap;
 
 /**
  * This class represents the backend interface that Minder uses
@@ -16,7 +17,8 @@ import org.apache.log4j.Logger;
  */
 public abstract class MinderBackendAdapter extends Wrapper {
   public static final Logger LOGGER = Logger.getLogger(MinderBackendAdapter.class);
-  private MinderMSHBackendAdapter backendClient;
+  private MinderMSHBackendAdapter mshBackendAdapter;
+  protected HashMap<String, String> sessionMap = new HashMap<>();
 
   /**
    * Called by the server when a test case that contains this wrapper is about
@@ -24,11 +26,11 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Override
   public void startTest(StartTestObject startTestObject) {
-    if (backendClient.isStarted())
+    if (mshBackendAdapter.isStarted())
       return;
 
     play.Logger.info("Backend Start Test");
-    backendClient.startTest(startTestObject);
+    mshBackendAdapter.startTest(startTestObject);
   }
 
   /**
@@ -37,7 +39,7 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Override
   public void finishTest(FinishTestObject finishTestObject) {
-    backendClient.finishTest(finishTestObject);
+    mshBackendAdapter.finishTest(finishTestObject);
     play.Logger.info("Backend Finish Test");
   }
 
@@ -48,11 +50,14 @@ public abstract class MinderBackendAdapter extends Wrapper {
    */
   @Slot
   public void submitMessage(SubmissionData submissionData) {
-    if (!backendClient.isStarted())
+    if (!mshBackendAdapter.isStarted())
       throw new MinderException(MinderException.E_SUT_NOT_RUNNING);
 
     try {
-      backendClient.submitMessage(submissionData);
+      //put the session id into a map WRT conversation id.
+      //TODO: we need a timer mechanism or a periodic checker to purge keys that have expired
+      sessionMap.put(submissionData.conversationId, this.getSessionId());
+      mshBackendAdapter.submitMessage(submissionData);
     } catch (Throwable throwable) {
       LOGGER.debug(throwable.getMessage(), throwable);
       throw throwable;
@@ -76,7 +81,7 @@ public abstract class MinderBackendAdapter extends Wrapper {
   public abstract void processNotification(MessageNotification status);
 
   public void setBackendClient(MinderMSHBackendAdapter backendClient) {
-    this.backendClient = backendClient;
+    this.mshBackendAdapter = backendClient;
   }
 
 
