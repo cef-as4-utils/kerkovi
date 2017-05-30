@@ -1,11 +1,10 @@
-package wrapper;
+package beybun;
 
 import esens.wp6.esensMshBackend.AbstractMSHBackendAdapter;
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
 import gov.tubitak.minder.client.MinderClient;
 import minderengine.SignalFailedException;
-import play.api.Play;
 
 import java.util.Properties;
 
@@ -60,7 +59,7 @@ public class MinderMSHBackendAdapter extends AbstractMSHBackendAdapter {
   public void initialize(Properties properties) {
     //do anything arbitrary here
     MinderClient minderClient = new MinderClient(properties, this.getClass().getClassLoader());
-    minderBackendAdapter = (MinderBackendAdapter) minderClient.wrapper();
+    minderBackendAdapter = (MinderBackendAdapter) minderClient.adapter();
     minderBackendAdapter.setBackendClient(this);
   }
 

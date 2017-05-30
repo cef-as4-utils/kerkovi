@@ -297,14 +297,11 @@ function createNew() {
 }
 
 function doCreateNew(theUrl) {
-
   var vnt = $(window.event);
   vnt.stop();
 
   if (editorBusy)
     return;
-  event.stopPropagation()
-  event.preventDefault()
   var dv = $("#newGatewayDiv")
   var frm = $("#newGatewayForm")
 

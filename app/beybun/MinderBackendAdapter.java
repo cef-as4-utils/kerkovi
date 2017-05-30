@@ -1,6 +1,5 @@
-package wrapper;
+package beybun;
 
-import controllers.KerkoviApplicationContext;
 import esens.wp6.esensMshBackend.MessageNotification;
 import esens.wp6.esensMshBackend.SubmissionData;
 import minderengine.*;
@@ -14,7 +13,7 @@ import org.apache.log4j.Logger;
  * <p>
  * It works either for C1 or C4 depending on the role.
  */
-public abstract class MinderBackendAdapter extends Wrapper {
+public abstract class MinderBackendAdapter extends Adapter {
   public static final Logger LOGGER = Logger.getLogger(MinderBackendAdapter.class);
   private MinderMSHBackendAdapter backendClient;
 

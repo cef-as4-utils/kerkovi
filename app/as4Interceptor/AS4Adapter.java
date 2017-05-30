@@ -41,7 +41,7 @@ import java.net.URL;
  *
  * @author yerlibilgin
  */
-public abstract class AS4Adapter extends Wrapper {
+public abstract class AS4Adapter extends Adapter {
   private MinderClient minderClient;
   private Object replyLock = new Object();
   private SOAPMessage reply = null;

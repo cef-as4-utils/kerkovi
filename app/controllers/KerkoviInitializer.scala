@@ -42,7 +42,7 @@ class KerkoviInitializer @Inject()(environment: Environment, configuration: Conf
           var prefix: String = "AS4_INTERCEPTOR."
           var properties: Properties = filterConfiguration(prefix)
           val minderClient: MinderClient = new MinderClient(properties, environment.classLoader())
-          KerkoviApplicationContext.as4Adapter = minderClient.wrapper.asInstanceOf[AS4Adapter]
+          KerkoviApplicationContext.as4Adapter = minderClient.adapter.asInstanceOf[AS4Adapter]
           KerkoviApplicationContext.as4Adapter.setMinderClient(minderClient)
           Logger.debug("-----------------")
           try {
