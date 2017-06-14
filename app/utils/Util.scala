@@ -1,6 +1,7 @@
 package utils
 
 import java.io.{ByteArrayInputStream, ByteArrayOutputStream, FileInputStream}
+import java.time.format.DateTimeFormatter
 import java.time.{ZoneOffset, ZonedDateTime}
 import java.util.UUID
 import javax.xml.namespace.{NamespaceContext, QName}
@@ -50,7 +51,7 @@ object Util extends Controller {
     val stylesource = new StreamSource(this.getClass.getResourceAsStream("/receipt-generator.xslt"));
     val transformer = TransformerFactory.newInstance().newTransformer(stylesource);
     transformer.setParameter("messageid", genereateEbmsMessageId("mindertestbed.org"));
-    transformer.setParameter("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toString);
+    transformer.setParameter("timestamp", getTimestamp);
     val baos = new ByteArrayOutputStream()
     transformer.transform(new DOMSource(soapMessage.getSOAPPart), new StreamResult(baos))
     val array: Array[Byte] = baos.toByteArray
@@ -70,7 +71,7 @@ object Util extends Controller {
     val stylesource = new StreamSource(this.getClass.getResourceAsStream("/receipt-generator.xslt"));
     val transformer = TransformerFactory.newInstance().newTransformer(stylesource);
     transformer.setParameter("messageid", genereateEbmsMessageId("mindertestbed.org"));
-    transformer.setParameter("timestamp", ZonedDateTime.now(ZoneOffset.UTC).toString);
+    transformer.setParameter("timestamp", getTimestamp);
     val baos = new ByteArrayOutputStream()
     transformer.transform(new DOMSource(soapMessage.getSOAPPart), new StreamResult(baos))
     baos.toByteArray
@@ -122,7 +123,7 @@ object Util extends Controller {
     val keyFaultCode = "${faultCode}"
     val keyReason = "${reason}"
     xml = xml
-        .replace("${timeStamp}", ZonedDateTime.now(ZoneOffset.UTC).toString)
+        .replace("${timeStamp}", getTimestamp)
         .replace("${refToMessageInError}", refToMessageInError)
         .replace("${messageId}", ebmsMessageId)
         .replace(keyCategory, category)
@@ -153,6 +154,12 @@ object Util extends Controller {
     //receipt.writeTo(baos)
     val array: Array[Byte] = xml.getBytes("utf-8")
     StreamConverters.fromInputStream(() => new ByteArrayInputStream(array))
+  }
+
+  def getTimestamp = {
+    val utc = ZonedDateTime.now(ZoneOffset.UTC);
+    //utc.format(DateTimeFormatter.ISO_DATE_TIME)
+    utc.format(DateTimeFormatter.ofPattern("uuuu-MM-dd'T'HH:mm:ss.SSSX"))
   }
 
   def getHeaders(request: mvc.Request[RawBuffer]): MimeHeaders = {
@@ -224,11 +231,11 @@ object Util extends Controller {
     val ebmsMessageId = genereateEbmsMessageId("mindertestbed.org")
 
     var toPartyId = submitPMODE.toPartyID
-    if(toPartyId == "*")
+    if (toPartyId == "*")
       toPartyId = submissionData.from; //take the inner corner as target.
 
     xml = xml
-        .replace(keyTimeStamp, ZonedDateTime.now(ZoneOffset.UTC).toString)
+        .replace(keyTimeStamp, getTimestamp)
         .replace(keyMessageId, ebmsMessageId)
         .replace(keyFrom, submitPMODE.fromPartyID)
         .replace(keyFromPartyRole, submitPMODE.fromPartyRole)
@@ -513,37 +520,6 @@ object Util extends Controller {
 
   def evaluateXpath(expression: String, document: Node, qname: QName): AnyRef = {
     xpath.evaluate(expression, document, qname)
-  }
-
-  def main(args: Array[String]): Unit = {
-    implicit val system = ActorSystem("QuickStart")
-    implicit val materializer = ActorMaterializer()
-
-    val (enumerator, channel) = Concurrent.broadcast[String];
-    val source = Source.fromPublisher(Streams.enumeratorToPublisher(enumerator))
-    val helloSource = source.filter(message => message.startsWith("Hello"))
-
-    val ref = Flow[String].to(Sink.foreach(k => {
-      println(k + "dd")
-      println(Thread.currentThread().getName)
-    })).runWith(helloSource)
-
-    println(Thread.currentThread().getName + "<<>>")
-    channel push "Hi there!"
-    Thread.sleep(100)
-    channel push "Hello there! 1"
-    //Thread.sleep(100)
-    channel push "Hello there! 2"
-    //Thread.sleep(100)
-    channel push "Hello there! 3"
-    //Thread.sleep(100)
-    channel push "Hello there! 4"
-    //Thread.sleep(100)
-    channel push "Hello there! 5"
-    //Thread.sleep(100)
-    channel push "Hello there! 6"
-    //Thread.sleep(100)
-    channel push "Hello there! 7"
   }
 }
 
