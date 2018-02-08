@@ -44,6 +44,7 @@ class Admin @Inject()(implicit environment: play.api.Environment,
     }
   }
 
+
   def admin() = UserAction { implicit request =>
     Ok(views.html.admin())
   }
